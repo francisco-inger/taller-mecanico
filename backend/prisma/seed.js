@@ -25,6 +25,18 @@ async function main() {
   // ── Usuarios ──────────────────────────────────────────────────
   const adminPass = await bcrypt.hash('Admin123!', 10);
   const recepPass = await bcrypt.hash('Recep123!', 10);
+  const cheoPass  = await bcrypt.hash('Cheoymaria2117', 10);
+
+  await prisma.usuario.upsert({
+    where:  { email: 'cheodiaz631@gmail.com' },
+    update: { passwordHash: cheoPass },
+    create: {
+      nombre:       'Francisco Diaz',
+      email:        'cheodiaz631@gmail.com',
+      passwordHash: cheoPass,
+      rol:          'ADMIN',
+    },
+  });
 
   await prisma.usuario.upsert({
     where:  { email: 'admin@taller.com' },
@@ -53,9 +65,9 @@ async function main() {
     where:  { id: 'mec-00000001-0001-0001-0001-000000000001' },
     update: {},
     create: {
-      id:          'mec-00000001-0001-0001-0001-000000000001',
-      nombre:      'Carlos Rodríguez',
-      telefono:    '809-555-1234',
+      id:           'mec-00000001-0001-0001-0001-000000000001',
+      nombre:       'Carlos Rodríguez',
+      telefono:     '809-555-1234',
       especialidad: 'Motor y transmisión',
     },
   });
@@ -116,6 +128,7 @@ async function main() {
 
   console.log('✅ Seed completado exitosamente!');
   console.log('\n👤 Credenciales de acceso:');
+  console.log('   Admin:       cheodiaz631@gmail.com / Cheoymaria2117');
   console.log('   Admin:       admin@taller.com / Admin123!');
   console.log('   Recepción:   recepcion@taller.com / Recep123!');
 }
@@ -128,3 +141,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
