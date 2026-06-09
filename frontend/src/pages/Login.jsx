@@ -17,7 +17,6 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    
     try {
       const response = await api.post('/auth/login', { email, password })
       const { usuario, token } = response.data.data
@@ -32,8 +31,18 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Fondo decorativo con degradado */}
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Fondo imagen taller mecánico */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=1920&q=80')`
+        }}
+      />
+      {/* Overlay oscuro */}
+      <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" />
+
+      {/* Efectos decorativos */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 opacity-10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500 opacity-10 rounded-full blur-3xl"></div>
@@ -51,7 +60,6 @@ export default function Login() {
 
         {/* Card principal */}
         <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl">
-          
           {/* Error Alert */}
           {error && (
             <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl flex items-start gap-3 animate-shake">
@@ -61,7 +69,6 @@ export default function Login() {
           )}
 
           <form onSubmit={handleLogin} className="space-y-5">
-            {/* Email Input */}
             <div className="group">
               <label className="block text-sm font-semibold text-slate-100 mb-2.5">Correo electrónico</label>
               <div className="relative">
@@ -79,7 +86,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Password Input */}
             <div className="group">
               <label className="block text-sm font-semibold text-slate-100 mb-2.5">Contraseña</label>
               <div className="relative">
@@ -104,7 +110,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -125,34 +130,23 @@ export default function Login() {
           </form>
         </div>
 
-        {/* Footer */}
-        <p className="mt-8 text-center text-xs text-slate-500">
+        <p className="mt-8 text-center text-xs text-slate-400">
           © {new Date().getFullYear()} SIGEST Taller. Todos los derechos reservados.
         </p>
       </div>
 
       <style>{`
         @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
           25% { transform: translateX(-5px); }
           75% { transform: translateX(5px); }
         }
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-        }
-        .animate-shake {
-          animation: shake 0.5s ease-in-out;
-        }
+        .animate-fade-in { animation: fade-in 0.6s ease-out; }
+        .animate-shake { animation: shake 0.5s ease-in-out; }
       `}</style>
     </div>
   )
