@@ -28,12 +28,12 @@ RUN npx prisma@5 generate
 # Copiar el resto del código fuente
 COPY . .
 
-# Puerto expuesto
-EXPOSE 3000
+# Puerto expuesto (Render usa la variable PORT)
+EXPOSE 10000
 
-# Variables de entorno por defecto (pueden sobreescribirse en docker-compose)
+# Variables de entorno por defecto
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=10000
 
-# Comando de inicio
-CMD ["node", "src/interfaces/http/server.js"]
+# Script de inicio: ejecuta migraciones y luego arranca el servidor
+CMD npx prisma@5 migrate deploy && node src/interfaces/http/server.js
