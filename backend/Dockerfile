@@ -36,4 +36,4 @@ ENV NODE_ENV=production
 ENV PORT=10000
 
 # Script de inicio: ejecuta migraciones y luego arranca el servidor
-CMD npx prisma@5 migrate deploy && node prisma/seed.js && node src/interfaces/http/server.js
+CMD npx prisma@5 db push && node prisma/seed.js && node src/interfaces/http/server.js
