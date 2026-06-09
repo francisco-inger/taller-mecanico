@@ -1,0 +1,167 @@
+// ─────────────────────────────────────────────────────────────
+// schema.prisma — Sistema de Órdenes de Servicio Taller Mecánico
+// ─────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Usuarios del sistema ──────────────────────────────────────
+model Usuario {
+  id           String   @id @default(uuid())
+  nombre       String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  rol          RolUsuario
+  activo       Boolean  @default(true)
+  creadoEn     DateTime @default(now()) @map("creado_en")
+
+  @@map("usuarios")
+}
+
+enum RolUsuario {
+  ADMIN
+  RECEPCIONISTA
+  MECANICO
+  CAJERO
+}
+
+// ── Clientes ──────────────────────────────────────────────────
+model Cliente {
+  id          String     @id @default(uuid())
+  nombre      String
+  telefono    String
+  email       String?
+  cedula      String?    @unique
+  esFrecuente Boolean    @default(false) @map("es_frecuente")
+  creadoEn    DateTime   @default(now()) @map("creado_en")
+
+  vehiculos   Vehiculo[]
+  ordenes     Orden[]
+
+  @@map("clientes")
+}
+
+// ── Vehículos ─────────────────────────────────────────────────
+model Vehiculo {
+  id          String   @id @default(uuid())
+  clienteId   String   @map("cliente_id")
+  marca       String
+  modelo      String
+  anio        Int
+  placa       String   @unique
+  kilometraje Int      @default(0)
+  color       String?
+  vin         String?  @unique
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  cliente     Cliente  @relation(fields: [clienteId], references: [id])
+  ordenes     Orden[]
+
+  @@map("vehiculos")
+}
+
+// ── Mecánicos ─────────────────────────────────────────────────
+model Mecanico {
+  id           String   @id @default(uuid())
+  nombre       String
+  telefono     String?
+  especialidad String?
+  activo       Boolean  @default(true)
+  creadoEn     DateTime @default(now()) @map("creado_en")
+
+  ordenes      Orden[]
+
+  @@map("mecanicos")
+}
+
+// ── Órdenes de Servicio ───────────────────────────────────────
+model Orden {
+  id                   String       @id
+  clienteId            String       @map("cliente_id")
+  vehiculoId           String       @map("vehiculo_id")
+  mecanicoId           String?      @map("mecanico_id")
+  estado               EstadoOrden  @default(RECIBIDA)
+  prioridad            Prioridad    @default(NORMAL)
+  notas                String?
+  fechaCreacion        DateTime     @default(now()) @map("fecha_creacion")
+  fechaEntregaEstimada DateTime?    @map("fecha_entrega_estimada")
+  fechaEntregaReal     DateTime?    @map("fecha_entrega_real")
+  actualizadoEn        DateTime     @updatedAt @map("actualizado_en")
+
+  cliente              Cliente      @relation(fields: [clienteId], references: [id])
+  vehiculo             Vehiculo     @relation(fields: [vehiculoId], references: [id])
+  mecanico             Mecanico?    @relation(fields: [mecanicoId], references: [id])
+  servicios            OrdenServicio[]
+  repuestos            OrdenRepuesto[]
+  factura              Factura?
+
+  @@map("ordenes")
+}
+
+enum EstadoOrden {
+  RECIBIDA
+  EN_DIAGNOSTICO
+  PRESUPUESTADA
+  APROBADA
+  EN_REPARACION
+  LISTA
+  ENTREGADA
+  FACTURADA
+  RECHAZADA
+}
+
+enum Prioridad {
+  NORMAL
+  URGENTE
+  VIP
+}
+
+// ── Servicios de una Orden ────────────────────────────────────
+model OrdenServicio {
+  id             String   @id @default(uuid())
+  ordenId        String   @map("orden_id")
+  tipo           String   // mantenimiento | reparacion | diagnostico
+  descripcion    String
+  costo          Decimal  @db.Decimal(10, 2)
+  tiempoEstimado Int      @map("tiempo_estimado") // minutos
+  creadoEn       DateTime @default(now()) @map("creado_en")
+
+  orden          Orden    @relation(fields: [ordenId], references: [id])
+
+  @@map("orden_servicios")
+}
+
+// ── Repuestos de una Orden ────────────────────────────────────
+model OrdenRepuesto {
+  id       String  @id @default(uuid())
+  ordenId  String  @map("orden_id")
+  nombre   String
+  precio   Decimal @db.Decimal(10, 2)
+  cantidad Int
+
+  orden    Orden   @relation(fields: [ordenId], references: [id])
+
+  @@map("orden_repuestos")
+}
+
+// ── Facturas ──────────────────────────────────────────────────
+model Factura {
+  id             String   @id @default(uuid())
+  ordenId        String   @unique @map("orden_id")
+  subtotal       Decimal  @db.Decimal(10, 2)
+  descuento      Decimal  @db.Decimal(10, 2) @default(0)
+  itbis          Decimal  @db.Decimal(10, 2)
+  total          Decimal  @db.Decimal(10, 2)
+  descripDescuento String? @map("descrip_descuento")
+  fechaEmision   DateTime @default(now()) @map("fecha_emision")
+
+  orden          Orden    @relation(fields: [ordenId], references: [id])
+
+  @@map("facturas")
+}
