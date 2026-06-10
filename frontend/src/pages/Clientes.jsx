@@ -4,10 +4,14 @@ import { useClienteStore } from '../store/clienteStore'
 import { useAuthStore } from '../store/authStore'
 import Modal from '../components/Modal'
 import ClienteForm from '../components/ClienteForm'
+import { useVehiculoStore } from '../store/vehiculoStore'
+
 
 export default function Clientes() {
   const { clientes, loading, fetchClientes, addCliente, updateCliente } = useClienteStore()
   const { user } = useAuthStore()
+  const { fetchVehiculosPorCliente } = useVehiculoStore()
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCliente, setEditingCliente] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -30,6 +34,8 @@ export default function Clientes() {
 
       if (vehiculoData) {
         const clienteId = cliente?.id || editingCliente?.id
+        if (!clienteId) throw new Error('clienteId no disponible para asociar el vehículo')
+
         await fetch(`${import.meta.env.VITE_API_URL}/api/vehiculos`, {
           method: 'POST',
           headers: {
@@ -43,10 +49,14 @@ export default function Clientes() {
             kilometraje: parseInt(vehiculoData.kilometraje) || 0
           })
         })
+
+        // Refrescar vehículos del cliente para que NuevaOrden muestre el dropdown correctamente
+        await fetchVehiculosPorCliente(clienteId)
       }
 
       handleCloseModal()
       fetchClientes()
+
     } catch (error) {
       console.error('Error al procesar cliente:', error)
       alert(error.response?.data?.message || 'Error al procesar la operación.')

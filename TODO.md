@@ -1,8 +1,6 @@
-# TODO - Redirigir siempre a login
+- [ ] Identificar origen exacto del error de UI al seleccionar vehículo (NuevaOrden)
+- [x] Implementar fix para refrescar vehículos del cliente tras crear vehículo en Clientes.jsx
 
-- [x] (Ya revisado) Encontrar rutas del frontend en `frontend/src/App.jsx`.
-- [x] Actualizar la lógica para que la ruta `/` redirija SIEMPRE a `/login`, independientemente del estado de autenticación.
-- [ ] Validar que otras rutas protegidas sigan funcionando (o también redirijan a login si se solicita).
-- [ ] Probar en `npm run start` / `npm run dev` y confirmar que al abrir la página principal entra a `/login`.
-
+- [ ] (Opcional) Forzar recarga en NuevaOrden si entra con clienteId ya seteado
+- [ ] Validar flujo completo: crear cliente -> crear vehículo -> crear orden -> confirmar que aparece en el dropdown
 
