@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Users, Search, Plus, Phone, Mail, Edit, MapPin, FileText } from 'lucide-react'
+import { Users, Search, Plus, Phone, Mail, Edit, MapPin } from 'lucide-react'
 import { useClienteStore } from '../store/clienteStore'
 import { useAuthStore } from '../store/authStore'
 import Modal from '../components/Modal'
 import ClienteForm from '../components/ClienteForm'
 import { useVehiculoStore } from '../store/vehiculoStore'
-
+import api from '../api/axios'
 
 export default function Clientes() {
   const { clientes, loading, fetchClientes, addCliente, updateCliente } = useClienteStore()
@@ -15,7 +15,6 @@ export default function Clientes() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCliente, setEditingCliente] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
-  const [viewMode, setViewMode] = useState('grid') // 'grid' o 'table'
 
   const isAdmin = user?.rol === 'ADMIN'
 
@@ -23,7 +22,7 @@ export default function Clientes() {
     fetchClientes()
   }, [])
 
- const handleSubmit = async (data, vehiculoData) => {
+  const handleSubmit = async (data, vehiculoData) => {
     try {
       let cliente
       if (editingCliente) {
@@ -36,21 +35,13 @@ export default function Clientes() {
         const clienteId = cliente?.id || editingCliente?.id
         if (!clienteId) throw new Error('clienteId no disponible para asociar el vehículo')
 
-        await fetch(`${import.meta.env.VITE_API_URL}/api/vehiculos`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify({
-            ...vehiculoData,
-            clienteId,
-            anio: parseInt(vehiculoData.anio),
-            kilometraje: parseInt(vehiculoData.kilometraje) || 0
-          })
+        await api.post('/vehiculos', {
+          ...vehiculoData,
+          clienteId,
+          anio: parseInt(vehiculoData.anio),
+          kilometraje: parseInt(vehiculoData.kilometraje) || 0
         })
 
-        // Refrescar vehículos del cliente para que NuevaOrden muestre el dropdown correctamente
         await fetchVehiculosPorCliente(clienteId)
       }
 
@@ -73,7 +64,7 @@ export default function Clientes() {
     setEditingCliente(null)
   }
 
-  const filteredClientes = clientes.filter(c => 
+  const filteredClientes = clientes.filter(c =>
     c.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.cedula.includes(searchTerm) ||
     c.telefono.includes(searchTerm)
@@ -87,7 +78,7 @@ export default function Clientes() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Directorio de Clientes</h1>
           <p className="text-gray-500 mt-1">Gestiona todos los clientes de tu taller</p>
         </div>
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
           className="group relative bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
         >
@@ -102,8 +93,8 @@ export default function Clientes() {
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-emerald-500 transition-colors">
             <Search size={20} />
           </div>
-          <input 
-            type="text" 
+          <input
+            type="text"
             className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all duration-300"
             placeholder="Buscar por nombre, cédula o teléfono..."
             value={searchTerm}
@@ -122,14 +113,17 @@ export default function Clientes() {
         ) : filteredClientes.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center">
             <Users size={48} className="text-gray-300 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-1">{searchTerm ? 'No se encontraron resultados' : 'No hay clientes registrados'}</h3>
-            <p className="text-sm text-gray-500">{searchTerm ? `No hay coincidencias para "${searchTerm}"` : 'Agrega tu primer cliente para comenzar'}</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-1">
+              {searchTerm ? 'No se encontraron resultados' : 'No hay clientes registrados'}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {searchTerm ? `No hay coincidencias para "${searchTerm}"` : 'Agrega tu primer cliente para comenzar'}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredClientes.map((cliente) => (
               <div key={cliente.id} className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-shadow group">
-                {/* Avatar */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold text-xl">
                     {cliente.nombre.charAt(0).toUpperCase()}
@@ -144,11 +138,9 @@ export default function Clientes() {
                   )}
                 </div>
 
-                {/* Info */}
                 <h3 className="font-bold text-gray-900 text-lg mb-1 truncate">{cliente.nombre}</h3>
                 <p className="text-xs text-gray-600 font-mono mb-4 bg-gray-50 px-2 py-1 rounded inline-block">{cliente.cedula}</p>
 
-                {/* Details */}
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center gap-3 text-sm">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center flex-shrink-0">
@@ -180,19 +172,18 @@ export default function Clientes() {
       </div>
 
       {/* Modal */}
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal} 
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
         title={editingCliente ? "Editar Información del Cliente" : "Registrar Nuevo Cliente"}
       >
-        <ClienteForm 
-          onSubmit={handleSubmit} 
+        <ClienteForm
+          onSubmit={handleSubmit}
           onCancel={handleCloseModal}
           isLoading={loading}
           initialData={editingCliente}
         />
       </Modal>
-
     </div>
   )
 }
