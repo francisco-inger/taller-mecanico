@@ -19,14 +19,34 @@ export default function Clientes() {
     fetchClientes()
   }, [])
 
-  const handleSubmit = async (data) => {
+ const handleSubmit = async (data, vehiculoData) => {
     try {
+      let cliente
       if (editingCliente) {
-        await updateCliente(editingCliente.id, data)
+        cliente = await updateCliente(editingCliente.id, data)
       } else {
-        await addCliente(data)
+        cliente = await addCliente(data)
       }
+
+      if (vehiculoData) {
+        const clienteId = cliente?.id || editingCliente?.id
+        await fetch(`${import.meta.env.VITE_API_URL}/api/vehiculos`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            ...vehiculoData,
+            clienteId,
+            anio: parseInt(vehiculoData.anio),
+            kilometraje: parseInt(vehiculoData.kilometraje) || 0
+          })
+        })
+      }
+
       handleCloseModal()
+      fetchClientes()
     } catch (error) {
       console.error('Error al procesar cliente:', error)
       alert(error.response?.data?.message || 'Error al procesar la operación.')
