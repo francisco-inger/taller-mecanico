@@ -38,6 +38,7 @@ model Cliente {
   telefono    String
   email       String?
   cedula      String?    @unique
+  direccion   String?
   esFrecuente Boolean    @default(false) @map("es_frecuente")
   creadoEn    DateTime   @default(now()) @map("creado_en")
 
@@ -126,10 +127,10 @@ enum Prioridad {
 model OrdenServicio {
   id             String   @id @default(uuid())
   ordenId        String   @map("orden_id")
-  tipo           String   // mantenimiento | reparacion | diagnostico
+  tipo           String
   descripcion    String
   costo          Decimal  @db.Decimal(10, 2)
-  tiempoEstimado Int      @map("tiempo_estimado") // minutos
+  tiempoEstimado Int      @map("tiempo_estimado")
   creadoEn       DateTime @default(now()) @map("creado_en")
 
   orden          Orden    @relation(fields: [ordenId], references: [id])
@@ -152,16 +153,16 @@ model OrdenRepuesto {
 
 // ── Facturas ──────────────────────────────────────────────────
 model Factura {
-  id             String   @id @default(uuid())
-  ordenId        String   @unique @map("orden_id")
-  subtotal       Decimal  @db.Decimal(10, 2)
-  descuento      Decimal  @db.Decimal(10, 2) @default(0)
-  itbis          Decimal  @db.Decimal(10, 2)
-  total          Decimal  @db.Decimal(10, 2)
-  descripDescuento String? @map("descrip_descuento")
-  fechaEmision   DateTime @default(now()) @map("fecha_emision")
+  id               String   @id @default(uuid())
+  ordenId          String   @unique @map("orden_id")
+  subtotal         Decimal  @db.Decimal(10, 2)
+  descuento        Decimal  @db.Decimal(10, 2) @default(0)
+  itbis            Decimal  @db.Decimal(10, 2)
+  total            Decimal  @db.Decimal(10, 2)
+  descripDescuento String?  @map("descrip_descuento")
+  fechaEmision     DateTime @default(now()) @map("fecha_emision")
 
-  orden          Orden    @relation(fields: [ordenId], references: [id])
+  orden            Orden    @relation(fields: [ordenId], references: [id])
 
   @@map("facturas")
 }
