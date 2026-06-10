@@ -1,26 +1,46 @@
 import { useState, useEffect } from 'react'
-import { Users, Search, Plus, Phone, Mail, Edit, MapPin } from 'lucide-react'
+import { Users, Search, Plus, Phone, Mail, Edit, MapPin, Car, ChevronDown, ChevronUp } from 'lucide-react'
 import { useClienteStore } from '../store/clienteStore'
 import { useAuthStore } from '../store/authStore'
 import Modal from '../components/Modal'
 import ClienteForm from '../components/ClienteForm'
-import { useVehiculoStore } from '../store/vehiculoStore'
 import api from '../api/axios'
 
 export default function Clientes() {
   const { clientes, loading, fetchClientes, addCliente, updateCliente } = useClienteStore()
   const { user } = useAuthStore()
-  const { fetchVehiculosPorCliente } = useVehiculoStore()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCliente, setEditingCliente] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [vehiculosPorCliente, setVehiculosPorCliente] = useState({})
+  const [expandedCliente, setExpandedCliente] = useState(null)
+  const [loadingVehiculos, setLoadingVehiculos] = useState({})
 
   const isAdmin = user?.rol === 'ADMIN'
 
   useEffect(() => {
     fetchClientes()
   }, [])
+
+  const handleToggleVehiculos = async (clienteId) => {
+    if (expandedCliente === clienteId) {
+      setExpandedCliente(null)
+      return
+    }
+    setExpandedCliente(clienteId)
+    if (!vehiculosPorCliente[clienteId]) {
+      setLoadingVehiculos(prev => ({ ...prev, [clienteId]: true }))
+      try {
+        const response = await api.get(`/vehiculos/cliente/${clienteId}`)
+        setVehiculosPorCliente(prev => ({ ...prev, [clienteId]: response.data.data || [] }))
+      } catch (error) {
+        setVehiculosPorCliente(prev => ({ ...prev, [clienteId]: [] }))
+      } finally {
+        setLoadingVehiculos(prev => ({ ...prev, [clienteId]: false }))
+      }
+    }
+  }
 
   const handleSubmit = async (data, vehiculoData) => {
     try {
@@ -33,21 +53,20 @@ export default function Clientes() {
 
       if (vehiculoData) {
         const clienteId = cliente?.id || editingCliente?.id
-        if (!clienteId) throw new Error('clienteId no disponible para asociar el vehículo')
-
+        if (!clienteId) throw new Error('clienteId no disponible')
         await api.post('/vehiculos', {
           ...vehiculoData,
           clienteId,
           anio: parseInt(vehiculoData.anio),
           kilometraje: parseInt(vehiculoData.kilometraje) || 0
         })
-
-        await fetchVehiculosPorCliente(clienteId)
+        // Refrescar vehículos de ese cliente
+        const response = await api.get(`/vehiculos/cliente/${clienteId}`)
+        setVehiculosPorCliente(prev => ({ ...prev, [clienteId]: response.data.data || [] }))
       }
 
       handleCloseModal()
       fetchClientes()
-
     } catch (error) {
       console.error('Error al procesar cliente:', error)
       alert(error.response?.data?.message || 'Error al procesar la operación.')
@@ -123,48 +142,96 @@ export default function Clientes() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredClientes.map((cliente) => (
-              <div key={cliente.id} className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-shadow group">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold text-xl">
-                    {cliente.nombre.charAt(0).toUpperCase()}
-                  </div>
-                  {isAdmin && (
-                    <button
-                      onClick={() => handleOpenEdit(cliente)}
-                      className="text-emerald-600 hover:text-emerald-700 p-2 rounded-lg hover:bg-emerald-50 transition-all"
-                    >
-                      <Edit size={18} />
-                    </button>
-                  )}
-                </div>
-
-                <h3 className="font-bold text-gray-900 text-lg mb-1 truncate">{cliente.nombre}</h3>
-                <p className="text-xs text-gray-600 font-mono mb-4 bg-gray-50 px-2 py-1 rounded inline-block">{cliente.cedula}</p>
-
-                <div className="space-y-3 mb-4">
-                  <div className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center flex-shrink-0">
-                      <Phone size={14} />
+              <div key={cliente.id} className="bg-white rounded-2xl shadow-lg border border-gray-200/50 hover:shadow-xl transition-shadow group">
+                <div className="p-6">
+                  {/* Avatar y editar */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold text-xl">
+                      {cliente.nombre.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-gray-700">{cliente.telefono}</span>
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleOpenEdit(cliente)}
+                        className="text-emerald-600 hover:text-emerald-700 p-2 rounded-lg hover:bg-emerald-50 transition-all"
+                      >
+                        <Edit size={18} />
+                      </button>
+                    )}
                   </div>
-                  {cliente.email && (
+
+                  <h3 className="font-bold text-gray-900 text-lg mb-1 truncate">{cliente.nombre}</h3>
+                  <p className="text-xs text-gray-600 font-mono mb-4 bg-gray-50 px-2 py-1 rounded inline-block">{cliente.cedula}</p>
+
+                  <div className="space-y-3 mb-4">
                     <div className="flex items-center gap-3 text-sm">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center flex-shrink-0">
-                        <Mail size={14} />
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center flex-shrink-0">
+                        <Phone size={14} />
                       </div>
-                      <span className="text-gray-700 truncate">{cliente.email}</span>
+                      <span className="text-gray-700">{cliente.telefono}</span>
                     </div>
-                  )}
-                  {cliente.direccion && (
-                    <div className="flex items-start gap-3 text-sm">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <MapPin size={14} />
+                    {cliente.email && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center flex-shrink-0">
+                          <Mail size={14} />
+                        </div>
+                        <span className="text-gray-700 truncate">{cliente.email}</span>
                       </div>
-                      <span className="text-gray-700 line-clamp-2">{cliente.direccion}</span>
-                    </div>
-                  )}
+                    )}
+                    {cliente.direccion && (
+                      <div className="flex items-start gap-3 text-sm">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <MapPin size={14} />
+                        </div>
+                        <span className="text-gray-700 line-clamp-2">{cliente.direccion}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {/* Botón ver vehículos */}
+                <button
+                  onClick={() => handleToggleVehiculos(cliente.id)}
+                  className="w-full flex items-center justify-between px-6 py-3 bg-gray-50 hover:bg-gray-100 border-t border-gray-100 transition-colors rounded-b-2xl"
+                >
+                  <div className="flex items-center gap-2 text-sm font-semibold text-gray-600">
+                    <Car size={15} className="text-emerald-500" />
+                    Ver vehículos
+                  </div>
+                  {expandedCliente === cliente.id
+                    ? <ChevronUp size={16} className="text-gray-400" />
+                    : <ChevronDown size={16} className="text-gray-400" />
+                  }
+                </button>
+
+                {/* Lista de vehículos */}
+                {expandedCliente === cliente.id && (
+                  <div className="px-6 pb-4 border-t border-gray-100">
+                    {loadingVehiculos[cliente.id] ? (
+                      <div className="py-4 flex justify-center">
+                        <div className="w-5 h-5 border-2 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+                      </div>
+                    ) : vehiculosPorCliente[cliente.id]?.length > 0 ? (
+                      <div className="space-y-2 pt-3">
+                        {vehiculosPorCliente[cliente.id].map((v) => (
+                          <div key={v.id} className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center flex-shrink-0">
+                              <Car size={14} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-gray-900">{v.marca} {v.modelo} {v.anio}</p>
+                              <p className="text-xs text-gray-500">Placa: <span className="font-mono font-semibold">{v.placa}</span> {v.color && `· ${v.color}`}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-4 text-center">
+                        <Car size={24} className="mx-auto text-gray-300 mb-1" />
+                        <p className="text-xs text-gray-500">Sin vehículos registrados</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
