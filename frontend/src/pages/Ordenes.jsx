@@ -11,6 +11,7 @@ export default function Ordenes() {
   const { ordenes, fetchOrdenes, avanzarEstado, eliminarOrden, loading } = useOrdenStore()
   const { generarFactura } = useFacturaStore()
   const { user } = useAuthStore()
+  const isAdmin = user?.rol === 'ADMIN'
   const [filtro, setFiltro] = useState('')
   const [selectedOrden, setSelectedOrden] = useState(null)
   const [ordenDetalle, setOrdenDetalle] = useState(null)
@@ -358,12 +359,14 @@ export default function Ordenes() {
                           <ArrowRight size={20} /> Avanzar a {siguienteEstado(detalleData.estado)}
                         </button>
                       )}
-                      <button
-                        onClick={() => handleEliminar(detalleData.id)}
-                        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                      >
-                        <Trash2 size={20} /> Eliminar Orden
-                      </button>
+                      {isAdmin && (
+                        <button
+                          onClick={() => handleEliminar(detalleData.id)}
+                          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                        >
+                          <Trash2 size={20} /> Eliminar Orden
+                        </button>
+                      )}
                     </div>
                   )}
                 </>

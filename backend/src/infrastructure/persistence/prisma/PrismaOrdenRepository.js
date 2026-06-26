@@ -108,7 +108,17 @@ class PrismaOrdenRepository extends OrdenRepository {
   }
 
   async eliminar(id) {
-    await prisma.orden.delete({ where: { id } });
+    const ordenId = id.toString ? id.toString() : id;
+    await prisma.$transaction(async (tx) => {
+      // 1. Eliminar factura asociada
+      await tx.factura.deleteMany({ where: { ordenId } });
+      // 2. Eliminar servicios de la orden
+      await tx.ordenServicio.deleteMany({ where: { ordenId } });
+      // 3. Eliminar repuestos de la orden
+      await tx.ordenRepuesto.deleteMany({ where: { ordenId } });
+      // 4. Eliminar la orden
+      await tx.orden.delete({ where: { id: ordenId } });
+    });
   }
 
   /**
