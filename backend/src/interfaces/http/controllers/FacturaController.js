@@ -20,8 +20,8 @@ class FacturaController {
 
   async crear(req, res, next) {
     try {
-      const { ordenId } = req.body;
-      const { factura, resumen } = await tallerFacade.generarFactura(ordenId);
+      const { ordenId, descuento, descripDescuento } = req.body;
+      const { factura, resumen } = await tallerFacade.generarFactura(ordenId, descuento, descripDescuento);
       res.status(201).json({ success: true, data: { factura, resumen }, message: 'Factura generada con éxito' });
     } catch (err) { next(err); }
   }

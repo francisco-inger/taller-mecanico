@@ -18,7 +18,7 @@ class GenerarFacturaUseCase {
     this._eventBus    = eventBus;
   }
 
-  async ejecutar(ordenId) {
+  async ejecutar(ordenId, descuentoManual = null, descripDescuentoManual = null) {
     const orden = await this._ordenRepo.obtenerPorId(ordenId);
     if (!orden) throw new Error(`Orden "${ordenId}" no encontrada`);
 
@@ -26,13 +26,31 @@ class GenerarFacturaUseCase {
       throw new Error(`Solo se puede facturar una orden en estado ENTREGADA. Estado actual: ${orden.estado}`);
     }
 
-    const cliente   = await this._clienteRepo.obtenerPorId(orden.clienteId);
-    const estrategia = cliente && cliente.esFrecuente
-      ? new DescuentoClienteFrecuente()
-      : new SinDescuento();
+    const totalServicios = orden.servicios.reduce((acc, s) => acc + Number(s.costo), 0);
+    const totalRepuestos = orden.repuestos.reduce((acc, r) => acc + (Number(r.precio) * r.cantidad), 0);
+    const subtotal       = totalServicios + totalRepuestos;
 
-    const calculadora = new CalculadoraOrden(estrategia);
-    const resumen     = calculadora.calcularTotal(orden.servicios, orden.repuestos);
+    let descuento = 0;
+    let descuentoDescripcion = '';
+
+    if (descuentoManual !== null && descuentoManual !== undefined) {
+      descuento = parseFloat(descuentoManual) || 0;
+      descuentoDescripcion = descripDescuentoManual || 'Descuento manual aplicado';
+    } else {
+      const cliente   = await this._clienteRepo.obtenerPorId(orden.clienteId);
+      const estrategia = cliente && cliente.esFrecuente
+        ? new DescuentoClienteFrecuente()
+        : new SinDescuento();
+
+      const calculadora = new CalculadoraOrden(estrategia);
+      const resumen     = calculadora.calcularTotal(orden.servicios, orden.repuestos);
+      descuento = resumen.descuento;
+      descuentoDescripcion = resumen.descuentoDescripcion;
+    }
+
+    const baseImponible = subtotal - descuento;
+    const itbis          = parseFloat((baseImponible * 0.18).toFixed(2));
+    const total          = parseFloat((baseImponible + itbis).toFixed(2));
 
     // Avanzar a estado FACTURADA
     orden.avanzar();
@@ -41,17 +59,26 @@ class GenerarFacturaUseCase {
     // Crear factura
     const factura = await this._facturaRepo.crear({
       ordenId:          orden.id.toString(),
-      subtotal:         resumen.subtotal,
-      descuento:        resumen.descuento,
-      itbis:            resumen.itbis,
-      total:            resumen.total,
-      descripDescuento: resumen.descuentoDescripcion,
+      subtotal:         subtotal,
+      descuento:        descuento,
+      itbis:            itbis,
+      total:            total,
+      descripDescuento: descuentoDescripcion,
     });
 
     const eventos = orden.pullEvents();
     await this._eventBus.publicarTodos(eventos);
 
-    return { factura, resumen };
+    return { 
+      factura, 
+      resumen: {
+        subtotal,
+        descuento,
+        itbis,
+        total,
+        descuentoDescripcion
+      } 
+    };
   }
 }
 

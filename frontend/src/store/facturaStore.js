@@ -16,12 +16,13 @@ export const useFacturaStore = create((set) => ({
     }
   },
 
-  generarFactura: async (ordenId) => {
+  generarFactura: async (ordenId, datosAdicionales = {}) => {
     set({ loading: true })
     try {
-      const response = await api.post('/facturas', { ordenId })
+      const response = await api.post('/facturas', { ordenId, ...datosAdicionales })
+      const nuevaFactura = response.data.data.factura
       set(state => ({
-        facturas: [response.data.data.factura, ...state.facturas],
+        facturas: [nuevaFactura, ...state.facturas],
         loading: false
       }))
       return response.data.data

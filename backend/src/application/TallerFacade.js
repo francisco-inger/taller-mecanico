@@ -6,6 +6,7 @@ const GenerarPresupuestoUseCase  = require('./casos-de-uso/GenerarPresupuestoUse
 const AprobarPresupuestoUseCase  = require('./casos-de-uso/AprobarPresupuestoUseCase');
 const RechazarPresupuestoUseCase = require('./casos-de-uso/RechazarPresupuestoUseCase');
 const GenerarFacturaUseCase      = require('./casos-de-uso/GenerarFacturaUseCase');
+const ActualizarFacturaUseCase   = require('./casos-de-uso/ActualizarFacturaUseCase');
 const ListarOrdenesUseCase       = require('./casos-de-uso/ListarOrdenesUseCase');
 const CrearClienteUseCase        = require('./casos-de-uso/CrearClienteUseCase');
 const ActualizarClienteUseCase   = require('./casos-de-uso/ActualizarClienteUseCase');
@@ -49,6 +50,7 @@ class TallerFacade {
     this._aprobarPresupuesto  = new AprobarPresupuestoUseCase(ordenRepo, eventBus);
     this._rechazarPresupuesto = new RechazarPresupuestoUseCase(ordenRepo, eventBus);
     this._generarFactura      = new GenerarFacturaUseCase(ordenRepo, clienteRepo, facturaRepo, eventBus);
+    this._actualizarFactura   = new ActualizarFacturaUseCase(facturaRepo, ordenRepo);
     this._listarOrdenes       = new ListarOrdenesUseCase(ordenRepo);
     this._crearCliente        = new CrearClienteUseCase(clienteRepo);
     this._actualizarCliente   = new ActualizarClienteUseCase(clienteRepo);
@@ -101,8 +103,8 @@ class TallerFacade {
 
   // ─── Facturación ──────────────────────────────────────────────────────────
 
-  generarFactura(ordenId) {
-    return this._generarFactura.ejecutar(ordenId);
+  generarFactura(ordenId, descuento, descripDescuento) {
+    return this._generarFactura.ejecutar(ordenId, descuento, descripDescuento);
   }
 
   obtenerFactura(id) {
@@ -114,7 +116,7 @@ class TallerFacade {
   }
 
   actualizarFactura(id, datos) {
-    return this._facturaRepo.actualizar(id, datos);
+    return this._actualizarFactura.ejecutar(id, datos);
   }
 
   eliminarFactura(id) {

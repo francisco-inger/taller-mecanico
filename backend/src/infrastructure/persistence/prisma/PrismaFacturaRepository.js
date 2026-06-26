@@ -5,7 +5,17 @@ const prisma = require('./prismaClient');
 
 class PrismaFacturaRepository extends FacturaRepository {
   async crear(datos) {
-    return prisma.factura.create({ data: datos });
+    return prisma.factura.create({
+      data: datos,
+      include: {
+        orden: {
+          include: {
+            cliente: true,
+            vehiculo: true
+          }
+        }
+      }
+    });
   }
 
   async obtenerPorId(id) {
@@ -31,7 +41,18 @@ class PrismaFacturaRepository extends FacturaRepository {
   }
 
   async actualizar(id, datos) {
-    return prisma.factura.update({ where: { id }, data: datos });
+    return prisma.factura.update({
+      where: { id },
+      data: datos,
+      include: {
+        orden: {
+          include: {
+            cliente: true,
+            vehiculo: true
+          }
+        }
+      }
+    });
   }
 
   async eliminar(id) {
