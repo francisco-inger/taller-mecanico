@@ -108,17 +108,26 @@ class PrismaOrdenRepository extends OrdenRepository {
   }
 
   async eliminar(id) {
-    const ordenId = id.toString ? id.toString() : id;
-    await prisma.$transaction(async (tx) => {
-      // 1. Eliminar factura asociada
-      await tx.factura.deleteMany({ where: { ordenId } });
-      // 2. Eliminar servicios de la orden
-      await tx.ordenServicio.deleteMany({ where: { ordenId } });
-      // 3. Eliminar repuestos de la orden
-      await tx.ordenRepuesto.deleteMany({ where: { ordenId } });
-      // 4. Eliminar la orden
-      await tx.orden.delete({ where: { id: ordenId } });
-    });
+    // Asegurar que el id sea un string primitivo
+    const ordenId = (id && id.value) ? id.value : String(id);
+    try {
+      await prisma.$transaction(async (tx) => {
+        // 1. Eliminar factura asociada (restricción de FK)
+        await tx.factura.deleteMany({ where: { ordenId } });
+        // 2. Eliminar servicios de la orden
+        await tx.ordenServicio.deleteMany({ where: { ordenId } });
+        // 3. Eliminar repuestos de la orden
+        await tx.ordenRepuesto.deleteMany({ where: { ordenId } });
+        // 4. Eliminar la orden principal
+        await tx.orden.delete({ where: { id: ordenId } });
+      });
+    } catch (err) {
+      // Enriquecer el error con el contexto de la operación
+      const mensaje = `Error al eliminar la orden "${ordenId}": ${err.message}`;
+      const error = new Error(mensaje);
+      error.statusCode = 500;
+      throw error;
+    }
   }
 
   /**
