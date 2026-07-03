@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
 import Layout from './components/Layout'
+import { ToastProvider } from './components/Toast'
 // Páginas (se implementarán luego)
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -19,7 +20,8 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
   return (
-    <Router>
+    <ToastProvider>
+      <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
 
@@ -51,6 +53,7 @@ function App() {
         </Route>
       </Routes>
     </Router>
+    </ToastProvider>
   )
 }
 

@@ -5,10 +5,12 @@ import { useAuthStore } from '../store/authStore'
 import Modal from '../components/Modal'
 import ClienteForm from '../components/ClienteForm'
 import api from '../api/axios'
+import { useToast } from '../components/Toast'
 
 export default function Clientes() {
   const { clientes, loading, fetchClientes, addCliente, updateCliente } = useClienteStore()
   const { user } = useAuthStore()
+  const toast = useToast()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCliente, setEditingCliente] = useState(null)
@@ -67,9 +69,10 @@ export default function Clientes() {
 
       handleCloseModal()
       fetchClientes()
+      toast.success(editingCliente ? 'Cliente actualizado' : 'Cliente registrado exitosamente')
     } catch (error) {
       console.error('Error al procesar cliente:', error)
-      alert(error.response?.data?.message || 'Error al procesar la operación.')
+      toast.error(error.response?.data?.message || 'Error al procesar la operación.')
     }
   }
 
@@ -94,7 +97,7 @@ export default function Clientes() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Directorio de Clientes</h1>
+          <h2 className="text-2xl font-bold text-gray-800">Listado de Clientes</h2>
           <p className="text-gray-500 mt-1">Gestiona todos los clientes de tu taller</p>
         </div>
         <button
