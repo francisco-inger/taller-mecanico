@@ -5,9 +5,14 @@ import { useOrdenStore } from '../store/ordenStore'
 import { useFacturaStore } from '../store/facturaStore'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/axios'
+import { formatMoneda as formatCurrency } from '../utils/formatMoneda'
+import { useToast } from '../components/Toast'
+import ConfirmModal from '../components/ConfirmModal'
 
 export default function Ordenes() {
   const navigate = useNavigate()
+  const toast = useToast()
+  const [confirmConfig, setConfirmConfig] = useState(null)
   const { ordenes, fetchOrdenes, avanzarEstado, eliminarOrden, loading } = useOrdenStore()
   const { generarFactura } = useFacturaStore()
   const { user } = useAuthStore()
@@ -42,32 +47,47 @@ export default function Ordenes() {
         const updated = ordenes.find(o => o.id === id)
         if (updated) setSelectedOrden(updated)
       }
+      toast.success('Estado actualizado correctamente')
     } catch (error) {
-      alert('Error al avanzar el estado: ' + error.message)
+      toast.error('Error al avanzar el estado: ' + error.message)
     }
   }
 
   const handleFacturar = async (id) => {
-    if (!window.confirm('¿Generar la factura final para esta orden?')) return
-    try {
-      await generarFactura(id)
-      fetchOrdenes()
-      setSelectedOrden(null)
-    } catch (error) {
-      alert('Error al facturar: ' + error.message)
-    }
+    setConfirmConfig({
+      title: '¿Generar factura?',
+      message: '¿Generar la factura final para esta orden?',
+      confirmText: 'Sí, generar factura',
+      onConfirm: async () => {
+        try {
+          await generarFactura(id)
+          fetchOrdenes()
+          setSelectedOrden(null)
+          toast.success('Factura generada exitosamente')
+        } catch (error) {
+          toast.error('Error al facturar: ' + error.message)
+        }
+      }
+    })
   }
 
   const handleEliminar = async (id) => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar esta orden? Esta acción no se puede deshacer.')) return
-    try {
-      await eliminarOrden(id)
-      setSelectedOrden(null)
-      setOrdenDetalle(null)
-      alert('Orden eliminada exitosamente')
-    } catch (error) {
-      alert('Error al eliminar la orden: ' + error.message)
-    }
+    setConfirmConfig({
+      title: '¿Eliminar orden?',
+      message: '¿Estás seguro de que deseas eliminar esta orden? Esta acción no se puede deshacer.',
+      danger: true,
+      confirmText: 'Sí, eliminar',
+      onConfirm: async () => {
+        try {
+          await eliminarOrden(id)
+          setSelectedOrden(null)
+          setOrdenDetalle(null)
+          toast.success('Orden eliminada exitosamente')
+        } catch (error) {
+          toast.error('Error al eliminar la orden: ' + error.message)
+        }
+      }
+    })
   }
 
   const getStatusGradient = (estado) => {
@@ -91,8 +111,7 @@ export default function Ordenes() {
     o.vehiculoNombre?.toLowerCase().includes(filtro.toLowerCase())
   )
 
-  const formatCurrency = (val) =>
-    new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP' }).format(Number(val) || 0)
+
 
   const detalleData = ordenDetalle || selectedOrden
 
@@ -102,7 +121,7 @@ export default function Ordenes() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">Órdenes de Servicio</h1>
+          <h2 className="text-2xl font-bold text-gray-800">Listado de Órdenes</h2>
           <p className="text-gray-500 mt-1">Gestiona y supervisa todas tus órdenes</p>
         </div>
         <button
@@ -375,6 +394,7 @@ export default function Ordenes() {
           </div>
         )}
       </div>
+      <ConfirmModal config={confirmConfig} onClose={() => setConfirmConfig(null)} />
     </div>
   )
 }

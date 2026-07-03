@@ -3,6 +3,8 @@ import { FileText, Search, Printer, DollarSign, Calendar, Hash, Trash2, Edit, Al
 import { useFacturaStore } from '../store/facturaStore'
 import { useOrdenStore } from '../store/ordenStore'
 import { useAuthStore } from '../store/authStore'
+import { formatMoneda as formatCurrency } from '../utils/formatMoneda'
+import { useToast } from '../components/Toast'
 
 export default function Facturacion() {
   const { facturas, fetchFacturas, loading: loadingFacturas, deleteFactura, updateFactura, generarFactura } = useFacturaStore()
@@ -10,6 +12,7 @@ export default function Facturacion() {
   const { user } = useAuthStore()
   const isAdmin = user?.rol === 'ADMIN'
   const isCajeroOrAdmin = user?.rol === 'ADMIN' || user?.rol === 'CAJERO'
+  const toast = useToast()
 
   const [activeTab, setActiveTab] = useState('historial') // 'historial' | 'pendientes'
   const [searchTerm, setSearchTerm] = useState('')
@@ -32,9 +35,6 @@ export default function Facturacion() {
     .reduce((acc, f) => acc + Number(f.total), 0)
 
   const totalGeneral = facturas.reduce((acc, f) => acc + Number(f.total), 0)
-
-  const formatCurrency = (val) =>
-    new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP' }).format(Number(val) || 0)
 
   const filteredFacturas = facturas.filter(f =>
     f.orden?.cliente?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -61,8 +61,9 @@ export default function Facturacion() {
       await updateFactura(editingFactura.id, editForm)
       setEditingFactura(null)
       fetchFacturas()
+      toast.success('Factura actualizada correctamente')
     } catch {
-      alert('Error al actualizar la factura')
+      toast.error('Error al actualizar la factura')
     }
   }
 
@@ -71,8 +72,9 @@ export default function Facturacion() {
       await deleteFactura(id)
       setConfirmDelete(null)
       fetchOrdenes({ estado: 'ENTREGADA' }) // Recargar pendientes por si la orden vuelve a entregada
+      toast.success('Factura eliminada correctamente')
     } catch {
-      alert('Error al eliminar la factura')
+      toast.error('Error al eliminar la factura')
     }
   }
 
@@ -101,8 +103,9 @@ export default function Facturacion() {
       setFacturarOrden(null)
       fetchFacturas()
       fetchOrdenes({ estado: 'ENTREGADA' })
+      toast.success('Factura generada exitosamente')
     } catch (error) {
-      alert('Error al generar la factura: ' + error.message)
+      toast.error('Error al generar la factura: ' + error.message)
     }
   }
 
@@ -137,7 +140,7 @@ export default function Facturacion() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">Facturación & Caja</h1>
+          <h2 className="text-2xl font-bold text-gray-800">Panel de Facturación</h2>
           <p className="text-gray-500 mt-1 font-medium">Historial, emisión de comprobantes y caja del taller mecánico</p>
         </div>
       </div>
