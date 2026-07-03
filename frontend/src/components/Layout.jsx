@@ -1,7 +1,8 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Wrench, Menu, X, LogOut, Users, FileText, Shield, Wrench as WrenchIcon, ChevronRight } from 'lucide-react'
+import { Wrench, Menu, X, LogOut, ChevronRight } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import { useState } from 'react'
+import { getNavItemsByRol } from '../config/navigationConfig'
 
 export default function Layout() {
   const location = useLocation();
@@ -9,16 +10,7 @@ export default function Layout() {
   const { user, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard, color: 'from-blue-500 to-blue-600' },
-    { name: 'Órdenes', path: '/ordenes', icon: Wrench, color: 'from-purple-500 to-purple-600' },
-    { name: 'Clientes', path: '/clientes', icon: Users, color: 'from-emerald-500 to-emerald-600' },
-    ...(user?.rol === 'ADMIN' ? [
-      { name: 'Usuarios', path: '/usuarios', icon: Shield, color: 'from-orange-500 to-orange-600' },
-      { name: 'Equipo Técnico', path: '/mecanicos', icon: WrenchIcon, color: 'from-red-500 to-red-600' }
-    ] : []),
-    { name: 'Facturación', path: '/facturacion', icon: FileText, color: 'from-green-500 to-green-600' },
-  ];
+  const navItems = getNavItemsByRol(user?.rol || 'ADMIN');
 
   const handleLogout = () => {
     logout();
