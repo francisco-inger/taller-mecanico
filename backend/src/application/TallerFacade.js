@@ -9,6 +9,7 @@ const GenerarFacturaUseCase      = require('./casos-de-uso/GenerarFacturaUseCase
 const ActualizarFacturaUseCase   = require('./casos-de-uso/ActualizarFacturaUseCase');
 const ListarOrdenesUseCase       = require('./casos-de-uso/ListarOrdenesUseCase');
 const CrearClienteUseCase        = require('./casos-de-uso/CrearClienteUseCase');
+const CrearVehiculoUseCase       = require('./casos-de-uso/CrearVehiculoUseCase');
 const ActualizarClienteUseCase   = require('./casos-de-uso/ActualizarClienteUseCase');
 const CrearUsuarioUseCase        = require('./casos-de-uso/CrearUsuarioUseCase');
 const ActualizarUsuarioUseCase   = require('./casos-de-uso/ActualizarUsuarioUseCase');
@@ -57,6 +58,7 @@ class TallerFacade {
     this._crearUsuario        = new CrearUsuarioUseCase(usuarioRepo);
     this._actualizarUsuario   = new ActualizarUsuarioUseCase(usuarioRepo);
     this._login               = new LoginUseCase(usuarioRepo, jwtAdapter);
+    this._crearVehiculo       = new CrearVehiculoUseCase(vehiculoRepo);
 
     // Guardar repos para operaciones directas
     this._ordenRepo    = ordenRepo;
@@ -157,7 +159,7 @@ class TallerFacade {
   // ─── Vehículos ────────────────────────────────────────────────────────────
 
   crearVehiculo(datos) {
-    return this._vehiculoRepo.crear(datos);
+    return this._crearVehiculo.ejecutar(datos);
   }
 
   listarVehiculos(clienteId) {
