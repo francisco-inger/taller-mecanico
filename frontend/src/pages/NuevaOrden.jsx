@@ -68,18 +68,12 @@ export default function NuevaOrden() {
   }
 
   const handleGuardarVehiculo = async () => {
-    if (!nuevoVehiculo.marca || !nuevoVehiculo.modelo || !nuevoVehiculo.placa || !nuevoVehiculo.anio) {
-      setErrorVehiculo('Marca, modelo, año y placa son obligatorios.')
-      return
-    }
     setGuardandoVehiculo(true)
     setErrorVehiculo('')
     try {
       const response = await api.post('/vehiculos', {
         ...nuevoVehiculo,
-        clienteId: formData.clienteId,
-        anio: parseInt(nuevoVehiculo.anio),
-        kilometraje: parseInt(nuevoVehiculo.kilometraje) || 0
+        clienteId: formData.clienteId
       })
       await fetchVehiculosPorCliente(formData.clienteId)
       setFormData(prev => ({ ...prev, vehiculoId: response.data.data.id }))

@@ -72,7 +72,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">Dashboard</h1>
+          <h2 className="text-2xl font-bold text-gray-800">Resumen de Actividad</h2>
           <p className="text-gray-500 mt-1">Bienvenido al panel de control de SIGEST Taller</p>
         </div>
         <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl">

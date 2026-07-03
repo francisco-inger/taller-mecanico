@@ -93,7 +93,7 @@ export default function Usuarios() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-rose-500 bg-clip-text text-transparent">Gestión de Personal</h1>
+          <h2 className="text-2xl font-bold text-gray-800">Directorio de Usuarios</h2>
           <p className="text-gray-500 mt-1">Administra usuarios y permisos del sistema</p>
         </div>
         <button 

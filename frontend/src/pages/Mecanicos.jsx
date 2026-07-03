@@ -55,7 +55,7 @@ export default function Mecanicos() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-500 bg-clip-text text-transparent">Equipo de Mecánicos</h1>
+          <h2 className="text-2xl font-bold text-gray-800">Equipo Técnico</h2>
           <p className="text-gray-500 mt-1">Gestiona al personal técnico y sus especialidades</p>
         </div>
         <button 
