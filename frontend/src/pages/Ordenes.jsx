@@ -52,8 +52,7 @@ export default function Ordenes() {
       // Recargar el detalle del panel para reflejar el nuevo estado
       const updated = ordenes.find(o => o.id === id)
       if (updated) {
-        setSelectedOrden(updated)
-        await loadDetalle(updated)
+        await handleVerDetalle(updated)
       }
       toast.success('Estado actualizado correctamente')
     } catch (error) {
