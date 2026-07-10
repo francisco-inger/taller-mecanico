@@ -73,7 +73,9 @@ export default function NuevaOrden() {
   })
 
   const [servicioActual, setServicioActual] = useState({
-    tipo: 'mantenimiento', descripcion: '', costo: 0, tiempoEstimado: 30
+    tipo: 'mantenimiento', descripcion: '', costo: 0,
+    tiempoEstimado: 30,  // total en minutos (se calcula desde horas + minutos)
+    horas: 0, minutos: 30  // campos de UI separados
   })
 
   const [mostrarFormVehiculo, setMostrarFormVehiculo] = useState(false)
@@ -112,8 +114,15 @@ export default function NuevaOrden() {
   /* ── Servicios ─── */
   const handleAddServicio = () => {
     if (!servicioActual.descripcion.trim()) { setErroresPaso('Escribe una descripción del servicio.'); return }
-    setFormData(prev => ({ ...prev, servicios: [...prev.servicios, { ...servicioActual }] }))
-    setServicioActual({ tipo: 'mantenimiento', descripcion: '', costo: 0, tiempoEstimado: 30 })
+    const totalMin = (parseInt(servicioActual.horas) || 0) * 60 + (parseInt(servicioActual.minutos) || 0)
+    const servicioFinal = {
+      tipo:           servicioActual.tipo,
+      descripcion:    servicioActual.descripcion,
+      costo:          servicioActual.costo,
+      tiempoEstimado: totalMin > 0 ? totalMin : 30
+    }
+    setFormData(prev => ({ ...prev, servicios: [...prev.servicios, servicioFinal] }))
+    setServicioActual({ tipo: 'mantenimiento', descripcion: '', costo: 0, tiempoEstimado: 30, horas: 0, minutos: 30 })
     setErroresPaso('')
   }
 
@@ -337,15 +346,40 @@ export default function NuevaOrden() {
                     onChange={e => setServicioActual({ ...servicioActual, costo: parseFloat(e.target.value) || 0 })} />
                 </div>
                 <div className="space-y-1">
-                  <label className="label-field">Tiempo estimado (min)</label>
-                  <input type="number" min="0" className="input-field" placeholder="30"
-                    value={servicioActual.tiempoEstimado === 0 ? '' : servicioActual.tiempoEstimado}
-                    onChange={e => setServicioActual({ ...servicioActual, tiempoEstimado: e.target.value === '' ? '' : Number(e.target.value) })}
+                  <label className="label-field">Horas</label>
+                  <input
+                    type="number" min="0" max="99" className="input-field"
+                    placeholder="0"
+                    value={servicioActual.horas === 0 ? '' : servicioActual.horas}
+                    onChange={e => {
+                      const raw = e.target.value
+                      setServicioActual(prev => ({ ...prev, horas: raw === '' ? '' : Number(raw) }))
+                    }}
                     onBlur={e => {
                       const val = parseInt(e.target.value)
-                      setServicioActual(prev => ({ ...prev, tiempoEstimado: isNaN(val) || val < 0 ? 30 : val }))
-                    }} />
+                      setServicioActual(prev => ({ ...prev, horas: isNaN(val) || val < 0 ? 0 : val }))
+                    }}
+                  />
                 </div>
+                <div className="space-y-1">
+                  <label className="label-field">Minutos</label>
+                  <input
+                    type="number" min="0" max="59" className="input-field"
+                    placeholder="0"
+                    value={servicioActual.minutos === 0 ? '' : servicioActual.minutos}
+                    onChange={e => {
+                      const raw = e.target.value
+                      setServicioActual(prev => ({ ...prev, minutos: raw === '' ? '' : Number(raw) }))
+                    }}
+                    onBlur={e => {
+                      let val = parseInt(e.target.value)
+                      if (isNaN(val) || val < 0) val = 0
+                      if (val > 59) val = 59
+                      setServicioActual(prev => ({ ...prev, minutos: val }))
+                    }}
+                  />
+                </div>
+
               </div>
               <div className="flex gap-2">
                 <input type="text" className="input-field flex-1" placeholder="Descripción del servicio..."
