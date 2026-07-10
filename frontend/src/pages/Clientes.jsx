@@ -147,18 +147,18 @@ export default function Clientes() {
             {filteredClientes.map((cliente) => (
               <div
                 key={cliente.id}
-                className="bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_30px_-6px_rgba(59,130,246,0.12)] hover:border-blue-200/50 hover:-translate-y-1 transition-all duration-300 group flex flex-col overflow-hidden"
+                className="bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_30px_-6px_rgba(16,185,129,0.12)] hover:border-emerald-200/50 hover:-translate-y-1 transition-all duration-300 group flex flex-col overflow-hidden"
               >
                 <div className="p-6 flex-1">
                   {/* Avatar y editar */}
                   <div className="flex items-start justify-between mb-5">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-50 to-indigo-50 border border-blue-100/80 text-blue-600 flex items-center justify-center font-extrabold text-xl shadow-inner">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-50 to-teal-50 border border-emerald-100/80 text-emerald-600 flex items-center justify-center font-extrabold text-xl shadow-inner">
                       {cliente.nombre.charAt(0).toUpperCase()}
                     </div>
                     {isAdmin && (
                       <button
                         onClick={() => handleOpenEdit(cliente)}
-                        className="text-gray-400 hover:text-blue-600 p-2.5 rounded-xl hover:bg-blue-50/60 transition-all duration-200"
+                        className="text-gray-400 hover:text-emerald-600 p-2.5 rounded-xl hover:bg-emerald-50/60 transition-all duration-200"
                       >
                         <Edit size={16} />
                       </button>
@@ -166,7 +166,7 @@ export default function Clientes() {
                   </div>
 
                   {/* Nombre y Cédula */}
-                  <h3 className="font-bold text-gray-800 text-lg mb-1.5 group-hover:text-blue-900 transition-colors truncate">
+                  <h3 className="font-bold text-gray-800 text-lg mb-1.5 group-hover:text-emerald-900 transition-colors truncate">
                     {cliente.nombre}
                   </h3>
                   <div className="mb-5">
@@ -178,18 +178,18 @@ export default function Clientes() {
                   {/* Información de contacto */}
                   <div className="space-y-3.5">
                     <div className="flex items-center gap-3 text-sm text-gray-600">
-                      <Phone size={16} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                      <Phone size={16} className="text-gray-400 group-hover:text-emerald-500 transition-colors" />
                       <span className="font-medium">{cliente.telefono}</span>
                     </div>
                     {cliente.email && (
                       <div className="flex items-center gap-3 text-sm text-gray-600">
-                        <Mail size={16} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                        <Mail size={16} className="text-gray-400 group-hover:text-emerald-500 transition-colors" />
                         <span className="font-medium truncate">{cliente.email}</span>
                       </div>
                     )}
                     {cliente.direccion && (
                       <div className="flex items-start gap-3 text-sm text-gray-600">
-                        <MapPin size={16} className="text-gray-400 mt-0.5 group-hover:text-blue-500 transition-colors flex-shrink-0" />
+                        <MapPin size={16} className="text-gray-400 mt-0.5 group-hover:text-emerald-500 transition-colors flex-shrink-0" />
                         <span className="font-medium line-clamp-2 leading-relaxed">{cliente.direccion}</span>
                       </div>
                     )}
@@ -201,32 +201,32 @@ export default function Clientes() {
                   onClick={() => handleToggleVehiculos(cliente.id)}
                   className={`w-full flex items-center justify-between px-6 py-4 transition-all duration-200 border-t ${
                     expandedCliente === cliente.id 
-                      ? 'bg-blue-50/40 border-blue-100/60' 
+                      ? 'bg-emerald-50/40 border-emerald-100/60' 
                       : 'bg-gray-50/50 hover:bg-gray-50 border-gray-100'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider text-gray-500">
-                    <Car size={14} className={expandedCliente === cliente.id ? 'text-blue-600' : 'text-gray-400'} />
+                    <Car size={14} className={expandedCliente === cliente.id ? 'text-emerald-600' : 'text-gray-400'} />
                     <span>Vehículos registrados</span>
                   </div>
                   {expandedCliente === cliente.id
-                    ? <ChevronUp size={16} className="text-blue-600" />
+                    ? <ChevronUp size={16} className="text-emerald-600" />
                     : <ChevronDown size={16} className="text-gray-400" />
                   }
                 </button>
 
                 {/* Lista de vehículos */}
                 {expandedCliente === cliente.id && (
-                  <div className="px-6 pb-5 pt-3 bg-blue-50/20 border-t border-blue-100/40">
+                  <div className="px-6 pb-5 pt-3 bg-emerald-50/20 border-t border-emerald-100/40">
                     {loadingVehiculos[cliente.id] ? (
                       <div className="py-4 flex justify-center">
-                        <div className="w-5 h-5 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                        <div className="w-5 h-5 border-2 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
                       </div>
                     ) : vehiculosPorCliente[cliente.id]?.length > 0 ? (
                       <div className="space-y-2.5">
                         {vehiculosPorCliente[cliente.id].map((v) => (
-                          <div key={v.id} className="flex items-center gap-3 p-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all duration-200">
-                            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                          <div key={v.id} className="flex items-center gap-3 p-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-emerald-200 transition-all duration-200">
+                            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
                               <Car size={14} />
                             </div>
                             <div className="flex-1 min-w-0">
