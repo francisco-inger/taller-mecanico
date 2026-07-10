@@ -143,49 +143,54 @@ export default function Clientes() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredClientes.map((cliente) => (
-              <div key={cliente.id} className="bg-white rounded-2xl shadow-lg border border-gray-200/50 hover:shadow-xl transition-shadow group">
-                <div className="p-6">
+              <div
+                key={cliente.id}
+                className="bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_30px_-6px_rgba(59,130,246,0.12)] hover:border-blue-200/50 hover:-translate-y-1 transition-all duration-300 group flex flex-col overflow-hidden"
+              >
+                <div className="p-6 flex-1">
                   {/* Avatar y editar */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold text-xl">
+                  <div className="flex items-start justify-between mb-5">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-50 to-indigo-50 border border-blue-100/80 text-blue-600 flex items-center justify-center font-extrabold text-xl shadow-inner">
                       {cliente.nombre.charAt(0).toUpperCase()}
                     </div>
                     {isAdmin && (
                       <button
                         onClick={() => handleOpenEdit(cliente)}
-                        className="text-emerald-600 hover:text-emerald-700 p-2 rounded-lg hover:bg-emerald-50 transition-all"
+                        className="text-gray-400 hover:text-blue-600 p-2.5 rounded-xl hover:bg-blue-50/60 transition-all duration-200"
                       >
-                        <Edit size={18} />
+                        <Edit size={16} />
                       </button>
                     )}
                   </div>
 
-                  <h3 className="font-bold text-gray-900 text-lg mb-1 truncate">{cliente.nombre}</h3>
-                  <p className="text-xs text-gray-600 font-mono mb-4 bg-gray-50 px-2 py-1 rounded inline-block">{cliente.cedula}</p>
+                  {/* Nombre y Cédula */}
+                  <h3 className="font-bold text-gray-800 text-lg mb-1.5 group-hover:text-blue-900 transition-colors truncate">
+                    {cliente.nombre}
+                  </h3>
+                  <div className="mb-5">
+                    <span className="text-[10px] font-bold tracking-wider text-gray-500 uppercase bg-gray-50 border border-gray-200/60 px-2 py-0.5 rounded-md font-mono">
+                      Cédula: {cliente.cedula || 'N/D'}
+                    </span>
+                  </div>
 
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center gap-3 text-sm">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center flex-shrink-0">
-                        <Phone size={14} />
-                      </div>
-                      <span className="text-gray-700">{cliente.telefono}</span>
+                  {/* Información de contacto */}
+                  <div className="space-y-3.5">
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <Phone size={16} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                      <span className="font-medium">{cliente.telefono}</span>
                     </div>
                     {cliente.email && (
-                      <div className="flex items-center gap-3 text-sm">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center flex-shrink-0">
-                          <Mail size={14} />
-                        </div>
-                        <span className="text-gray-700 truncate">{cliente.email}</span>
+                      <div className="flex items-center gap-3 text-sm text-gray-600">
+                        <Mail size={16} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                        <span className="font-medium truncate">{cliente.email}</span>
                       </div>
                     )}
                     {cliente.direccion && (
-                      <div className="flex items-start gap-3 text-sm">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <MapPin size={14} />
-                        </div>
-                        <span className="text-gray-700 line-clamp-2">{cliente.direccion}</span>
+                      <div className="flex items-start gap-3 text-sm text-gray-600">
+                        <MapPin size={16} className="text-gray-400 mt-0.5 group-hover:text-blue-500 transition-colors flex-shrink-0" />
+                        <span className="font-medium line-clamp-2 leading-relaxed">{cliente.direccion}</span>
                       </div>
                     )}
                   </div>
@@ -194,43 +199,56 @@ export default function Clientes() {
                 {/* Botón ver vehículos */}
                 <button
                   onClick={() => handleToggleVehiculos(cliente.id)}
-                  className="w-full flex items-center justify-between px-6 py-3 bg-gray-50 hover:bg-gray-100 border-t border-gray-100 transition-colors rounded-b-2xl"
+                  className={`w-full flex items-center justify-between px-6 py-4 transition-all duration-200 border-t ${
+                    expandedCliente === cliente.id 
+                      ? 'bg-blue-50/40 border-blue-100/60' 
+                      : 'bg-gray-50/50 hover:bg-gray-50 border-gray-100'
+                  }`}
                 >
-                  <div className="flex items-center gap-2 text-sm font-semibold text-gray-600">
-                    <Car size={15} className="text-emerald-500" />
-                    Ver vehículos
+                  <div className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider text-gray-500">
+                    <Car size={14} className={expandedCliente === cliente.id ? 'text-blue-600' : 'text-gray-400'} />
+                    <span>Vehículos registrados</span>
                   </div>
                   {expandedCliente === cliente.id
-                    ? <ChevronUp size={16} className="text-gray-400" />
+                    ? <ChevronUp size={16} className="text-blue-600" />
                     : <ChevronDown size={16} className="text-gray-400" />
                   }
                 </button>
 
                 {/* Lista de vehículos */}
                 {expandedCliente === cliente.id && (
-                  <div className="px-6 pb-4 border-t border-gray-100">
+                  <div className="px-6 pb-5 pt-3 bg-blue-50/20 border-t border-blue-100/40">
                     {loadingVehiculos[cliente.id] ? (
                       <div className="py-4 flex justify-center">
-                        <div className="w-5 h-5 border-2 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+                        <div className="w-5 h-5 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
                       </div>
                     ) : vehiculosPorCliente[cliente.id]?.length > 0 ? (
-                      <div className="space-y-2 pt-3">
+                      <div className="space-y-2.5">
                         {vehiculosPorCliente[cliente.id].map((v) => (
-                          <div key={v.id} className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center flex-shrink-0">
+                          <div key={v.id} className="flex items-center gap-3 p-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all duration-200">
+                            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
                               <Car size={14} />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-bold text-gray-900">{v.marca} {v.modelo} {v.anio}</p>
-                              <p className="text-xs text-gray-500">Placa: <span className="font-mono font-semibold">{v.placa}</span> {v.color && `· ${v.color}`}</p>
+                              <p className="text-sm font-bold text-gray-800 leading-tight">{v.marca} {v.modelo} <span className="text-gray-400 font-normal">({v.anio})</span></p>
+                              <div className="flex items-center gap-1.5 mt-1">
+                                <span className="text-[10px] font-bold bg-slate-900 text-white font-mono px-1.5 py-0.5 rounded leading-none">
+                                  {v.placa}
+                                </span>
+                                {v.color && (
+                                  <span className="text-xs text-gray-500 capitalize">
+                                    · {v.color}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="py-4 text-center">
-                        <Car size={24} className="mx-auto text-gray-300 mb-1" />
-                        <p className="text-xs text-gray-500">Sin vehículos registrados</p>
+                      <div className="py-5 text-center bg-white/50 border border-dashed border-gray-200 rounded-2xl">
+                        <Car size={20} className="mx-auto text-gray-300 mb-1.5" />
+                        <p className="text-xs text-gray-400 font-medium">Sin vehículos registrados</p>
                       </div>
                     )}
                   </div>
