@@ -3,12 +3,20 @@
 const CalculadoraOrden          = require('../../domain/presupuesto/CalculadoraOrden');
 const DescuentoClienteFrecuente = require('../../domain/presupuesto/estrategias/DescuentoClienteFrecuente');
 const SinDescuento              = require('../../domain/presupuesto/estrategias/SinDescuento');
+const prisma                    = require('../../infrastructure/persistence/prisma/prismaClient');
 
 /**
  * GenerarFacturaUseCase — Caso de Uso
  *
  * Genera la factura de una orden en estado ENTREGADA.
  * Calcula el total final con ITBIS 18% y lo persiste.
+ *
+ * CORRECCIÓN: Se usa prisma.$transaction para garantizar atomicidad.
+ * Si crear la factura falla, el estado de la orden NO queda como FACTURADA.
+ *
+ * SOLID:
+ *  - SRP: única responsabilidad — generar la factura de una orden
+ *  - DIP: depende de abstracciones (repositorios), no de implementaciones concretas
  */
 class GenerarFacturaUseCase {
   constructor(ordenRepo, clienteRepo, facturaRepo, eventBus) {
@@ -37,7 +45,7 @@ class GenerarFacturaUseCase {
       descuento = parseFloat(descuentoManual) || 0;
       descuentoDescripcion = descripDescuentoManual || 'Descuento manual aplicado';
     } else {
-      const cliente   = await this._clienteRepo.obtenerPorId(orden.clienteId);
+      const cliente    = await this._clienteRepo.obtenerPorId(orden.clienteId);
       const estrategia = cliente && cliente.esFrecuente
         ? new DescuentoClienteFrecuente()
         : new SinDescuento();
@@ -49,35 +57,61 @@ class GenerarFacturaUseCase {
     }
 
     const baseImponible = subtotal - descuento;
-    const itbis          = parseFloat((baseImponible * 0.18).toFixed(2));
-    const total          = parseFloat((baseImponible + itbis).toFixed(2));
+    const itbis         = parseFloat((baseImponible * 0.18).toFixed(2));
+    const total         = parseFloat((baseImponible + itbis).toFixed(2));
 
-    // Avanzar a estado FACTURADA
+    console.log(`[GenerarFactura] Orden=${ordenId} subtotal=${subtotal} descuento=${descuento} itbis=${itbis} total=${total}`);
+
+    // ── Transacción atómica: estado + factura juntos ───────────────────────
+    // Si cualquier paso falla, ambos se revierten y la orden queda en ENTREGADA.
+    let factura;
+    try {
+      factura = await prisma.$transaction(async (tx) => {
+        // 1. Avanzar estado de la orden a FACTURADA
+        await tx.orden.update({
+          where: { id: ordenId.toString() },
+          data:  { estado: 'FACTURADA' },
+        });
+
+        // 2. Crear la factura dentro de la misma transacción
+        const nuevaFactura = await tx.factura.create({
+          data: {
+            ordenId:          ordenId.toString(),
+            subtotal,
+            descuento,
+            itbis,
+            total,
+            descripDescuento: descuentoDescripcion,
+          },
+          include: {
+            orden: {
+              include: { cliente: true, vehiculo: true }
+            }
+          }
+        });
+
+        console.log(`[GenerarFactura] Factura creada exitosamente: ${nuevaFactura.id}`);
+        return nuevaFactura;
+      });
+    } catch (txError) {
+      console.error(`[GenerarFactura] ERROR en transaccion para orden ${ordenId}:`, txError.message);
+      throw txError;
+    }
+
+    // Publicar eventos de dominio (fuera de la transaccion, no bloquean)
     orden.avanzar();
-    await this._ordenRepo.guardar(orden);
-
-    // Crear factura
-    const factura = await this._facturaRepo.crear({
-      ordenId:          orden.id.toString(),
-      subtotal:         subtotal,
-      descuento:        descuento,
-      itbis:            itbis,
-      total:            total,
-      descripDescuento: descuentoDescripcion,
-    });
-
     const eventos = orden.pullEvents();
     await this._eventBus.publicarTodos(eventos);
 
-    return { 
-      factura, 
+    return {
+      factura,
       resumen: {
         subtotal,
         descuento,
         itbis,
         total,
         descuentoDescripcion
-      } 
+      }
     };
   }
 }
