@@ -73,10 +73,10 @@ export default function NuevaOrden() {
   })
 
   const [servicioActual, setServicioActual] = useState({
-    tipo: 'mantenimiento', descripcion: '', costo: 0,
-    tiempoEstimado: 30,  // total en minutos (se calcula desde horas + minutos)
-    horas: 0, minutos: 30  // campos de UI separados
+    tipo: 'mantenimiento', descripcion: '', costo: 0, tiempoEstimado: 30
   })
+  const [horasServicio, setHorasServicio] = useState('0')
+  const [minutosServicio, setMinutosServicio] = useState('30')
 
   const [mostrarFormVehiculo, setMostrarFormVehiculo] = useState(false)
   const [nuevoVehiculo, setNuevoVehiculo]             = useState({
@@ -114,15 +114,18 @@ export default function NuevaOrden() {
   /* ── Servicios ─── */
   const handleAddServicio = () => {
     if (!servicioActual.descripcion.trim()) { setErroresPaso('Escribe una descripción del servicio.'); return }
-    const totalMin = (parseInt(servicioActual.horas) || 0) * 60 + (parseInt(servicioActual.minutos) || 0)
-    const servicioFinal = {
-      tipo:           servicioActual.tipo,
-      descripcion:    servicioActual.descripcion,
-      costo:          servicioActual.costo,
-      tiempoEstimado: totalMin > 0 ? totalMin : 30
-    }
-    setFormData(prev => ({ ...prev, servicios: [...prev.servicios, servicioFinal] }))
-    setServicioActual({ tipo: 'mantenimiento', descripcion: '', costo: 0, tiempoEstimado: 30, horas: 0, minutos: 30 })
+    const h = parseInt(horasServicio) || 0
+    const m = parseInt(minutosServicio) || 0
+    const totalMinutos = (h * 60) + m
+    if (totalMinutos <= 0) { setErroresPaso('El tiempo estimado debe ser mayor a 0.'); return }
+
+    setFormData(prev => ({
+      ...prev,
+      servicios: [...prev.servicios, { ...servicioActual, tiempoEstimado: totalMinutos }]
+    }))
+    setServicioActual({ tipo: 'mantenimiento', descripcion: '', costo: 0, tiempoEstimado: 30 })
+    setHorasServicio('0')
+    setMinutosServicio('30')
     setErroresPaso('')
   }
 
@@ -346,40 +349,33 @@ export default function NuevaOrden() {
                     onChange={e => setServicioActual({ ...servicioActual, costo: parseFloat(e.target.value) || 0 })} />
                 </div>
                 <div className="space-y-1">
-                  <label className="label-field">Horas</label>
-                  <input
-                    type="number" min="0" max="99" className="input-field"
-                    placeholder="0"
-                    value={servicioActual.horas === 0 ? '' : servicioActual.horas}
-                    onChange={e => {
-                      const raw = e.target.value
-                      setServicioActual(prev => ({ ...prev, horas: raw === '' ? '' : Number(raw) }))
-                    }}
-                    onBlur={e => {
-                      const val = parseInt(e.target.value)
-                      setServicioActual(prev => ({ ...prev, horas: isNaN(val) || val < 0 ? 0 : val }))
-                    }}
-                  />
+                  <label className="label-field block text-sm font-medium text-gray-700 mb-1">Tiempo Estimado</label>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-300 rounded-lg px-2.5 py-1.5 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all duration-200">
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        className="w-12 bg-transparent text-center border-none p-0 focus:ring-0 focus:outline-none text-gray-800 font-semibold"
+                        value={horasServicio}
+                        onChange={e => setHorasServicio(e.target.value)}
+                      />
+                      <span className="text-xs text-gray-400 font-medium">h</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-300 rounded-lg px-2.5 py-1.5 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all duration-200">
+                      <input
+                        type="number"
+                        min="0"
+                        max="59"
+                        placeholder="30"
+                        className="w-12 bg-transparent text-center border-none p-0 focus:ring-0 focus:outline-none text-gray-800 font-semibold"
+                        value={minutosServicio}
+                        onChange={e => setMinutosServicio(e.target.value)}
+                      />
+                      <span className="text-xs text-gray-400 font-medium">m</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="label-field">Minutos</label>
-                  <input
-                    type="number" min="0" max="59" className="input-field"
-                    placeholder="0"
-                    value={servicioActual.minutos === 0 ? '' : servicioActual.minutos}
-                    onChange={e => {
-                      const raw = e.target.value
-                      setServicioActual(prev => ({ ...prev, minutos: raw === '' ? '' : Number(raw) }))
-                    }}
-                    onBlur={e => {
-                      let val = parseInt(e.target.value)
-                      if (isNaN(val) || val < 0) val = 0
-                      if (val > 59) val = 59
-                      setServicioActual(prev => ({ ...prev, minutos: val }))
-                    }}
-                  />
-                </div>
-
               </div>
               <div className="flex gap-2">
                 <input type="text" className="input-field flex-1" placeholder="Descripción del servicio..."
