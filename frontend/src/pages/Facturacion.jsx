@@ -71,7 +71,9 @@ export default function Facturacion() {
     try {
       await deleteFactura(id)
       setConfirmDelete(null)
-      fetchOrdenes({ estado: 'ENTREGADA' }) // Recargar pendientes por si la orden vuelve a entregada
+      // Recargar historial y pendientes tras eliminar
+      await fetchFacturas()
+      await fetchOrdenes({ estado: 'ENTREGADA' })
       toast.success('Factura eliminada correctamente')
     } catch {
       toast.error('Error al eliminar la factura')
@@ -101,8 +103,11 @@ export default function Facturacion() {
         descripDescuento: descripDescuento
       })
       setFacturarOrden(null)
-      fetchFacturas()
-      fetchOrdenes({ estado: 'ENTREGADA' })
+      // Esperar el refresco del historial antes de cambiar de pestaña
+      await fetchFacturas()
+      await fetchOrdenes({ estado: 'ENTREGADA' })
+      // Cambiar automáticamente al historial para que el usuario vea la nueva factura
+      setActiveTab('historial')
       toast.success('Factura generada exitosamente')
     } catch (error) {
       toast.error('Error al generar la factura: ' + error.message)
