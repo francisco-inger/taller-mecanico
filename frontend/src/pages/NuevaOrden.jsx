@@ -479,11 +479,25 @@ export default function NuevaOrden() {
                   </li>
                 ))}
               </ul>
-              <div className="px-4 py-3 bg-emerald-50 border-t border-emerald-200 flex justify-between items-center">
-                <span className="text-sm font-bold text-gray-700">Total estimado (sin ITBIS)</span>
-                <span className="text-base font-bold text-emerald-700">
-                  RD${totalServicios.toLocaleString('es-DO', { minimumFractionDigits: 2 })}
-                </span>
+              <div className="px-4 py-4 bg-emerald-50/50 border-t border-emerald-200 space-y-2">
+                <div className="flex justify-between items-center text-sm text-gray-600">
+                  <span>Subtotal estimado (sin ITBIS)</span>
+                  <span className="font-semibold text-gray-800">
+                    RD${totalServicios.toLocaleString('es-DO', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm text-gray-600">
+                  <span>ITBIS estimado (18%)</span>
+                  <span className="font-semibold text-gray-800">
+                    RD${(totalServicios * 0.18).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-emerald-200/50">
+                  <span className="text-sm font-bold text-gray-800">Total estimado (con ITBIS)</span>
+                  <span className="text-lg font-bold text-emerald-700">
+                    RD${(totalServicios * 1.18).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
               </div>
             </div>
 
