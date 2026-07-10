@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Search, Plus, ArrowRight, DollarSign, Clock, ChevronRight, X, User, Car, Wrench, Package, FileText, Calendar, Trash2, Zap } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
+import { Search, Plus, ArrowRight, DollarSign, Clock, ChevronRight, ChevronLeft, X, User, Car, Wrench, Package, FileText, Calendar, Trash2, Zap, ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useOrdenStore } from '../store/ordenStore'
 import { useFacturaStore } from '../store/facturaStore'
@@ -22,6 +22,12 @@ export default function Ordenes() {
   const [ordenDetalle, setOrdenDetalle] = useState(null)
   const [loadingDetalle, setLoadingDetalle] = useState(false)
 
+  // DataGrid: sorting & pagination
+  const [sortCol, setSortCol]   = useState('fechaCreacion')
+  const [sortDir, setSortDir]   = useState('desc')
+  const [page, setPage]         = useState(1)
+  const PAGE_SIZE = 10
+
   useEffect(() => {
     fetchOrdenes()
   }, [])
@@ -42,16 +48,19 @@ export default function Ordenes() {
   const handleAvanzar = async (id) => {
     try {
       await avanzarEstado(id)
-      fetchOrdenes()
-      if (selectedOrden?.id === id) {
-        const updated = ordenes.find(o => o.id === id)
-        if (updated) setSelectedOrden(updated)
+      await fetchOrdenes()
+      // Recargar el detalle del panel para reflejar el nuevo estado
+      const updated = ordenes.find(o => o.id === id)
+      if (updated) {
+        setSelectedOrden(updated)
+        await loadDetalle(updated)
       }
       toast.success('Estado actualizado correctamente')
     } catch (error) {
       toast.error('Error al avanzar el estado: ' + error.message)
     }
   }
+
 
   const handleFacturar = async (id) => {
     setConfirmConfig({
@@ -105,13 +114,39 @@ export default function Ordenes() {
     return gradients[estado] || 'from-gray-400 to-gray-600'
   }
 
-  const filteredOrdenes = ordenes.filter(o =>
-    o.id.toLowerCase().includes(filtro.toLowerCase()) ||
-    o.clienteNombre?.toLowerCase().includes(filtro.toLowerCase()) ||
-    o.vehiculoNombre?.toLowerCase().includes(filtro.toLowerCase())
-  )
+  // Filtrado + ordenamiento + paginación
+  const filteredOrdenes = useMemo(() => {
+    const q = filtro.toLowerCase()
+    const filtered = ordenes.filter(o =>
+      o.id.toLowerCase().includes(q) ||
+      (o.clienteNombre  || '').toLowerCase().includes(q) ||
+      (o.vehiculoNombre || '').toLowerCase().includes(q) ||
+      (o.estado         || '').toLowerCase().includes(q)
+    )
+    filtered.sort((a, b) => {
+      let va = a[sortCol] ?? ''
+      let vb = b[sortCol] ?? ''
+      if (sortCol === 'fechaCreacion') { va = new Date(va); vb = new Date(vb) }
+      if (va < vb) return sortDir === 'asc' ? -1 : 1
+      if (va > vb) return sortDir === 'asc' ?  1 : -1
+      return 0
+    })
+    return filtered
+  }, [ordenes, filtro, sortCol, sortDir])
 
+  const totalPages   = Math.max(1, Math.ceil(filteredOrdenes.length / PAGE_SIZE))
+  const pagedOrdenes = filteredOrdenes.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
+  const handleSort = (col) => {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortCol(col); setSortDir('asc') }
+    setPage(1)
+  }
+
+  const SortIcon = ({ col }) => {
+    if (sortCol !== col) return <ChevronsUpDown size={13} className="opacity-40" />
+    return sortDir === 'asc' ? <ChevronUp size={13} /> : <ChevronDown size={13} />
+  }
 
   const detalleData = ordenDetalle || selectedOrden
 
@@ -135,9 +170,9 @@ export default function Ordenes() {
 
       <div className="flex gap-6 flex-1 min-h-0">
         
-        {/* Lista de órdenes */}
+        {/* ── Lista de órdenes (DataGrid profesional) ── */}
         <div className={`bg-white rounded-2xl shadow-lg border border-gray-200/50 flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl ${selectedOrden ? 'w-2/5' : 'flex-1'}`}>
-          
+
           {/* Search Header */}
           <div className="p-4 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-gray-200/50">
             <div className="relative group">
@@ -147,63 +182,120 @@ export default function Ordenes() {
               <input
                 type="text"
                 className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300"
-                placeholder="Buscar por cliente, vehículo o ID..."
+                placeholder="Buscar por cliente, vehículo, estado o ID..."
                 value={filtro}
-                onChange={(e) => setFiltro(e.target.value)}
+                onChange={(e) => { setFiltro(e.target.value); setPage(1) }}
               />
             </div>
           </div>
 
-          {/* Órdenes List */}
+          {/* Encabezados de columna con sorting */}
+          <div className="grid grid-cols-[2fr_1fr_1fr] gap-0 px-4 py-2 bg-slate-100 border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+            <button onClick={() => handleSort('clienteNombre')} className="flex items-center gap-1 hover:text-blue-600 transition-colors text-left">
+              Cliente / Vehículo <SortIcon col="clienteNombre" />
+            </button>
+            <button onClick={() => handleSort('estado')} className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+              Estado <SortIcon col="estado" />
+            </button>
+            <button onClick={() => handleSort('fechaCreacion')} className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+              Fecha <SortIcon col="fechaCreacion" />
+            </button>
+          </div>
+
+          {/* Filas del DataGrid con zebra striping */}
           <div className="flex-1 overflow-auto divide-y divide-gray-100">
             {loading && ordenes.length === 0 ? (
               <div className="p-20 text-center flex flex-col items-center justify-center">
                 <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
                 <p className="text-gray-400">Cargando órdenes...</p>
               </div>
-            ) : filteredOrdenes.length === 0 ? (
+            ) : pagedOrdenes.length === 0 ? (
               <div className="p-16 text-center text-gray-500 flex flex-col items-center justify-center">
                 <Search size={48} className="text-gray-300 mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-1">No se encontraron órdenes</h3>
                 <p className="text-sm">Crea una nueva orden para comenzar.</p>
               </div>
             ) : (
-              filteredOrdenes.map((orden) => (
+              pagedOrdenes.map((orden, idx) => (
                 <div
                   key={orden.id}
                   onClick={() => handleVerDetalle(orden)}
-                  className={`group p-4 cursor-pointer transition-all duration-300 border-l-4 hover:bg-gradient-to-r hover:from-blue-50 to-transparent ${
-                    selectedOrden?.id === orden.id 
-                      ? `bg-gradient-to-r from-blue-50 to-transparent border-l-blue-600 shadow-lg` 
-                      : 'border-l-transparent hover:border-l-blue-400'
+                  title={`ID: ${orden.id}`}
+                  className={`group grid grid-cols-[2fr_1fr_1fr] gap-0 items-center px-4 py-3 cursor-pointer transition-all duration-200 border-l-4 ${
+                    selectedOrden?.id === orden.id
+                      ? 'bg-blue-50 border-l-blue-600 shadow-inner'
+                      : idx % 2 === 0
+                        ? 'bg-white border-l-transparent hover:bg-blue-50 hover:border-l-blue-400'
+                        : 'bg-slate-50 border-l-transparent hover:bg-blue-50 hover:border-l-blue-400'
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <div className={`bg-gradient-to-r ${getStatusGradient(orden.estado)} text-white px-2.5 py-1 text-[9px] font-bold uppercase rounded-full shadow-sm`}>
-                          {orden.estado.replace(/_/g, ' ')}
-                        </div>
-                        {orden.prioridad === 'URGENTE' && (
-                          <div className="bg-gradient-to-r from-red-500 to-rose-600 text-white px-2.5 py-1 text-[9px] font-bold uppercase rounded-full shadow-sm flex items-center gap-1">
-                            <Zap size={10} /> Urgente
-                          </div>
-                        )}
-                      </div>
-                      <p className="font-bold text-gray-900 text-sm truncate group-hover:text-blue-600 transition-colors">{orden.clienteNombre || 'Sin cliente'}</p>
-                      <p className="text-xs text-gray-600 truncate">{orden.vehiculoNombre || 'Sin vehículo'}</p>
-                      <div className="flex items-center mt-1.5 text-[11px] text-gray-500">
-                        <Calendar size={12} className="mr-1" />
-                        {new Date(orden.fechaCreacion).toLocaleDateString('es-DO')}
-                      </div>
-                    </div>
+                  {/* Col 1: Cliente + Vehículo */}
+                  <div className="min-w-0 pr-2">
+                    <p className="font-bold text-gray-900 text-sm truncate group-hover:text-blue-600 transition-colors">{orden.clienteNombre || 'Sin cliente'}</p>
+                    <p className="text-xs text-gray-500 truncate">{orden.vehiculoNombre || 'Sin vehículo'}</p>
+                    {orden.prioridad === 'URGENTE' && (
+                      <span className="inline-flex items-center gap-0.5 mt-1 bg-red-100 text-red-700 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded">
+                        <Zap size={9} /> Urgente
+                      </span>
+                    )}
+                    {orden.prioridad === 'VIP' && (
+                      <span className="inline-flex items-center gap-0.5 mt-1 bg-purple-100 text-purple-700 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded">
+                        ⭐ VIP
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Col 2: Estado */}
+                  <div>
+                    <span className={`inline-block bg-gradient-to-r ${getStatusGradient(orden.estado)} text-white px-2 py-0.5 text-[9px] font-bold uppercase rounded-full shadow-sm whitespace-nowrap`}>
+                      {orden.estado.replace(/_/g, ' ')}
+                    </span>
+                  </div>
+
+                  {/* Col 3: Fecha */}
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <Calendar size={11} className="flex-shrink-0" />
+                    {new Date(orden.fechaCreacion).toLocaleDateString('es-DO')}
                     {selectedOrden?.id === orden.id && (
-                      <ChevronRight size={18} className="text-blue-600 font-bold flex-shrink-0" />
+                      <ChevronRight size={14} className="text-blue-600 ml-auto flex-shrink-0" />
                     )}
                   </div>
                 </div>
               ))
             )}
+          </div>
+
+          {/* Pie de paginación */}
+          <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50 border-t border-gray-200 text-xs text-gray-500">
+            <span>{filteredOrdenes.length} orden{filteredOrdenes.length !== 1 ? 'es' : ''} · pág. {page} de {totalPages}</span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="p-1.5 rounded-lg hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft size={15} />
+              </button>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pg = totalPages <= 5 ? i + 1 : Math.max(1, Math.min(totalPages - 4, page - 2)) + i
+                return (
+                  <button
+                    key={pg}
+                    onClick={() => setPage(pg)}
+                    className={`w-6 h-6 rounded-md text-[11px] font-semibold transition-colors ${
+                      pg === page ? 'bg-blue-600 text-white' : 'hover:bg-gray-200 text-gray-600'
+                    }`}
+                  >{pg}</button>
+                )
+              })}
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="p-1.5 rounded-lg hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight size={15} />
+              </button>
+            </div>
           </div>
         </div>
 

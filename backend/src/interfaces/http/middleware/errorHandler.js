@@ -11,11 +11,11 @@ const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
 
   const statusCode = err.statusCode || err.code === 'P2025' ? 404 : 500;
-  const message    = err.message || 'Error interno del servidor';
+  const message = err.message || 'Error interno del servidor';
 
   res.status(statusCode).json({
     success: false,
-    data:    null,
+    data: null,
     message,
   });
 };
