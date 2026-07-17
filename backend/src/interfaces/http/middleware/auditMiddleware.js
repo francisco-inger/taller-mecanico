@@ -1,6 +1,6 @@
 'use strict';
 
-const logRepo = require('../../infrastructure/persistence/prisma/PrismaLogRepository');
+const logRepo = require('../../../infrastructure/persistence/prisma/PrismaLogRepository');
 
 /**
  * auditMiddleware — Middleware de Auditoría (Trazabilidad)
