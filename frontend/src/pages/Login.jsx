@@ -70,38 +70,43 @@ export default function Login() {
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="group">
-              <label className="block text-sm font-semibold text-slate-100 mb-2.5">Correo electrónico</label>
+              <label htmlFor="login-email" className="block text-sm font-semibold text-slate-100 mb-2.5">Correo electrónico</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-400 transition-colors">
                   <Mail size={20} />
                 </div>
                 <input
+                  id="login-email"
                   type="email"
                   className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@taller.com"
+                  autoComplete="email"
                   required
                 />
               </div>
             </div>
 
             <div className="group">
-              <label className="block text-sm font-semibold text-slate-100 mb-2.5">Contraseña</label>
+              <label htmlFor="login-password" className="block text-sm font-semibold text-slate-100 mb-2.5">Contraseña</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-400 transition-colors">
                   <KeyRound size={20} />
                 </div>
                 <input
+                  id="login-password"
                   type={showPassword ? 'text' : 'password'}
                   className="w-full pl-12 pr-12 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all duration-300"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
+                  autoComplete="current-password"
                   required
                 />
                 <button
                   type="button"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-blue-400 transition-colors"
                 >

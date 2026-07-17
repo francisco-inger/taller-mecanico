@@ -24,6 +24,7 @@ export default function Ordenes() {
   const [selectedOrden, setSelectedOrden] = useState(null)
   const [ordenDetalle, setOrdenDetalle] = useState(null)
   const [loadingDetalle, setLoadingDetalle] = useState(false)
+  const [logHistorial, setLogHistorial] = useState([])
 
   // DataGrid: sorting & pagination
   const [sortCol, setSortCol]   = useState('fechaCreacion')
@@ -38,9 +39,17 @@ export default function Ordenes() {
   const handleVerDetalle = async (orden) => {
     setSelectedOrden(orden)
     setLoadingDetalle(true)
+    setLogHistorial([])
     try {
       const res = await api.get(`/ordenes/${orden.id}`)
       setOrdenDetalle(res.data.data)
+      // Cargar historial de auditoría si el usuario es ADMIN
+      if (user?.rol === 'ADMIN') {
+        try {
+          const logRes = await api.get(`/log-actividad?entidad=ORDEN&entidadId=${orden.id}&limite=5`)
+          setLogHistorial(logRes.data.data || [])
+        } catch (_) { /* log no disponible */ }
+      }
     } catch {
       setOrdenDetalle(orden)
     } finally {
@@ -443,6 +452,34 @@ export default function Ordenes() {
                           <div key={i} className="flex justify-between items-center bg-white border border-gray-200/50 rounded-lg p-3 text-sm hover:shadow-md transition-shadow">
                             <span className="text-gray-700 font-medium">{r.nombre} × {r.cantidad}</span>
                             <span className="text-emerald-600 font-bold">{formatCurrency(r.precio * r.cantidad)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Historial de Auditoría — solo visible para ADMIN */}
+                  {isAdmin && logHistorial.length > 0 && (
+                    <div className="bg-gradient-to-br from-slate-50 to-gray-100 border border-gray-200/50 rounded-2xl p-5">
+                      <p className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-600 to-slate-700 text-white flex items-center justify-center">
+                          <FileText size={16} />
+                        </div>
+                        Historial de Cambios
+                      </p>
+                      <div className="space-y-2">
+                        {logHistorial.map((entry) => (
+                          <div key={entry.id} className="flex items-start gap-3 bg-white border border-gray-100 rounded-lg p-3">
+                            <div className="w-2 h-2 rounded-full bg-brand-primary mt-1.5 flex-shrink-0" style={{ background: '#1A7FD4' }} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-semibold text-gray-800">
+                                {entry.accion.replace('_', ' ')} &mdash; <span className="font-normal text-gray-500">{entry.usuarioNombre}</span>
+                              </p>
+                              {entry.detalle && <p className="text-xs text-gray-500 truncate">{entry.detalle}</p>}
+                            </div>
+                            <span className="text-[10px] text-gray-400 flex-shrink-0">
+                              {new Date(entry.creadoEn).toLocaleString('es-DO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                            </span>
                           </div>
                         ))}
                       </div>

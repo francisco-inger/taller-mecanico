@@ -205,8 +205,9 @@ export default function NuevaOrden() {
 
             {/* Cliente */}
             <div className="space-y-2">
-              <label className="label-field">Cliente *</label>
+              <label htmlFor="orden-cliente" className="label-field">Cliente *</label>
               <select
+                id="orden-cliente"
                 className="input-field bg-white"
                 value={formData.clienteId}
                 onChange={e => setFormData({ ...formData, clienteId: e.target.value })}
@@ -303,8 +304,8 @@ export default function NuevaOrden() {
             {/* Prioridad y Mecánico */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="label-field">Prioridad</label>
-                <select className="input-field" value={formData.prioridad}
+                <label htmlFor="orden-prioridad" className="label-field">Prioridad</label>
+                <select id="orden-prioridad" className="input-field" value={formData.prioridad}
                   onChange={e => setFormData({ ...formData, prioridad: e.target.value })}>
                   <option value="NORMAL">🔵 Normal</option>
                   <option value="URGENTE">🔴 Urgente</option>
@@ -312,8 +313,8 @@ export default function NuevaOrden() {
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="label-field">Mecánico (Opcional)</label>
-                <select className="input-field bg-white" value={formData.mecanicoId}
+                <label htmlFor="orden-mecanico" className="label-field">Mecánico (Opcional)</label>
+                <select id="orden-mecanico" className="input-field bg-white" value={formData.mecanicoId}
                   onChange={e => setFormData({ ...formData, mecanicoId: e.target.value })}>
                   <option value="">Sin asignar por ahora...</option>
                   {mecanicos.map(m => (
@@ -334,8 +335,8 @@ export default function NuevaOrden() {
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <label className="label-field">Tipo</label>
-                  <select className="input-field" value={servicioActual.tipo}
+                  <label htmlFor="servicio-tipo" className="label-field">Tipo</label>
+                  <select id="servicio-tipo" className="input-field" value={servicioActual.tipo}
                     onChange={e => setServicioActual({ ...servicioActual, tipo: e.target.value })}>
                     <option value="mantenimiento">Mantenimiento</option>
                     <option value="reparacion">Reparación</option>
@@ -343,8 +344,8 @@ export default function NuevaOrden() {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="label-field">Costo (RD$)</label>
-                  <input type="number" min="0" step="0.01" className="input-field" placeholder="0.00"
+                  <label htmlFor="servicio-costo" className="label-field">Costo (RD$)</label>
+                  <input id="servicio-costo" type="number" min="0" step="0.01" className="input-field" placeholder="0.00"
                     value={servicioActual.costo || ''}
                     onChange={e => setServicioActual({ ...servicioActual, costo: parseFloat(e.target.value) || 0 })} />
                 </div>
@@ -438,8 +439,8 @@ export default function NuevaOrden() {
 
             {/* Notas */}
             <div className="space-y-2">
-              <label className="label-field">Notas / Síntomas reportados</label>
-              <textarea className="input-field min-h-[90px] resize-y" placeholder="Describa el problema reportado por el cliente..."
+              <label htmlFor="orden-notas" className="label-field">Notas / Síntomas reportados</label>
+              <textarea id="orden-notas" className="input-field min-h-[90px] resize-y" placeholder="Describa el problema reportado por el cliente..."
                 value={formData.notas}
                 onChange={e => setFormData({ ...formData, notas: e.target.value })} />
             </div>

@@ -21,6 +21,8 @@ model Usuario {
   activo       Boolean  @default(true)
   creadoEn     DateTime @default(now()) @map("creado_en")
 
+  logActividad LogActividad[]
+
   @@map("usuarios")
 }
 
@@ -165,4 +167,37 @@ model Factura {
   orden            Orden    @relation(fields: [ordenId], references: [id])
 
   @@map("facturas")
+}
+
+// ── Log de Auditoría ──────────────────────────────────────────
+// Registra quién hizo qué acción, sobre qué entidad y cuándo.
+// Principio: transparencia y trazabilidad (requisitos éticos SIGEST).
+model LogActividad {
+  id             String      @id @default(uuid())
+  usuarioId      String      @map("usuario_id")
+  usuarioNombre  String      @map("usuario_nombre")
+  usuarioRol     String      @map("usuario_rol")
+  accion         AccionLog
+  entidad        String      // 'ORDEN' | 'CLIENTE' | 'USUARIO' | 'FACTURA' | 'MECANICO'
+  entidadId      String      @map("entidad_id")
+  detalle        String?     // descripción legible del cambio
+  creadoEn       DateTime    @default(now()) @map("creado_en")
+
+  usuario        Usuario     @relation(fields: [usuarioId], references: [id])
+
+  @@index([entidad, entidadId])
+  @@index([usuarioId])
+  @@index([creadoEn])
+  @@map("log_actividad")
+}
+
+enum AccionLog {
+  CREAR
+  ACTUALIZAR
+  ELIMINAR
+  AVANZAR_ESTADO
+  APROBAR
+  RECHAZAR
+  LOGIN
+  GENERAR_FACTURA
 }
