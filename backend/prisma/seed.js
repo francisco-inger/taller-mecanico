@@ -147,7 +147,11 @@ async function main() {
     });
   }
 
-  console.log('✅ Seed completado exitosamente!');\n  console.log('\n👤 Credenciales de acceso:');\n  console.log('   Admin:       cheodiaz631@gmail.com / Cheoymaria2117');\n  console.log('   Admin:       admin@taller.com / Admin123!');\n  console.log('   Recepción:   recepcion@taller.com / Recep123!');
+  console.log('✅ Seed completado exitosamente!');
+  console.log('\n👤 Credenciales de acceso:');
+  console.log('   Admin:       cheodiaz631@gmail.com / Cheoymaria2117');
+  console.log('   Admin:       admin@taller.com / Admin123!');
+  console.log('   Recepción:   recepcion@taller.com / Recep123!');
 
 }
 
