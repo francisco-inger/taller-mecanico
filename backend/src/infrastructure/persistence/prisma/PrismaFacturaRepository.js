@@ -11,7 +11,9 @@ class PrismaFacturaRepository extends FacturaRepository {
         orden: {
           include: {
             cliente: true,
-            vehiculo: true
+            vehiculo: true,
+            servicios: true,
+            repuestos: true
           }
         }
       }
@@ -32,7 +34,9 @@ class PrismaFacturaRepository extends FacturaRepository {
         orden: {
           include: {
             cliente: true,
-            vehiculo: true
+            vehiculo: true,
+            servicios: true,
+            repuestos: true
           }
         }
       },
@@ -48,7 +52,9 @@ class PrismaFacturaRepository extends FacturaRepository {
         orden: {
           include: {
             cliente: true,
-            vehiculo: true
+            vehiculo: true,
+            servicios: true,
+            repuestos: true
           }
         }
       }

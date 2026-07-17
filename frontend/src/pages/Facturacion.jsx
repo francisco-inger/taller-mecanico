@@ -24,6 +24,7 @@ export default function Facturacion() {
   const [facturarOrden, setFacturarOrden] = useState(null)
   const [descuentoManual, setDescuentoManual] = useState(0)
   const [descripDescuento, setDescripDescuento] = useState('')
+  const [facturaReciente, setFacturaReciente] = useState(null)
 
   useEffect(() => {
     fetchFacturas()
@@ -98,7 +99,7 @@ export default function Facturacion() {
 
   const handleCrearFactura = async () => {
     try {
-      await generarFactura(facturarOrden.id, {
+      const res = await generarFactura(facturarOrden.id, {
         descuento: descuentoManual,
         descripDescuento: descripDescuento
       })
@@ -109,6 +110,10 @@ export default function Facturacion() {
       // Cambiar automáticamente al historial para que el usuario vea la nueva factura
       setActiveTab('historial')
       toast.success('Factura generada exitosamente')
+
+      if (res && res.factura) {
+        setFacturaReciente(res.factura)
+      }
     } catch (error) {
       toast.error('Error al generar la factura: ' + error.message)
     }
@@ -135,6 +140,215 @@ export default function Facturacion() {
     const itbis = parseFloat((baseImponible * 0.18).toFixed(2))
     const total = parseFloat((baseImponible + itbis).toFixed(2))
     return { subtotal, descuento, baseImponible, itbis, total }
+  }
+
+  const imprimirFactura = (f) => {
+    if (!f) return
+    const subtotal = Number(f.subtotal) || 0
+    const descuento = Number(f.descuento) || 0
+    const itbis = Number(f.itbis) || 0
+    const total = Number(f.total) || 0
+    const cliente = f.orden?.cliente || {}
+    const vehiculo = f.orden?.vehiculo || {}
+    const servicios = f.orden?.servicios || []
+    const repuestos = f.orden?.repuestos || []
+    const fecha = new Date(f.fechaEmision).toLocaleString('es-DO')
+
+    const win = window.open('', '_blank', 'width=800,height=900')
+    win.document.write(`
+      <html>
+        <head>
+          <title>Factura FAC-${f.id.substring(0, 8).toUpperCase()}</title>
+          <style>
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              color: #333;
+              padding: 40px;
+              margin: 0;
+              line-height: 1.5;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 2px solid #1A7FD4;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+            }
+            .logo {
+              font-size: 28px;
+              font-weight: 800;
+              color: #1A7FD4;
+              margin: 0 0 5px 0;
+            }
+            .subtitle {
+              font-size: 12px;
+              color: #666;
+              margin: 0;
+            }
+            .meta-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+              margin-bottom: 30px;
+              font-size: 13px;
+            }
+            .meta-box h4 {
+              margin: 0 0 8px 0;
+              color: #1a202c;
+              text-transform: uppercase;
+              font-size: 11px;
+              letter-spacing: 0.5px;
+              border-bottom: 1px solid #edf2f7;
+              padding-bottom: 4px;
+            }
+            .meta-box p {
+              margin: 4px 0;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 30px;
+              font-size: 13px;
+            }
+            th {
+              background-color: #f7fafc;
+              font-weight: 700;
+              text-align: left;
+              padding: 10px;
+              border-bottom: 1px solid #e2e8f0;
+              color: #4a5568;
+              text-transform: uppercase;
+              font-size: 11px;
+            }
+            td {
+              padding: 10px;
+              border-bottom: 1px solid #edf2f7;
+              color: #4a5568;
+            }
+            .number {
+              text-align: right;
+            }
+            .summary {
+              width: 300px;
+              margin-left: auto;
+              margin-top: 20px;
+              font-size: 13px;
+            }
+            .summary-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 6px 0;
+              border-bottom: 1px solid #edf2f7;
+            }
+            .summary-row.total {
+              font-size: 18px;
+              font-weight: 800;
+              color: #27500A;
+              border-top: 2px solid #1A7FD4;
+              border-bottom: none;
+              padding-top: 12px;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 60px;
+              font-size: 12px;
+              color: #718096;
+              border-top: 1px solid #edf2f7;
+              padding-top: 20px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo">SIGEST TALLER</div>
+            <p class="subtitle">Servicio de Calidad Automotriz | RNC: 131-22222-2</p>
+            <p class="subtitle">Teléfono: 809-555-1234 | Santo Domingo, Rep. Dominicana</p>
+          </div>
+
+          <div class="meta-grid">
+            <div class="meta-box">
+              <h4>Comprobante de Pago</h4>
+              <p><strong>Factura Nro:</strong> FAC-${f.id.toUpperCase()}</p>
+              <p><strong>Orden de Servicio:</strong> OS-${f.ordenId.toUpperCase()}</p>
+              <p><strong>Fecha Emisión:</strong> ${fecha}</p>
+            </div>
+            <div class="meta-box">
+              <h4>Cliente & Vehículo</h4>
+              <p><strong>Cliente:</strong> ${cliente.nombre || '—'}</p>
+              <p><strong>Teléfono:</strong> ${cliente.telefono || '—'}</p>
+              <p><strong>Vehículo:</strong> ${vehiculo.marca || ''} ${vehiculo.modelo || ''} ${vehiculo.anio ? `(${vehiculo.anio})` : ''}</p>
+              <p><strong>Placa:</strong> ${vehiculo.placa || '—'}</p>
+            </div>
+          </div>
+
+          <h4>Detalle del Servicio</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Descripción / Repuesto</th>
+                <th class="number" style="width: 100px;">Cant.</th>
+                <th class="number" style="width: 120px;">Precio</th>
+                <th class="number" style="width: 120px;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${servicios.map(s => `
+                <tr>
+                  <td>${s.descripcion} (Mano de Obra)</td>
+                  <td class="number">1</td>
+                  <td class="number">RD$ ${Number(s.costo).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                  <td class="number">RD$ ${Number(s.costo).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>
+              `).join('')}
+              ${repuestos.map(r => `
+                <tr>
+                  <td>${r.nombre} (Repuesto)</td>
+                  <td class="number">${r.cantidad}</td>
+                  <td class="number">RD$ ${Number(r.precio).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                  <td class="number">RD$ ${(Number(r.precio) * r.cantidad).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>
+              `).join('')}
+              ${servicios.length === 0 && repuestos.length === 0 ? `
+                <tr>
+                  <td colspan="4" style="text-align: center; color: #a0aec0;">Sin ítems registrados</td>
+                </tr>
+              ` : ''}
+            </tbody>
+          </table>
+
+          <div class="summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span>RD$ ${subtotal.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div class="summary-row" style="color: #633806;">
+              <span>Descuento (${f.descripDescuento || 'N/A'}):</span>
+              <span>-RD$ ${descuento.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div class="summary-row">
+              <span>ITBIS (18%):</span>
+              <span>RD$ ${itbis.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total a Pagar:</span>
+              <span>RD$ ${total.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p><strong>¡Gracias por preferirnos!</strong></p>
+            <p>Garantía de servicio: 30 días en mano de obra. Todo repuesto instalado cuenta con la garantía directa del fabricante.</p>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            }
+          </script>
+        </body>
+      </html>
+    `)
+    win.document.close()
   }
 
   const resumenNueva = calcResumenFactura(facturarOrden)
@@ -302,6 +516,13 @@ export default function Facturacion() {
                       {(isAdmin || isCajeroOrAdmin) && (
                         <td className="px-6 py-4 whitespace-nowrap text-center">
                           <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              onClick={() => imprimirFactura(f)}
+                              className="p-2 rounded-lg text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-200"
+                              title="Imprimir Factura"
+                            >
+                              <Printer size={16} />
+                            </button>
                             {isAdmin && (
                               <button
                                 onClick={() => handleOpenEdit(f)}
@@ -582,6 +803,39 @@ export default function Facturacion() {
                 disabled={loadingFacturas}
               >
                 Sí, eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Factura Creada Exitosamente */}
+      {facturaReciente && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-100 mb-4 text-emerald-600">
+              <CheckCircle2 size={28} />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">¡Factura Generada!</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              La factura para la orden ha sido registrada exitosamente. ¿Deseas imprimir el comprobante ahora?
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => setFacturaReciente(null)}
+                className="px-5 py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-100 transition-colors flex-1 text-sm"
+              >
+                Cerrar
+              </button>
+              <button
+                onClick={() => {
+                  imprimirFactura(facturaReciente)
+                  setFacturaReciente(null)
+                }}
+                className="text-white font-bold py-2.5 px-5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex-1 flex items-center justify-center gap-1.5 text-sm"
+                style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
+              >
+                <Printer size={16} /> Imprimir
               </button>
             </div>
           </div>

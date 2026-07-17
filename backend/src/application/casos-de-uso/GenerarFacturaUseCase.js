@@ -85,7 +85,7 @@ class GenerarFacturaUseCase {
           },
           include: {
             orden: {
-              include: { cliente: true, vehiculo: true }
+              include: { cliente: true, vehiculo: true, servicios: true, repuestos: true }
             }
           }
         });
