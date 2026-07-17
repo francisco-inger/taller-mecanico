@@ -10,6 +10,7 @@ export default function Facturacion() {
   const { facturas, fetchFacturas, loading: loadingFacturas, deleteFactura, updateFactura, generarFactura } = useFacturaStore()
   const { ordenes, fetchOrdenes, loading: loadingOrdenes } = useOrdenStore()
   const { user } = useAuthStore()
+  const { config } = useConfigStore()
   const isAdmin = user?.rol === 'ADMIN'
   const isCajeroOrAdmin = user?.rol === 'ADMIN' || user?.rol === 'CAJERO'
   const toast = useToast()
@@ -143,223 +144,242 @@ export default function Facturacion() {
   }
 
   const imprimirFactura = (f) => {
-    if (!f) return
-    const subtotal = Number(f.subtotal) || 0
-    const descuento = Number(f.descuento) || 0
-    const itbis = Number(f.itbis) || 0
-    const total = Number(f.total) || 0
-    const cliente = f.orden?.cliente || {}
-    const vehiculo = f.orden?.vehiculo || {}
-    const servicios = f.orden?.servicios || []
-    const repuestos = f.orden?.repuestos || []
-    const fecha = new Date(f.fechaEmision).toLocaleString('es-DO')
+    try {
+      if (!f) return
+      const subtotal = Number(f.subtotal) || 0
+      const descuento = Number(f.descuento) || 0
+      const itbis = Number(f.itbis) || 0
+      const total = Number(f.total) || 0
+      const cliente = f.orden?.cliente || {}
+      const vehiculo = f.orden?.vehiculo || {}
+      const servicios = f.orden?.servicios || []
+      const repuestos = f.orden?.repuestos || []
+      
+      let fecha = '—'
+      try {
+        if (f.fechaEmision) {
+          fecha = new Date(f.fechaEmision).toLocaleString('es-DO')
+        }
+      } catch (_) {
+        try {
+          fecha = new Date(f.fechaEmision).toLocaleString()
+        } catch (inner) {
+          fecha = String(f.fechaEmision || '—')
+        }
+      }
 
-    const config = useConfigStore.getState().config || {}
-    const nombreTaller = config.nombre_taller || 'SIGEST TALLER'
-    const rnc = config.rnc ? `RNC: ${config.rnc}` : 'RNC: —'
-    const telefono = config.telefono ? `Teléfono: ${config.telefono}` : 'Teléfono: —'
-    const direccion = config.direccion || 'República Dominicana'
+      const nombreTaller = config?.nombre_taller || 'SIGEST TALLER'
+      const rnc = config?.rnc ? `RNC: ${config.rnc}` : 'RNC: —'
+      const telefono = config?.telefono ? `Teléfono: ${config.telefono}` : 'Teléfono: —'
+      const direccion = config?.direccion || 'República Dominicana'
+      const moneda = config?.moneda || 'RD$'
+      const itbisPorcentaje = config?.itbis_porcentaje || '18'
 
-    const win = window.open('', '_blank', 'width=800,height=900')
-    if (!win) {
-      toast.show('El navegador bloqueó la ventana emergente de impresión. Por favor habilita los permisos de popups para este sitio.', 'warning')
-      return
+      const win = window.open('', '_blank', 'width=800,height=900')
+      if (!win) {
+        toast.show('El navegador bloqueó la ventana emergente de impresión. Por favor habilita los permisos de popups para este sitio.', 'warning')
+        return
+      }
+
+      win.document.write(`
+        <html>
+          <head>
+            <title>Factura FAC-${f.id ? f.id.substring(0, 8).toUpperCase() : 'N/A'}</title>
+            <style>
+              body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: #333;
+                padding: 40px;
+                margin: 0;
+                line-height: 1.5;
+              }
+              .header {
+                text-align: center;
+                border-bottom: 2px solid #1A7FD4;
+                padding-bottom: 20px;
+                margin-bottom: 30px;
+              }
+              .logo {
+                font-size: 28px;
+                font-weight: 800;
+                color: #1A7FD4;
+                margin: 0 0 5px 0;
+              }
+              .subtitle {
+                font-size: 12px;
+                color: #666;
+                margin: 0;
+              }
+              .meta-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin-bottom: 30px;
+                font-size: 13px;
+              }
+              .meta-box h4 {
+                margin: 0 0 8px 0;
+                color: #1a202c;
+                text-transform: uppercase;
+                font-size: 11px;
+                letter-spacing: 0.5px;
+                border-bottom: 1px solid #edf2f7;
+                padding-bottom: 4px;
+              }
+              .meta-box p {
+                margin: 4px 0;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 30px;
+                font-size: 13px;
+              }
+              th {
+                background-color: #f7fafc;
+                font-weight: 700;
+                text-align: left;
+                padding: 10px;
+                border-bottom: 1px solid #e2e8f0;
+                color: #4a5568;
+                text-transform: uppercase;
+                font-size: 11px;
+              }
+              td {
+                padding: 10px;
+                border-bottom: 1px solid #edf2f7;
+                color: #4a5568;
+              }
+              .number {
+                text-align: right;
+              }
+              .summary {
+                width: 300px;
+                margin-left: auto;
+                margin-top: 20px;
+                font-size: 13px;
+              }
+              .summary-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 6px 0;
+                border-bottom: 1px solid #edf2f7;
+              }
+              .summary-row.total {
+                font-size: 18px;
+                font-weight: 800;
+                color: #27500A;
+                border-top: 2px solid #1A7FD4;
+                border-bottom: none;
+                padding-top: 12px;
+              }
+              .footer {
+                text-align: center;
+                margin-top: 60px;
+                font-size: 12px;
+                color: #718096;
+                border-top: 1px solid #edf2f7;
+                padding-top: 20px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <div class="logo">${nombreTaller}</div>
+              <p class="subtitle">Servicio de Calidad Automotriz | ${rnc}</p>
+              <p class="subtitle">${telefono} | ${direccion}</p>
+            </div>
+
+            <div class="meta-grid">
+              <div class="meta-box">
+                <h4>Comprobante de Pago</h4>
+                <p><strong>Factura Nro:</strong> FAC-${f.id ? f.id.toUpperCase() : 'N/A'}</p>
+                <p><strong>Orden de Servicio:</strong> OS-${f.ordenId ? f.ordenId.toUpperCase() : 'N/A'}</p>
+                <p><strong>Fecha Emisión:</strong> ${fecha}</p>
+              </div>
+              <div class="meta-box">
+                <h4>Cliente & Vehículo</h4>
+                <p><strong>Cliente:</strong> ${cliente.nombre || '—'}</p>
+                <p><strong>Teléfono:</strong> ${cliente.telefono || '—'}</p>
+                <p><strong>Vehículo:</strong> ${vehiculo.marca || ''} ${vehiculo.modelo || ''} ${vehiculo.anio ? `(${vehiculo.anio})` : ''}</p>
+                <p><strong>Placa:</strong> ${vehiculo.placa || '—'}</p>
+              </div>
+            </div>
+
+            <h4>Detalle del Servicio</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Descripción / Repuesto</th>
+                  <th class="number" style="width: 100px;">Cant.</th>
+                  <th class="number" style="width: 120px;">Precio</th>
+                  <th class="number" style="width: 120px;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${servicios.map(s => `
+                  <tr>
+                    <td>${s.descripcion} (Mano de Obra)</td>
+                    <td class="number">1</td>
+                    <td class="number">${moneda} ${Number(s.costo).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="number">${moneda} ${Number(s.costo).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                  </tr>
+                `).join('')}
+                ${repuestos.map(r => `
+                  <tr>
+                    <td>${r.nombre} (Repuesto)</td>
+                    <td class="number">${r.cantidad}</td>
+                    <td class="number">${moneda} ${Number(r.precio).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="number">${moneda} ${(Number(r.precio) * r.cantidad).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                  </tr>
+                `).join('')}
+                ${servicios.length === 0 && repuestos.length === 0 ? `
+                  <tr>
+                    <td colspan="4" style="text-align: center; color: #a0aec0;">Sin ítems registrados</td>
+                  </tr>
+                ` : ''}
+              </tbody>
+            </table>
+
+            <div class="summary">
+              <div class="summary-row">
+                <span>Subtotal:</span>
+                <span>${moneda} ${subtotal.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+              <div class="summary-row" style="color: #633806;">
+                <span>Descuento (${f.descripDescuento || 'N/A'}):</span>
+                <span>-${moneda} ${descuento.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+              <div class="summary-row">
+                <span>ITBIS (${itbisPorcentaje}%):</span>
+                <span>${moneda} ${itbis.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total a Pagar:</span>
+                <span>${moneda} ${total.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+            </div>
+
+            <div class="footer">
+              <p><strong>¡Gracias por preferirnos!</strong></p>
+              <p>Garantía de servicio: 30 días en mano de obra. Todo repuesto instalado cuenta con la garantía directa del fabricante.</p>
+            </div>
+
+            <script>
+              // Ejecución inmediata, ya que about:blank con document.write no dispara onload de forma consistente
+              setTimeout(function() {
+                window.print();
+                setTimeout(function() { window.close(); }, 500);
+              }, 300);
+            </script>
+          </body>
+        </html>
+      `)
+      win.document.close()
+    } catch (err) {
+      console.error('Error durante la impresión de factura:', err)
+      toast.show('Error al generar la impresión: ' + err.message, 'error')
     }
-    win.document.write(`
-      <html>
-        <head>
-          <title>Factura FAC-${f.id.substring(0, 8).toUpperCase()}</title>
-          <style>
-            body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              color: #333;
-              padding: 40px;
-              margin: 0;
-              line-height: 1.5;
-            }
-            .header {
-              text-align: center;
-              border-bottom: 2px solid #1A7FD4;
-              padding-bottom: 20px;
-              margin-bottom: 30px;
-            }
-            .logo {
-              font-size: 28px;
-              font-weight: 800;
-              color: #1A7FD4;
-              margin: 0 0 5px 0;
-            }
-            .subtitle {
-              font-size: 12px;
-              color: #666;
-              margin: 0;
-            }
-            .meta-grid {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 20px;
-              margin-bottom: 30px;
-              font-size: 13px;
-            }
-            .meta-box h4 {
-              margin: 0 0 8px 0;
-              color: #1a202c;
-              text-transform: uppercase;
-              font-size: 11px;
-              letter-spacing: 0.5px;
-              border-bottom: 1px solid #edf2f7;
-              padding-bottom: 4px;
-            }
-            .meta-box p {
-              margin: 4px 0;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 30px;
-              font-size: 13px;
-            }
-            th {
-              background-color: #f7fafc;
-              font-weight: 700;
-              text-align: left;
-              padding: 10px;
-              border-bottom: 1px solid #e2e8f0;
-              color: #4a5568;
-              text-transform: uppercase;
-              font-size: 11px;
-            }
-            td {
-              padding: 10px;
-              border-bottom: 1px solid #edf2f7;
-              color: #4a5568;
-            }
-            .number {
-              text-align: right;
-            }
-            .summary {
-              width: 300px;
-              margin-left: auto;
-              margin-top: 20px;
-              font-size: 13px;
-            }
-            .summary-row {
-              display: flex;
-              justify-content: space-between;
-              padding: 6px 0;
-              border-bottom: 1px solid #edf2f7;
-            }
-            .summary-row.total {
-              font-size: 18px;
-              font-weight: 800;
-              color: #27500A;
-              border-top: 2px solid #1A7FD4;
-              border-bottom: none;
-              padding-top: 12px;
-            }
-            .footer {
-              text-align: center;
-              margin-top: 60px;
-              font-size: 12px;
-              color: #718096;
-              border-top: 1px solid #edf2f7;
-              padding-top: 20px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="logo">${nombreTaller}</div>
-            <p class="subtitle">Servicio de Calidad Automotriz | ${rnc}</p>
-            <p class="subtitle">${telefono} | ${direccion}</p>
-          </div>
-
-          <div class="meta-grid">
-            <div class="meta-box">
-              <h4>Comprobante de Pago</h4>
-              <p><strong>Factura Nro:</strong> FAC-${f.id.toUpperCase()}</p>
-              <p><strong>Orden de Servicio:</strong> OS-${f.ordenId.toUpperCase()}</p>
-              <p><strong>Fecha Emisión:</strong> ${fecha}</p>
-            </div>
-            <div class="meta-box">
-              <h4>Cliente & Vehículo</h4>
-              <p><strong>Cliente:</strong> ${cliente.nombre || '—'}</p>
-              <p><strong>Teléfono:</strong> ${cliente.telefono || '—'}</p>
-              <p><strong>Vehículo:</strong> ${vehiculo.marca || ''} ${vehiculo.modelo || ''} ${vehiculo.anio ? `(${vehiculo.anio})` : ''}</p>
-              <p><strong>Placa:</strong> ${vehiculo.placa || '—'}</p>
-            </div>
-          </div>
-
-          <h4>Detalle del Servicio</h4>
-          <table>
-            <thead>
-              <tr>
-                <th>Descripción / Repuesto</th>
-                <th class="number" style="width: 100px;">Cant.</th>
-                <th class="number" style="width: 120px;">Precio</th>
-                <th class="number" style="width: 120px;">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${servicios.map(s => `
-                <tr>
-                  <td>${s.descripcion} (Mano de Obra)</td>
-                  <td class="number">1</td>
-                  <td class="number">RD$ ${Number(s.costo).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                  <td class="number">RD$ ${Number(s.costo).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                </tr>
-              `).join('')}
-              ${repuestos.map(r => `
-                <tr>
-                  <td>${r.nombre} (Repuesto)</td>
-                  <td class="number">${r.cantidad}</td>
-                  <td class="number">RD$ ${Number(r.precio).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                  <td class="number">RD$ ${(Number(r.precio) * r.cantidad).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                </tr>
-              `).join('')}
-              ${servicios.length === 0 && repuestos.length === 0 ? `
-                <tr>
-                  <td colspan="4" style="text-align: center; color: #a0aec0;">Sin ítems registrados</td>
-                </tr>
-              ` : ''}
-            </tbody>
-          </table>
-
-          <div class="summary">
-            <div class="summary-row">
-              <span>Subtotal:</span>
-              <span>RD$ ${subtotal.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-            <div class="summary-row" style="color: #633806;">
-              <span>Descuento (${f.descripDescuento || 'N/A'}):</span>
-              <span>-RD$ ${descuento.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-            <div class="summary-row">
-              <span>ITBIS (18%):</span>
-              <span>RD$ ${itbis.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-            <div class="summary-row total">
-              <span>Total a Pagar:</span>
-              <span>RD$ ${total.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-          </div>
-
-          <div class="footer">
-            <p><strong>¡Gracias por preferirnos!</strong></p>
-            <p>Garantía de servicio: 30 días en mano de obra. Todo repuesto instalado cuenta con la garantía directa del fabricante.</p>
-          </div>
-
-          <script>
-            // Ejecución inmediata, ya que about:blank con document.write no dispara onload de forma consistente
-            setTimeout(function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 500);
-            }, 300);
-          </script>
-        </body>
-      </html>
-    `)
-    win.document.close()
   }
 
   const resumenNueva = calcResumenFactura(facturarOrden)
