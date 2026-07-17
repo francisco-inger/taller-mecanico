@@ -5,12 +5,12 @@ import Modal from '../components/Modal'
 
 const getRoleGradient = (rol) => {
   const gradients = {
-    'ADMIN': 'from-orange-500 to-rose-600',
-    'RECEPCIONISTA': 'from-blue-500 to-blue-600',
-    'MECANICO': 'from-purple-500 to-pink-600',
-    'CAJERO': 'from-green-500 to-emerald-600',
+    'ADMIN': 'avatar-admin',
+    'RECEPCIONISTA': 'avatar-recepcionista',
+    'MECANICO': 'avatar-mecanico',
+    'CAJERO': 'avatar-cajero',
   }
-  return gradients[rol] || 'from-gray-400 to-gray-600'
+  return gradients[rol] || 'bg-gray-500'
 }
 
 const getRoleBadgeColor = (rol) => {
@@ -109,12 +109,12 @@ export default function Usuarios() {
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Usuarios', value: usuarios.length, gradient: 'from-slate-500 to-slate-600' },
-          { label: 'Administradores', value: totalAdmins, gradient: 'from-orange-500 to-orange-600' },
-          { label: 'Recepcionistas', value: totalRecepcionistas, gradient: 'from-blue-500 to-blue-600' },
-          { label: 'Mecánicos', value: totalMecanicos, gradient: 'from-purple-500 to-purple-600' },
+          { label: 'Total Usuarios', value: usuarios.length, bgClass: 'card-total-usuarios' },
+          { label: 'Administradores', value: totalAdmins, bgClass: 'card-total-admins' },
+          { label: 'Recepcionistas', value: totalRecepcionistas, bgClass: 'card-total-recepcionistas' },
+          { label: 'Mecánicos', value: totalMecanicos, bgClass: 'card-total-mecanicos' },
         ].map((stat, i) => (
-          <div key={i} className={`bg-gradient-to-br ${stat.gradient} rounded-2xl shadow-lg p-5 text-white group hover:shadow-xl transition-shadow`}>
+          <div key={i} className={`${stat.bgClass} rounded-2xl shadow-lg p-5 text-white group hover:shadow-xl transition-shadow`}>
             <p className="text-xs font-bold opacity-80 uppercase tracking-wider">{stat.label}</p>
             <p className="text-3xl font-bold mt-2">{stat.value}</p>
           </div>
@@ -139,11 +139,11 @@ export default function Usuarios() {
             {usuarios.map(u => (
               <div key={u.id} className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-shadow group overflow-hidden relative">
                 {/* Background accent */}
-                <div className={`absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-gradient-to-br ${getRoleGradient(u.rol)} opacity-5 rounded-full`}></div>
+                <div className={`absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 ${getRoleGradient(u.rol)} opacity-5 rounded-full`}></div>
                 
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4 relative z-10">
-                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${getRoleGradient(u.rol)} text-white flex items-center justify-center font-bold text-lg`}>
+                  <div className={`w-12 h-12 rounded-full ${getRoleGradient(u.rol)} text-white flex items-center justify-center font-bold text-lg`}>
                     {u.nombre.charAt(0).toUpperCase()}
                   </div>
                   <button

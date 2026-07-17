@@ -86,11 +86,11 @@ export default function Mecanicos() {
             {mecanicos.map(m => (
               <div key={m.id} className={`bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-shadow group overflow-hidden relative ${!m.activo ? 'opacity-60' : ''}`}>
                 {/* Background accent */}
-                <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-gradient-to-br from-red-500 to-rose-600 opacity-5 rounded-full"></div>
+                <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 avatar-mecanico opacity-5 rounded-full"></div>
                 
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4 relative z-10">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-rose-600 text-white flex items-center justify-center font-bold text-xl">
+                  <div className="w-14 h-14 rounded-full avatar-mecanico text-white flex items-center justify-center font-bold text-xl">
                     {m.nombre.charAt(0).toUpperCase()}
                   </div>
                   <button
@@ -112,13 +112,13 @@ export default function Mecanicos() {
                 {/* Details */}
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-600 text-white flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg avatar-mecanico text-white flex items-center justify-center flex-shrink-0">
                       <Phone size={14} />
                     </div>
                     <span className="text-gray-700">{m.telefono || 'Sin teléfono'}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg avatar-mecanico text-white flex items-center justify-center flex-shrink-0">
                       <Award size={14} />
                     </div>
                     <span className="text-gray-700">{m.especialidad || 'Mecánico General'}</span>

@@ -53,4 +53,35 @@
   .label-field {
     @apply block text-sm font-medium text-gray-700;
   }
+
+  /* Custom Avatars */
+  .avatar-admin {
+    background: linear-gradient(135deg, #E24B4A, #D4537E);
+  }
+  .avatar-mecanico {
+    background: linear-gradient(135deg, #7F77DD, #D4537E);
+  }
+  .avatar-recepcionista {
+    background: linear-gradient(135deg, #378ADD, #1A7FD4);
+  }
+  .avatar-cajero {
+    background: linear-gradient(135deg, #0F9D6E, #1A7FD4);
+  }
+  .avatar-cliente {
+    background: linear-gradient(135deg, #0F9D6E, #0B7A55);
+  }
+
+  /* Custom Totals Cards */
+  .card-total-usuarios {
+    background: linear-gradient(135deg, #5F5E5A, #444441);
+  }
+  .card-total-admins {
+    background: linear-gradient(135deg, #EF9F27, #BA7517);
+  }
+  .card-total-recepcionistas {
+    background: linear-gradient(135deg, #378ADD, #185FA5);
+  }
+  .card-total-mecanicos {
+    background: linear-gradient(135deg, #7F77DD, #534AB7);
+  }
 }

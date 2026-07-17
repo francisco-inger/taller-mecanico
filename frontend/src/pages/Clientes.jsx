@@ -164,7 +164,7 @@ export default function Clientes() {
 
                 <div className="px-6 pb-6 pt-0 flex-1 flex flex-col relative">
                   {/* Avatar flotante superpuesto en el banner */}
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center font-black text-2xl absolute -top-8 left-6 ring-4 ring-white shadow-lg shadow-emerald-500/10">
+                  <div className="w-16 h-16 rounded-2xl avatar-cliente text-white flex items-center justify-center font-black text-2xl absolute -top-8 left-6 ring-4 ring-white shadow-lg shadow-emerald-500/10">
                     {cliente.nombre.charAt(0).toUpperCase()}
                   </div>
 
