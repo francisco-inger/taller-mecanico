@@ -17,6 +17,9 @@ export default function Ordenes() {
   const { generarFactura } = useFacturaStore()
   const { user } = useAuthStore()
   const isAdmin = user?.rol === 'ADMIN'
+  const isRecepOrAdmin = user?.rol === 'ADMIN' || user?.rol === 'RECEPCIONISTA'
+  const isCajeroOrAdmin = user?.rol === 'ADMIN' || user?.rol === 'CAJERO'
+  const canAvanzar = user?.rol === 'ADMIN' || user?.rol === 'RECEPCIONISTA' || user?.rol === 'MECANICO'
   const [filtro, setFiltro] = useState('')
   const [selectedOrden, setSelectedOrden] = useState(null)
   const [ordenDetalle, setOrdenDetalle] = useState(null)
@@ -158,14 +161,16 @@ export default function Ordenes() {
           <h2 className="text-2xl font-bold text-gray-800">Listado de Órdenes</h2>
           <p className="text-gray-500 mt-1">Gestiona y supervisa todas tus órdenes</p>
         </div>
-        <button
-          onClick={() => navigate('/ordenes/nueva')}
-          className="group relative text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
-          style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
-        >
-          <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
-          Nueva Orden
-        </button>
+        {isRecepOrAdmin && (
+          <button
+            onClick={() => navigate('/ordenes/nueva')}
+            className="group relative text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+            style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
+          >
+            <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+            Nueva Orden
+          </button>
+        )}
       </div>
 
       <div className="flex gap-6 flex-1 min-h-0">
@@ -456,21 +461,41 @@ export default function Ordenes() {
                           </div>
                         </div>
                       ) : detalleData.estado === 'ENTREGADA' ? (
-                        <button
-                          onClick={() => handleFacturar(detalleData.id)}
-                          className="w-full flex items-center justify-center gap-2 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                          style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
-                        >
-                          <DollarSign size={20} /> Realizar Facturación
-                        </button>
+                        isCajeroOrAdmin ? (
+                          <button
+                            onClick={() => handleFacturar(detalleData.id)}
+                            className="w-full flex items-center justify-center gap-2 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                            style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
+                          >
+                            <DollarSign size={20} /> Realizar Facturación
+                          </button>
+                        ) : (
+                          <div className="flex items-center gap-3 bg-amber-50 border border-amber-200/50 text-amber-700 rounded-xl p-4">
+                            <DollarSign size={24} className="text-amber-600 flex-shrink-0" />
+                            <div className="text-left">
+                              <p className="font-bold">Facturación Pendiente</p>
+                              <p className="text-sm">El cobro debe procesarse por un cajero</p>
+                            </div>
+                          </div>
+                        )
                       ) : (
-                        <button
-                          onClick={() => handleAvanzar(detalleData.id)}
-                          className="w-full flex items-center justify-center gap-2 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                          style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
-                        >
-                          <ArrowRight size={20} /> Avanzar a {siguienteEstado(detalleData.estado)}
-                        </button>
+                        canAvanzar ? (
+                          <button
+                            onClick={() => handleAvanzar(detalleData.id)}
+                            className="w-full flex items-center justify-center gap-2 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                            style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
+                          >
+                            <ArrowRight size={20} /> Avanzar a {siguienteEstado(detalleData.estado)}
+                          </button>
+                        ) : (
+                          <div className="flex items-center gap-3 bg-gray-50 border border-gray-200/50 text-gray-500 rounded-xl p-4">
+                            <Clock size={24} className="text-gray-400 flex-shrink-0" />
+                            <div className="text-left">
+                              <p className="font-bold">Acción No Permitida</p>
+                              <p className="text-sm">Solo mecánicos o recepcionistas pueden cambiar estados</p>
+                            </div>
+                          </div>
+                        )
                       )}
                       {isAdmin && (
                         <button

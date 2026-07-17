@@ -18,6 +18,17 @@ const PrivateRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" />
 }
 
+// RoleRoute protege vistas basándose en los roles del usuario.
+const RoleRoute = ({ children, allowedRoles }) => {
+  const user = useAuthStore(state => state.user)
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  if (!isAuthenticated) return <Navigate to="/login" />
+  if (!user || !allowedRoles.includes(user.rol)) {
+    return <Navigate to="/" replace />
+  }
+  return children
+}
+
 function App() {
   return (
     <ToastProvider>
@@ -45,11 +56,46 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="ordenes" element={<Ordenes />} />
-          <Route path="ordenes/nueva" element={<NuevaOrden />} />
-          <Route path="clientes" element={<Clientes />} />
-          <Route path="usuarios" element={<Usuarios />} />
-          <Route path="mecanicos" element={<Mecanicos />} />
-          <Route path="facturacion" element={<Facturacion />} />
+          <Route
+            path="ordenes/nueva"
+            element={
+              <RoleRoute allowedRoles={['ADMIN', 'RECEPCIONISTA']}>
+                <NuevaOrden />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="clientes"
+            element={
+              <RoleRoute allowedRoles={['ADMIN', 'RECEPCIONISTA', 'CAJERO']}>
+                <Clientes />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="usuarios"
+            element={
+              <RoleRoute allowedRoles={['ADMIN']}>
+                <Usuarios />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="mecanicos"
+            element={
+              <RoleRoute allowedRoles={['ADMIN']}>
+                <Mecanicos />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="facturacion"
+            element={
+              <RoleRoute allowedRoles={['ADMIN', 'CAJERO', 'RECEPCIONISTA']}>
+                <Facturacion />
+              </RoleRoute>
+            }
+          />
         </Route>
       </Routes>
     </Router>
