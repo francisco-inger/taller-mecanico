@@ -161,6 +161,10 @@ export default function Facturacion() {
     const direccion = config.direccion || 'República Dominicana'
 
     const win = window.open('', '_blank', 'width=800,height=900')
+    if (!win) {
+      toast.show('El navegador bloqueó la ventana emergente de impresión. Por favor habilita los permisos de popups para este sitio.', 'warning')
+      return
+    }
     win.document.write(`
       <html>
         <head>
@@ -346,10 +350,11 @@ export default function Facturacion() {
           </div>
 
           <script>
-            window.onload = function() {
+            // Ejecución inmediata, ya que about:blank con document.write no dispara onload de forma consistente
+            setTimeout(function() {
               window.print();
               setTimeout(function() { window.close(); }, 500);
-            }
+            }, 300);
           </script>
         </body>
       </html>
