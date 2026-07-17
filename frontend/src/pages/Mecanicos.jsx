@@ -60,7 +60,7 @@ export default function Mecanicos() {
         </div>
         <button 
           onClick={handleOpenCreate} 
-          className="group relative bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-700 hover:to-rose-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+          className="group relative bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
         >
           <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
           Nuevo Mecánico
@@ -126,8 +126,8 @@ export default function Mecanicos() {
 
                 {/* Status */}
                 <div className="flex items-center gap-2 text-xs pt-3 border-t border-gray-200">
-                  <div className={`w-2 h-2 rounded-full ${m.activo ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
-                  <span className={m.activo ? 'text-emerald-600 font-semibold' : 'text-red-600 font-semibold'}>
+                  <div className={`w-2 h-2 rounded-full ${m.activo ? 'bg-state-success' : 'bg-state-danger'}`}></div>
+                  <span className={m.activo ? 'text-state-success font-semibold' : 'text-state-danger font-semibold'}>
                     {m.activo ? 'Disponible' : 'No disponible'}
                   </span>
                 </div>

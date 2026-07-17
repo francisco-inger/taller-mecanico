@@ -98,7 +98,7 @@ export default function Usuarios() {
         </div>
         <button 
           onClick={handleOpenCreate} 
-          className="group relative bg-gradient-to-r from-orange-600 to-rose-500 hover:from-orange-700 hover:to-rose-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+          className="group relative bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
         >
           <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
           Nuevo Usuario
@@ -168,8 +168,8 @@ export default function Usuarios() {
                     <span className="truncate">{u.email}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
-                    <div className={`w-2 h-2 rounded-full ${u.activo ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
-                    <span className={u.activo ? 'text-emerald-600 font-semibold' : 'text-red-600 font-semibold'}>
+                    <div className={`w-2 h-2 rounded-full ${u.activo ? 'bg-state-success' : 'bg-state-danger'}`}></div>
+                    <span className={u.activo ? 'text-state-success font-semibold' : 'text-state-danger font-semibold'}>
                       {u.activo ? 'Activo' : 'Inactivo'}
                     </span>
                   </div>

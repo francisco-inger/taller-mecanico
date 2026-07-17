@@ -182,7 +182,7 @@ export default function Facturacion() {
           onClick={() => setActiveTab('historial')}
           className={`py-3 px-6 font-bold text-sm border-b-2 transition-all duration-200 flex items-center gap-2 ${
             activeTab === 'historial'
-              ? 'border-emerald-500 text-emerald-600'
+              ? 'border-brand-primary text-brand-primary'
               : 'border-transparent text-gray-500 hover:text-gray-700'
           }`}
         >
@@ -195,13 +195,13 @@ export default function Facturacion() {
           onClick={() => setActiveTab('pendientes')}
           className={`py-3 px-6 font-bold text-sm border-b-2 transition-all duration-200 flex items-center gap-2 relative ${
             activeTab === 'pendientes'
-              ? 'border-emerald-500 text-emerald-600'
+              ? 'border-brand-primary text-brand-primary'
               : 'border-transparent text-gray-500 hover:text-gray-700'
           }`}
         >
           <Receipt size={16} /> Órdenes por Facturar
           {filteredPendientes.length > 0 && (
-            <span className="bg-amber-100 text-amber-800 text-xs py-0.5 px-2 rounded-full font-bold animate-pulse">
+            <span className="bg-state-warningBg text-state-warning text-xs py-0.5 px-2 rounded-full font-bold animate-pulse">
               {filteredPendientes.length}
             </span>
           )}
@@ -214,12 +214,12 @@ export default function Facturacion() {
         {/* Search Header */}
         <div className="p-4 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-gray-200/50 flex justify-between items-center gap-4 flex-wrap">
           <div className="relative group flex-1 min-w-xs">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-emerald-500 transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-primary transition-colors">
               <Search size={20} />
             </div>
             <input
               type="text"
-              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all duration-300"
+              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30 transition-all duration-300"
               placeholder={activeTab === 'historial' ? "Buscar por cliente o ID..." : "Buscar orden por cliente o vehículo..."}
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
@@ -267,7 +267,7 @@ export default function Facturacion() {
                     <tr key={f.id} className="hover:bg-gray-50/70 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="p-2 bg-emerald-50 text-emerald-600 rounded mr-3 shadow-sm">
+                          <div className="p-2 bg-brand-light text-brand-primary rounded mr-3 shadow-sm">
                             <Hash size={14} />
                           </div>
                           <div>
@@ -289,14 +289,14 @@ export default function Facturacion() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-600">
                         {formatCurrency(f.subtotal)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-amber-600 font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-state-warning font-medium">
                         {Number(f.descuento) > 0 ? `-${formatCurrency(f.descuento)}` : '—'}
                         {f.descripDescuento && <p className="text-[10px] text-gray-400 italic truncate max-w-[130px] ml-auto" title={f.descripDescuento}>{f.descripDescuento}</p>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-600">
                         {formatCurrency(f.itbis)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right font-extrabold text-emerald-600 text-base">
+                      <td className="px-6 py-4 whitespace-nowrap text-right font-extrabold text-state-success text-base">
                         {formatCurrency(f.total)}
                       </td>
                       {(isAdmin || isCajeroOrAdmin) && (
@@ -361,7 +361,7 @@ export default function Facturacion() {
                             <h4 className="text-lg font-bold text-gray-900 mt-2">{orden.clienteNombre || 'Sin Cliente'}</h4>
                           </div>
                           {orden.cliente?.esFrecuente && (
-                            <span className="bg-emerald-100 text-emerald-800 text-[10px] px-2.5 py-1 rounded-full font-extrabold flex items-center gap-1">
+                            <span className="bg-state-successBg text-state-success text-[10px] px-2.5 py-1 rounded-full font-extrabold flex items-center gap-1">
                               <Percent size={10} /> Frecuente
                             </span>
                           )}
@@ -384,7 +384,7 @@ export default function Facturacion() {
                       {isCajeroOrAdmin && (
                         <button
                           onClick={() => handleOpenFacturar(orden)}
-                          className="mt-4 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-1.5 text-sm"
+                          className="mt-4 w-full bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-1.5 text-sm"
                         >
                           <DollarSign size={16} /> Facturar Orden
                         </button>
@@ -417,7 +417,7 @@ export default function Facturacion() {
                 <p><strong>Cliente:</strong> {facturarOrden.clienteNombre}</p>
                 <p><strong>Vehículo:</strong> {facturarOrden.vehiculoNombre}</p>
                 {facturarOrden.cliente?.esFrecuente && (
-                  <p className="text-emerald-700 font-semibold flex items-center gap-1 text-xs">
+                  <p className="text-state-success font-semibold flex items-center gap-1 text-xs">
                     <CheckCircle2 size={14} /> Aplica 10% Descuento Automático Cliente Frecuente
                   </p>
                 )}
@@ -468,7 +468,7 @@ export default function Facturacion() {
                   <span>ITBIS (18%):</span>
                   <span className="font-semibold">{formatCurrency(resumenNueva.itbis)}</span>
                 </div>
-                <div className="flex justify-between text-lg text-emerald-600 font-extrabold pt-2 border-t border-gray-200">
+                <div className="flex justify-between text-lg text-state-success font-extrabold pt-2 border-t border-gray-200">
                   <span>Total a Pagar:</span>
                   <span>{formatCurrency(resumenNueva.total)}</span>
                 </div>
@@ -481,7 +481,7 @@ export default function Facturacion() {
               </button>
               <button 
                 onClick={handleCrearFactura} 
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-colors flex items-center gap-1.5"
+                className="bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-colors flex items-center gap-1.5"
               >
                 <DollarSign size={16} /> Procesar Factura
               </button>
@@ -547,7 +547,7 @@ export default function Facturacion() {
             </div>
             <div className="flex justify-end gap-2 p-6 border-t border-gray-100 bg-slate-50">
               <button onClick={() => setEditingFactura(null)} className="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-100 transition-colors">Cancelar</button>
-              <button onClick={handleSaveEdit} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-xl shadow-md transition-colors flex items-center gap-1.5">
+              <button onClick={handleSaveEdit} className="bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-2 px-5 rounded-xl shadow-md transition-colors flex items-center gap-1.5">
                 <Save size={16} /> Guardar Cambios
               </button>
             </div>

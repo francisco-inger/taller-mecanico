@@ -1,6 +1,6 @@
 # SIGEST — Sistema de Gestión de Órdenes de Servicio para Taller Mecánico
 
-Este proyecto es una aplicación web empresarial diseñada para la gestión, control y seguimiento de órdenes de servicio en un taller mecánico automotriz. Fue desarrollado para la asignatura **Ingeniería de Software II (INF-259)** en la **Universidad Nacional Evangélica (UNEV)**.
+
 
 ---
 
@@ -8,7 +8,6 @@ Este proyecto es una aplicación web empresarial diseñada para la gestión, con
 * **Estudiante:** Francisco R. Díaz
 * **Matrícula:** 2023-3300016
 * **Universidad:** Universidad Nacional Evangélica (UNEV)
-* **Facultad:** Ingeniería · Escuela de Ingeniería en Sistemas
 * **Docente:** Ing. Carlos Artemio Escalante Lorenzo
 * **Asignación:** Tarea 4 — Lógica de Negocio con Principios SOLID y Mejoras de UI/UX
 
@@ -20,6 +19,14 @@ Este proyecto es una aplicación web empresarial diseñada para la gestión, con
 * **Frontend:** React (Vite) + Tailwind CSS + Lucide Icons
 * **Contenedores:** Docker & Docker Compose (entorno reproducible)
 * **Pruebas de Arquitectura:** dependency-cruiser (valida reglas de acoplamiento)
+
+---
+
+## 📄 Documentos de Entrega (Tarea 4)
+
+Los informes detallados con la justificación técnica de SOLID, el análisis UI/UX y la galería completa de capturas reales antes/después se encuentran en los siguientes archivos del repositorio:
+* 📘 **Documento Word (Completo con Capturas):** [TAREA4_SOLID_UIUX_Francisco_Diaz.docx](file:///C:/Users/Francisco/Desktop/Órdenes de servicio para taller mecánico/TAREA4_SOLID_UIUX_Francisco_Diaz.docx)
+* 🌐 **Documento Web Interactivo:** [TAREA4_SOLID_UIUX_Francisco_Diaz.html](file:///C:/Users/Francisco/Desktop/Órdenes de servicio para taller mecánico/TAREA4_SOLID_UIUX_Francisco_Diaz.html)
 
 ---
 
@@ -83,7 +90,7 @@ Para iniciar la base de datos, el backend y el frontend en un entorno idéntico 
 ```bash
 docker-compose up --build
 ```
-El backend estará disponible en `http://localhost:5000` y el frontend en `http://localhost:5173`.
+El backend estará disponible en `http://localhost:5000` y el frontend en ` https://taller-mecanico-frontend-khc6.onrender.com.
 
 ### 2. Ejecución Local en Desarrollo
 **Backend:**

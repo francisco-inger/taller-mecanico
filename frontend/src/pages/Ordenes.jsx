@@ -98,19 +98,19 @@ export default function Ordenes() {
     })
   }
 
-  const getStatusGradient = (estado) => {
-    const gradients = {
-      'RECIBIDA':       'from-gray-400 to-gray-600',
-      'EN_DIAGNOSTICO': 'from-purple-500 to-purple-700',
-      'PRESUPUESTADA':  'from-amber-500 to-orange-600',
-      'APROBADA':       'from-blue-500 to-blue-700',
-      'EN_REPARACION':  'from-blue-500 to-cyan-600',
-      'LISTA':          'from-emerald-500 to-teal-600',
-      'ENTREGADA':      'from-slate-700 to-slate-900',
-      'FACTURADA':      'from-emerald-600 to-green-700',
-      'RECHAZADA':      'from-red-500 to-rose-600',
+  const getStatusStyle = (estado) => {
+    const styles = {
+      'RECIBIDA':       'bg-state-warningBg text-state-warning',
+      'EN_DIAGNOSTICO': 'bg-state-infoBg text-state-info',
+      'PRESUPUESTADA':  'bg-state-warningBg text-state-warning',
+      'APROBADA':       'bg-state-infoBg text-state-info',
+      'EN_REPARACION':  'bg-state-infoBg text-state-info',
+      'LISTA':          'bg-state-successBg text-state-success',
+      'ENTREGADA':      'bg-state-successBg text-state-success',
+      'FACTURADA':      'bg-state-successBg text-state-success',
+      'RECHAZADA':      'bg-state-dangerBg text-state-danger',
     }
-    return gradients[estado] || 'from-gray-400 to-gray-600'
+    return styles[estado] || 'bg-gray-100 text-gray-800'
   }
 
   // Filtrado + ordenamiento + paginación
@@ -160,7 +160,7 @@ export default function Ordenes() {
         </div>
         <button
           onClick={() => navigate('/ordenes/nueva')}
-          className="group relative bg-gradient-to-r from-blue-600 to-emerald-500 hover:from-blue-700 hover:to-emerald-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+          className="group relative bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
         >
           <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
           Nueva Orden
@@ -233,12 +233,12 @@ export default function Ordenes() {
                     <p className="font-bold text-gray-900 text-sm truncate group-hover:text-blue-600 transition-colors">{orden.clienteNombre || 'Sin cliente'}</p>
                     <p className="text-xs text-gray-500 truncate">{orden.vehiculoNombre || 'Sin vehículo'}</p>
                     {orden.prioridad === 'URGENTE' && (
-                      <span className="inline-flex items-center gap-0.5 mt-1 bg-red-100 text-red-700 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded">
+                      <span className="inline-flex items-center gap-0.5 mt-1 bg-state-dangerBg text-state-danger px-1.5 py-0.5 text-[9px] font-bold uppercase rounded">
                         <Zap size={9} /> Urgente
                       </span>
                     )}
                     {orden.prioridad === 'VIP' && (
-                      <span className="inline-flex items-center gap-0.5 mt-1 bg-purple-100 text-purple-700 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded">
+                      <span className="inline-flex items-center gap-0.5 mt-1 bg-state-warningBg text-state-warning px-1.5 py-0.5 text-[9px] font-bold uppercase rounded">
                         ⭐ VIP
                       </span>
                     )}
@@ -246,7 +246,7 @@ export default function Ordenes() {
 
                   {/* Col 2: Estado */}
                   <div>
-                    <span className={`inline-block bg-gradient-to-r ${getStatusGradient(orden.estado)} text-white px-2 py-0.5 text-[9px] font-bold uppercase rounded-full shadow-sm whitespace-nowrap`}>
+                    <span className={`inline-block ${getStatusStyle(orden.estado)} px-2 py-0.5 text-[9px] font-bold uppercase rounded-full shadow-sm whitespace-nowrap`}>
                       {orden.estado.replace(/_/g, ' ')}
                     </span>
                   </div>
@@ -282,7 +282,7 @@ export default function Ordenes() {
                     key={pg}
                     onClick={() => setPage(pg)}
                     className={`w-6 h-6 rounded-md text-[11px] font-semibold transition-colors ${
-                      pg === page ? 'bg-blue-600 text-white' : 'hover:bg-gray-200 text-gray-600'
+                      pg === page ? 'bg-brand-primary text-white' : 'hover:bg-gray-200 text-gray-600'
                     }`}
                   >{pg}</button>
                 )
@@ -310,7 +310,7 @@ export default function Ordenes() {
               </div>
               <div className="flex items-center gap-2">
                 {detalleData?.estado && (
-                  <div className={`bg-gradient-to-r ${getStatusGradient(detalleData.estado)} text-white px-3 py-1 text-[10px] font-bold uppercase rounded-full shadow-md`}>
+                  <div className={`px-3 py-1 text-[10px] font-bold uppercase rounded-full shadow-sm ${getStatusStyle(detalleData.estado)}`}>
                     {detalleData.estado.replace(/_/g, ' ')}
                   </div>
                 )}
@@ -377,8 +377,8 @@ export default function Ordenes() {
                       <div className="pt-2 border-t border-amber-200/50">
                         <p className="text-xs text-gray-600 uppercase mb-2">Prioridad</p>
                         <div className={`inline-block px-3 py-1.5 text-xs font-bold uppercase rounded-full ${
-                          detalleData?.prioridad === 'URGENTE' ? 'bg-gradient-to-r from-red-500 to-rose-600 text-white' :
-                          detalleData?.prioridad === 'VIP' ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white' : 'bg-gradient-to-r from-gray-400 to-gray-600 text-white'
+                          detalleData?.prioridad === 'URGENTE' ? 'bg-state-dangerBg text-state-danger' :
+                          detalleData?.prioridad === 'VIP' ? 'bg-state-warningBg text-state-warning' : 'bg-slate-100 text-slate-600'
                         }`}>
                           {detalleData?.prioridad || 'NORMAL'}
                         </div>
@@ -457,14 +457,14 @@ export default function Ordenes() {
                       ) : detalleData.estado === 'ENTREGADA' ? (
                         <button
                           onClick={() => handleFacturar(detalleData.id)}
-                          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                          className="w-full flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                         >
                           <DollarSign size={20} /> Realizar Facturación
                         </button>
                       ) : (
                         <button
                           onClick={() => handleAvanzar(detalleData.id)}
-                          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                          className="w-full flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                         >
                           <ArrowRight size={20} /> Avanzar a {siguienteEstado(detalleData.estado)}
                         </button>
@@ -472,7 +472,7 @@ export default function Ordenes() {
                       {isAdmin && (
                         <button
                           onClick={() => handleEliminar(detalleData.id)}
-                          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                          className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                         >
                           <Trash2 size={20} /> Eliminar Orden
                         </button>

@@ -26,7 +26,7 @@ function BarraProgreso({ pasoActual }) {
       <div className="absolute inset-x-0 top-5 h-0.5 bg-gray-200 z-0" />
       {/* línea de progreso */}
       <div
-        className="absolute top-5 h-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 z-0 transition-all duration-500"
+        className="absolute top-5 h-0.5 bg-gradient-to-r from-[#0F9D6E] to-[#1A7FD4] z-0 transition-all duration-500"
         style={{ left: 0, width: `${((pasoActual - 1) / (PASOS.length - 1)) * 100}%` }}
       />
       {PASOS.map((p) => {
@@ -36,14 +36,14 @@ function BarraProgreso({ pasoActual }) {
         return (
           <div key={p.id} className="relative z-10 flex flex-col items-center gap-2">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-              completado ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-200'
-              : activo   ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200 scale-110'
+              completado ? 'bg-state-success border-state-success text-white shadow-lg shadow-emerald-200'
+              : activo   ? 'bg-brand-primary border-brand-primary text-white shadow-lg shadow-blue-200 scale-110'
               :             'bg-white border-gray-300 text-gray-400'
             }`}>
               {completado ? <Check size={18} strokeWidth={3} /> : <Icono size={17} />}
             </div>
             <div className="text-center">
-              <p className={`text-xs font-bold transition-colors ${activo ? 'text-blue-600' : completado ? 'text-emerald-600' : 'text-gray-400'}`}>
+              <p className={`text-xs font-bold transition-colors ${activo ? 'text-brand-primary' : completado ? 'text-state-success' : 'text-gray-400'}`}>
                 {p.titulo}
               </p>
               <p className="text-[10px] text-gray-400 hidden sm:block">{p.desc}</p>
@@ -524,7 +524,7 @@ export default function NuevaOrden() {
           <div className="flex gap-1">
             {PASOS.map(p => (
               <div key={p.id} className={`h-1.5 rounded-full transition-all duration-300 ${
-                p.id === paso ? 'w-6 bg-blue-600' : p.id < paso ? 'w-3 bg-emerald-400' : 'w-3 bg-gray-200'
+                p.id === paso ? 'w-6 bg-brand-primary' : p.id < paso ? 'w-3 bg-state-success' : 'w-3 bg-gray-200'
               }`} />
             ))}
           </div>
@@ -542,7 +542,7 @@ export default function NuevaOrden() {
               type="button"
               onClick={handleSubmit}
               disabled={creatingOrden}
-              className="flex items-center gap-2 btn-primary px-8 bg-emerald-600 hover:bg-emerald-700"
+              className="flex items-center gap-2 btn-primary px-8"
             >
               {creatingOrden
                 ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Creando...</>
@@ -559,8 +559,8 @@ export default function NuevaOrden() {
 function SectionTitle({ icono: Icono, titulo }) {
   return (
     <div className="flex items-center gap-2 mb-1">
-      <div className="p-1.5 rounded-lg bg-blue-100">
-        <Icono size={16} className="text-blue-600" />
+      <div className="p-1.5 rounded-lg bg-brand-light">
+        <Icono size={16} className="text-brand-primary" />
       </div>
       <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{titulo}</h3>
     </div>

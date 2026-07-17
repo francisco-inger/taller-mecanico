@@ -66,7 +66,7 @@ export default function ConfirmModal({ config, onClose }) {
             className={`flex-1 px-4 py-2.5 font-bold rounded-xl shadow-md transition-all duration-200 hover:scale-105 ${
               danger
                 ? 'bg-red-600 hover:bg-red-700 text-white'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                : 'bg-brand-primary hover:bg-brand-primaryHover text-white'
             }`}
           >
             {confirmText}

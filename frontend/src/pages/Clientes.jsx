@@ -102,7 +102,7 @@ export default function Clientes() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="group relative bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+          className="group relative bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
         >
           <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
           Nuevo Cliente
@@ -174,11 +174,11 @@ export default function Clientes() {
                         {cliente.nombre}
                       </h3>
                       {cliente.esFrecuente ? (
-                        <span className="text-[9px] font-black tracking-wider text-amber-800 uppercase bg-amber-100/80 border border-amber-200 px-2 py-0.5 rounded-full whitespace-nowrap">
+                        <span className="text-[9px] font-black tracking-wider text-state-warning uppercase bg-state-warningBg border border-state-warning/20 px-2 py-0.5 rounded-full whitespace-nowrap">
                           ⭐ VIP
                         </span>
                       ) : (
-                        <span className="text-[9px] font-black tracking-wider text-emerald-800 uppercase bg-emerald-50/80 border border-emerald-100 px-2 py-0.5 rounded-full whitespace-nowrap">
+                        <span className="text-[9px] font-black tracking-wider text-state-success uppercase bg-state-successBg border border-state-success/20 px-2 py-0.5 rounded-full whitespace-nowrap">
                           Activo
                         </span>
                       )}

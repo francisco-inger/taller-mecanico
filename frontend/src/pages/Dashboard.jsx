@@ -19,46 +19,47 @@ export default function Dashboard() {
       title: 'Órdenes Activas', 
       value: ordenes.filter(o => !['ENTREGADA', 'FACTURADA', 'RECHAZADA'].includes(o.estado)).length, 
       icon: Car, 
-      gradient: 'from-blue-500 to-cyan-500',
-      lightGradient: 'from-blue-50 to-cyan-50',
-      textColor: 'text-blue-600'
+      bgColor: 'bg-state-infoBg',
+      textColor: 'text-state-info',
+      iconBgColor: 'bg-state-info'
     },
     { 
       title: 'En Espera', 
       value: ordenes.filter(o => o.estado === 'RECIBIDA').length, 
       icon: Clock, 
-      gradient: 'from-amber-500 to-orange-500',
-      lightGradient: 'from-amber-50 to-orange-50',
-      textColor: 'text-amber-600'
+      bgColor: 'bg-state-warningBg',
+      textColor: 'text-state-warning',
+      iconBgColor: 'bg-state-warning'
     },
     { 
       title: 'Urgentes', 
-      value: ordenes.filter(o => o.prioridad === 'URGENTE').length, 
+      value: ordenes.filter(o => o.prioridad === 'URGENTE' && !['ENTREGADA', 'FACTURADA', 'RECHAZADA'].includes(o.estado)).length, 
       icon: AlertTriangle, 
-      gradient: 'from-red-500 to-rose-500',
-      lightGradient: 'from-red-50 to-rose-50',
-      textColor: 'text-red-600'
+      bgColor: 'bg-state-dangerBg',
+      textColor: 'text-state-danger',
+      iconBgColor: 'bg-state-danger'
     },
     { 
       title: 'Total Órdenes', 
       value: ordenes.length, 
       icon: CheckCircle, 
-      gradient: 'from-emerald-500 to-teal-500',
-      lightGradient: 'from-emerald-50 to-teal-50',
-      textColor: 'text-emerald-600'
+      bgColor: 'bg-state-successBg',
+      textColor: 'text-state-success',
+      iconBgColor: 'bg-state-success'
     },
   ]
 
   const getStatusBadge = (estado) => {
     const styles = {
-      'RECIBIDA': 'bg-gray-100 text-gray-800',
-      'EN_DIAGNOSTICO': 'bg-purple-100 text-purple-800',
-      'PRESUPUESTADA': 'bg-amber-100 text-amber-800',
-      'APROBADA': 'bg-blue-100 text-blue-800',
-      'EN_REPARACION': 'bg-blue-100 text-blue-800',
-      'LISTA': 'bg-emerald-100 text-emerald-800',
-      'ENTREGADA': 'bg-gray-800 text-white',
-      'RECHAZADA': 'bg-red-100 text-red-800',
+      'RECIBIDA': 'bg-state-warningBg text-state-warning',
+      'EN_DIAGNOSTICO': 'bg-state-infoBg text-state-info',
+      'PRESUPUESTADA': 'bg-state-warningBg text-state-warning',
+      'APROBADA': 'bg-state-infoBg text-state-info',
+      'EN_REPARACION': 'bg-state-infoBg text-state-info',
+      'LISTA': 'bg-state-successBg text-state-success',
+      'ENTREGADA': 'bg-state-successBg text-state-success',
+      'RECHAZADA': 'bg-state-dangerBg text-state-danger',
+      'FACTURADA': 'bg-state-successBg text-state-success',
     }
     return <span className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-full ${styles[estado] || 'bg-gray-100 text-gray-800'}`}>{estado.replace(/_/g, ' ')}</span>
   }
@@ -88,22 +89,20 @@ export default function Dashboard() {
           return (
             <div key={idx} className="group relative">
               {/* Glow background */}
-              <div className={`absolute inset-0 bg-gradient-to-r ${stat.gradient} rounded-2xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-300`}></div>
+              <div className={`absolute inset-0 ${stat.bgColor} rounded-2xl opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-300`}></div>
               
               {/* Card */}
-              <div className={`relative bg-gradient-to-br ${stat.lightGradient} border border-gray-200/50 rounded-2xl p-6 hover:border-gray-300/70 transition-all duration-300 group-hover:shadow-lg group-hover:scale-105 overflow-hidden`}>
-                {/* Animated gradient background */}
-                <div className={`absolute inset-0 bg-gradient-to-r ${stat.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+              <div className={`relative ${stat.bgColor} border border-gray-200/30 rounded-2xl p-6 hover:border-gray-300/50 transition-all duration-300 group-hover:shadow-lg group-hover:scale-105 overflow-hidden`}>
                 
                 <div className="relative flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 mb-2">{stat.title}</p>
+                    <p className={`text-sm font-semibold ${stat.textColor} opacity-80 mb-2`}>{stat.title}</p>
                     <div className="flex items-baseline gap-2">
-                      <h3 className={`text-4xl font-bold ${stat.textColor}`}>{stat.value}</h3>
+                      <h3 className={`text-4xl font-extrabold ${stat.textColor}`}>{stat.value}</h3>
                       <ArrowUp size={16} className={`${stat.textColor} opacity-60`} />
                     </div>
                   </div>
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.gradient} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-16 h-16 rounded-2xl ${stat.iconBgColor} text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
                     <Icon size={32} />
                   </div>
                 </div>

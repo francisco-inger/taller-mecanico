@@ -51,7 +51,7 @@ export default function Login() {
       <div className="max-w-md w-full relative z-10">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 text-white mb-6 shadow-2xl transform hover:scale-110 transition-transform duration-300">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0F9D6E] to-[#1A7FD4] text-white mb-6 shadow-2xl transform hover:scale-110 transition-transform duration-300">
             <Wrench size={40} />
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">SIGEST Taller</h1>
@@ -113,7 +113,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-8 py-3 px-4 bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 disabled:opacity-75 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+              className="w-full mt-8 py-3 px-4 bg-gradient-to-r from-[#0F9D6E] to-[#1A7FD4] hover:from-[#0d8960] hover:to-[#1772bf] text-white font-bold rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 disabled:opacity-75 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
