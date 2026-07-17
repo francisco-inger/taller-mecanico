@@ -384,7 +384,8 @@ export default function Facturacion() {
                       {isCajeroOrAdmin && (
                         <button
                           onClick={() => handleOpenFacturar(orden)}
-                          className="mt-4 w-full bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-1.5 text-sm"
+                          className="mt-4 w-full text-white font-bold py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-1.5 text-sm"
+                          style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
                         >
                           <DollarSign size={16} /> Facturar Orden
                         </button>
@@ -481,7 +482,8 @@ export default function Facturacion() {
               </button>
               <button 
                 onClick={handleCrearFactura} 
-                className="bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-colors flex items-center gap-1.5"
+                className="text-white font-bold py-2 px-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1.5"
+                style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
               >
                 <DollarSign size={16} /> Procesar Factura
               </button>
@@ -547,7 +549,7 @@ export default function Facturacion() {
             </div>
             <div className="flex justify-end gap-2 p-6 border-t border-gray-100 bg-slate-50">
               <button onClick={() => setEditingFactura(null)} className="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-100 transition-colors">Cancelar</button>
-              <button onClick={handleSaveEdit} className="bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-2 px-5 rounded-xl shadow-md transition-colors flex items-center gap-1.5">
+              <button onClick={handleSaveEdit} className="text-white font-bold py-2 px-5 rounded-xl shadow-md transition-all duration-200 flex items-center gap-1.5" style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}>
                 <Save size={16} /> Guardar Cambios
               </button>
             </div>

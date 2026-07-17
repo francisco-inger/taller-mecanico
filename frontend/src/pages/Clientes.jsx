@@ -102,7 +102,8 @@ export default function Clientes() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="group relative bg-brand-primary hover:bg-brand-primaryHover text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+          className="group relative text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+          style={{ background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' }}
         >
           <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
           Nuevo Cliente

@@ -64,10 +64,9 @@ export default function ConfirmModal({ config, onClose }) {
           <button
             onClick={handleConfirm}
             className={`flex-1 px-4 py-2.5 font-bold rounded-xl shadow-md transition-all duration-200 hover:scale-105 ${
-              danger
-                ? 'bg-red-600 hover:bg-red-700 text-white'
-                : 'bg-brand-primary hover:bg-brand-primaryHover text-white'
+              danger ? 'bg-red-600 hover:bg-red-700 text-white' : 'text-white'
             }`}
+            style={!danger ? { background: 'linear-gradient(135deg, #1A7FD4, #0F9D6E)' } : {}}
           >
             {confirmText}
           </button>

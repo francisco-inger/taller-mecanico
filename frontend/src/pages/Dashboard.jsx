@@ -76,9 +76,9 @@ export default function Dashboard() {
           <h2 className="text-2xl font-bold text-gray-800">Resumen de Actividad</h2>
           <p className="text-gray-500 mt-1">Bienvenido al panel de control de SIGEST Taller</p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl">
-          <Zap size={18} className="text-emerald-600" />
-          <span className="text-sm font-semibold text-emerald-700">Sistema en línea</span>
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-white shadow-md" style={{ background: 'linear-gradient(135deg, #0F9D6E, #0B7A55)' }}>
+          <Zap size={18} className="text-white/90" />
+          <span className="text-sm font-semibold">Sistema en línea</span>
         </div>
       </div>
 

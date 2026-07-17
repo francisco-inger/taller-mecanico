@@ -96,9 +96,10 @@ export default function Layout() {
                   title={collapsed ? item.name : undefined}
                   className={`relative flex items-center gap-2.5 px-2.5 py-2.5 transition-all duration-300 overflow-hidden ${
                     isActive
-                      ? 'bg-brand-light border-l-[3px] border-l-brand-primary text-white rounded-r-xl rounded-l-none'
+                      ? 'border-l-[3px] border-l-brand-primary text-white rounded-r-xl rounded-l-none'
                       : 'text-[#C3CED2] hover:text-white hover:bg-white/10 rounded-xl'
                   } ${collapsed ? 'justify-center' : ''}`}
+                  style={isActive ? { background: 'linear-gradient(90deg, rgba(26,127,212,0.22), rgba(15,157,110,0.10))' } : {}}
                 >
                   {/* shimmer effect */}
                   {!isActive && (
@@ -140,7 +141,7 @@ export default function Layout() {
           {collapsed ? (
             /* Avatar compacto al colapsar */
             <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-emerald-400 flex items-center justify-center text-white font-bold text-sm">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1A7FD4] to-[#0F9D6E] flex items-center justify-center text-white font-bold text-sm">
                 {(user?.nombre || 'A').charAt(0).toUpperCase()}
               </div>
               <button
@@ -156,7 +157,7 @@ export default function Layout() {
               <div className="absolute inset-0 bg-gradient-to-r from-[#0F9D6E] to-[#1A7FD4] rounded-xl opacity-0 group-hover:opacity-75 blur transition-opacity duration-300" />
               <div className="relative bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl p-3 border border-white/10 hover:border-white/20 transition-all duration-300">
                 <div className="flex items-start gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-emerald-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1A7FD4] to-[#0F9D6E] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                     {(user?.nombre || 'A').charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
