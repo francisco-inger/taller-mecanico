@@ -3,6 +3,7 @@ import { FileText, Search, Printer, DollarSign, Calendar, Hash, Trash2, Edit, Al
 import { useFacturaStore } from '../store/facturaStore'
 import { useOrdenStore } from '../store/ordenStore'
 import { useAuthStore } from '../store/authStore'
+import { useConfigStore } from '../store/configStore'
 import { formatMoneda as formatCurrency } from '../utils/formatMoneda'
 import { useToast } from '../components/Toast'
 
