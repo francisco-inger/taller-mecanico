@@ -1,0 +1,146 @@
+UNIVERSIDAD NACIONAL EVANGÉLICA (UNEV) 
+Facultad de Ingeniería · Escuela de Ingeniería en Sistemas 
+ 
+ASIGNACIÓN PRÁCTICA 
+Lógica de Negocio con Principios SOLID y Mejoras de UI/UX 
+Asignatura:  Ingeniería de Software II 
+Unidades:  Tema 1 — Lógica de Negocio  |  Tema 2 — Diseño Frontend (UI/UX) 
+Docente:  Ing. Carlos Artemio Escalante Lorenzo 
+Modalidad:  Proyecto práctico individual/grupal con demostración en video 
+«Todo lo que hagan, háganlo de corazón, como para el Señor», Colosenses 3:23   
+1. Presentación de la Asignación 
+Esta asignación integra los dos ejes centrales del curso: la lógica de negocio construida sobre código robusto mediante los principios SOLID, y el diseño de interfaz y experiencia de usuario (UI/UX). El estudiante tomará un proyecto propio (o uno asignado) y aplicará mejoras verificables tanto en el backend como en el frontend, documentando el proceso y demostrándolo en un video. 
+El objetivo no es escribir código nuevo desde cero, sino transformar código existente en código que resiste el cambio: 
+mantenible, extensible y profesional. 
+2. Objetivos de Aprendizaje 
+Aplicar de manera práctica los cinco principios SOLID sobre la lógica de negocio de un proyecto real. 
+Identificar «malos olores» de código (code smells) y refactorizarlos con criterio de ingeniería. 
+Diseñar e implementar mejoras de UI/UX que aumenten la usabilidad y accesibilidad del sistema. 
+Comunicar decisiones técnicas de forma clara mediante una demostración en video. 
+3. Tema 1 — Lógica de Negocio: Reglas SOLID para Código que Resiste 
+El estudiante deberá aplicar y justificar por escrito cada uno de los cinco principios en la capa de lógica de negocio de su proyecto (services, controllers, modelos, repositorios, etc.): 
+SRP — Single Responsibility Principle (Responsabilidad Única) 
+Cada clase debe tener una sola razón para cambiar. 
+Separar responsabilidades mezcladas (ej.: una clase que calcula, guarda y notifica debe dividirse). 
+OCP — Open/Closed Principle (Abierto/Cerrado) 
+Abierto a la extensión, cerrado a la modificación. 
+Agregar comportamiento nuevo sin modificar el código ya probado (ej.: estrategias de descuento o de pago). 
+LSP — Liskov Substitution Principle (Sustitución de Liskov) 
+Una subclase debe poder reemplazar a su clase base sin alterar el comportamiento esperado del programa. 
+ISP — Interface Segregation Principle (Segregación de Interfaces) 
+Preferir interfaces pequeñas y específicas; ninguna clase debe implementar métodos que no usa. 
+DIP — Dependency Inversion Principle (Inversión de Dependencias) 
+• Depender de abstracciones (interfaces), no de implementaciones concretas; usar inyección de dependencias. 
+Entregable de este tema: por cada principio, un fragmento de código «antes» (problemático) y «después» (refactorizado), con una breve explicación de qué olor de código se eliminó y por qué la nueva versión resiste mejor el cambio. 
+4. Tema 2 — Diseño Frontend: Mejoras Profesionales de UI/UX 
+Sobre la interfaz del mismo proyecto (aplicación empresarial de escritorio o web), el estudiante aplicará técnicas profesionales de diseño de interfaz. Por cada técnica implementada debe presentar una captura «ANTES» y una captura «DESPUÉS» con la justificación del cambio. Se exige un mínimo de seis (6) técnicas de la siguiente lista. 
+4.1 Fundamentos de diseño (obligatorios) 
+Jerarquía visual y consistencia: tipografía, espaciado, alineación y componentes reutilizables. 
+Usabilidad: estados de carga, mensajes de error claros, validación de formularios y retroalimentación al usuario. 
+Accesibilidad: contraste adecuado, etiquetas (labels), navegación por teclado y textos alternativos. 
+Experiencia (UX): reducción de pasos, flujos intuitivos y microinteracciones útiles. 
+4.2 Técnicas profesionales de interfaz (aplicación empresarial) 
+El estudiante deberá implementar y documentar, con evidencia antes/después, las siguientes técnicas propias de un sistema profesional: 
+Asistente / Wizard: convertir un formulario largo y saturado en un asistente por pasos (ej.: alta de cliente, registro de venta o configuración inicial), con barra de progreso y validación por etapa. 
+Ventanas modales (Modal / Dialog): reemplazar acciones que abrían pantallas completas por diálogos modales para confirmaciones, edición rápida o mensajes críticos, evitando la pérdida de contexto del usuario. 
+Barra de menú (MenuStrip / Ribbon): organizar las funciones del sistema en un menú superior estructurado por categorías (Archivo, Ventas, Inventario, Reportes, Configuración) con iconos y atajos de teclado. 
+Ocultación / deshabilitación de opciones según permisos: mostrar u ocultar botones y menús según el rol del usuario (administrador, cajero, supervisor). Las opciones no permitidas se ocultan o deshabilitan (grayed out), no se dejan visibles y sin función. 
+Menú lateral colapsable (ocultación de menú): implementar un panel de navegación lateral que se pueda colapsar/expandir para aprovechar el espacio de trabajo, con iconos visibles al colapsar. 
+Técnica de color aplicada con criterio: definir una paleta profesional (primario, secundario, acento, estados de éxito/advertencia/error) basada en teoría del color; documentar los códigos HEX y justificar contraste y significado (ej.: rojo para eliminar, verde para guardar). 
+Cuadrículas de datos profesionales (DataGrid / DataGridView): mejorar las tablas de datos con encabezados fijos, filas alternadas (zebra), formato condicional, ordenamiento, filtrado, paginación y alineación correcta de números y fechas. 
+Retroalimentación visual y estados: agregar tooltips, estados hover/focus, spinners de carga, badges de notificación y mensajes de confirmación (toast/snackbar). 
+Entregable de este tema: por cada técnica aplicada, la comparación «ANTES» y «DESPUÉS» en imágenes, más una justificación técnica de 2-3 líneas (qué problema de usabilidad resolvía y qué principio de diseño aplicó). 
+  
+4.3 Lista de verificación de técnicas aplicadas 
+El estudiante marcará las técnicas implementadas y anexará la evidencia correspondiente. Se requiere un mínimo de seis (6) marcadas. 
+☐ 
+Técnica 
+Evidencia (pantalla / módulo) 
+Antes/Desp. 
+☐ 
+Asistente / Wizard por pasos 
+ 
+☐  ☐ 
+☐ 
+Ventanas modales (Modal / Dialog) 
+ 
+☐  ☐ 
+☐ 
+Barra de menú (MenuStrip / Ribbon) 
+ 
+☐  ☐ 
+☐ 
+Ocultación de opciones por rol/permiso 
+ 
+☐  ☐ 
+☐ 
+Menú lateral colapsable 
+ 
+☐  ☐ 
+☐ 
+Técnica de color (paleta + HEX) 
+ 
+☐  ☐ 
+☐ 
+DataGrid / DataGridView profesional 
+ 
+☐  ☐ 
+☐ 
+Retroalimentación visual (tooltips, toast) 
+ 
+☐  ☐ 
+5. Requisitos de Entrega 
+Repositorio del proyecto (GitHub/GitLab) con el código refactorizado y un archivo README.md que resuma las mejoras. 
+Documento técnico (PDF) que contenga: (a) la tabla de los 5 principios SOLID con ejemplos antes/después; (b) la sección de mejoras UI/UX con capturas justificadas. 
+Video de demostración (5 a 10 minutos) subido a YouTube (no listado) o Drive, donde el estudiante: 
+Muestra el proyecto funcionando. 
+Explica al menos 3 de los principios SOLID aplicados, mostrando el código. 
+Recorre las mejoras de UI/UX realizadas. 
+Justifica sus decisiones de diseño e ingeniería. 
+6. Rúbrica de Evaluación (10 puntos) 
+La calificación se distribuye según los siguientes criterios: 
+Criterio 
+Excelente 
+Aceptable 
+Deficiente 
+Punts. 
+Aplicación de SOLID (backend) 
+Los 5 principios aplicados correctamente y justificados 
+3-4 principios aplicados con errores menores 
+1-2 principios o mal aplicados 
+3 
+Refactorización (antes/después) 
+Comparación clara con evidencia de mejora 
+Comparación parcial 
+Sin evidencia comparativa 
+1.5 
+Técnicas profesionales UI/UX (mín. 6) 
+6+ técnicas con antes/después justificados 
+4-5 técnicas o justificación parcial 
+Menos de 4 o cambios superficiales 
+2 
+Funcionamiento del proyecto 
+Ejecuta sin errores, cumple requisitos 
+Errores menores 
+Fallas graves 
+1.5 
+Video de demostración 
+Claro, completo, explica decisiones 
+Cubre lo básico 
+Confuso o incompleto 
+1.5 
+Documentación / 
+README 
+Completa y profesional 
+Básica 
+Ausente o pobre 
+1.5 
+TOTAL 
+ 
+ 
+ 
+10 
+ 
+7. Recomendaciones y Reflexión 
+Recuerden que un buen ingeniero no solo hace que el código funcione, sino que lo hace comprensible y sostenible en el tiempo. Como enseña la Escritura: «El sabio edifica su casa sobre la roca» (Mateo 7:24). SOLID es esa roca sobre la que construimos software que perdura. 
+Fecha de entrega: _______________________     Ponderación en el curso: _______________________ 

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fase 4 - Presentación Final</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul-unev: #00337A;
+      --azul-light: #1A5FB4;
+      --azul-dark: #001F4D;
+      --azul-gradient: linear-gradient(135deg, #001F4D 0%, #00337A 50%, #1A5FB4 100%);
+      --naranja-accent: #FF8C00;
+      --gris-dark: #0F172A;
+      --gris-body: #1E293B;
+      --gris-light: #F8FAFC;
+      --text-main: #FFFFFF;
+      --text-muted: #94A3B8;
+      --bg-slide: #0B132B;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --code-bg: #030712;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --transition-speed: 0.5s;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', sans-serif; background-color: var(--gris-dark); color: var(--text-main); overflow: hidden; height: 100vh; width: 100vw; }
+    .deck { position: relative; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at top right, rgba(0, 51, 122, 0.4) 0%, rgba(15, 23, 42, 1) 70%); }
+    .slide { position: absolute; width: 90vw; height: 85vh; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 1px solid var(--border-color); border-radius: 24px; padding: 3rem; opacity: 0; pointer-events: none; transform: translateY(20px) scale(0.98); transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .slide.active { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+    .slide-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .slide-title { font-size: 2.2rem; font-weight: 800; background: linear-gradient(to right, #FFFFFF, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
+    .slide-title span.accent { color: var(--naranja-accent); -webkit-text-fill-color: initial; }
+    .univeridad-logo { font-size: 0.9rem; font-weight: 600; color: var(--azul-light); letter-spacing: 2px; text-transform: uppercase; border: 1.5px solid var(--azul-light); padding: 4px 12px; border-radius: 8px; }
+    .slide-body { flex-grow: 1; display: flex; gap: 2rem; align-items: center; justify-content: space-between; }
+    .slide-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted); }
+    .slide-cover { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%; }
+    .cover-badge { background: rgba(0, 51, 122, 0.3); border: 1px solid var(--azul-light); color: #7DB2FF; padding: 6px 16px; border-radius: 100px; font-size: 0.9rem; font-weight: 600; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+    .cover-title { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; background: linear-gradient(135deg, #FFFFFF 30%, #7DB2FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .cover-subtitle { font-size: 1.5rem; color: var(--text-muted); margin-bottom: 3rem; font-weight: 300; }
+    .cover-meta { display: flex; gap: 3rem; font-size: 1rem; background: rgba(30, 41, 59, 0.4); padding: 1rem 2rem; border-radius: 16px; border: 1px solid var(--border-color); }
+    .meta-item strong { color: var(--naranja-accent); }
+    .flex-col-left { width: 48%; display: flex; flex-direction: column; gap: 1.2rem; }
+    .flex-col-right { width: 48%; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 1.2rem; }
+    .concept-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.5rem; transition: transform 0.3s ease, border-color 0.3s ease; width: 100%; }
+    .concept-card:hover { transform: translateY(-3px); border-color: var(--azul-light); }
+    .concept-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: #7DB2FF; display: flex; align-items: center; gap: 10px; }
+    .concept-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+    .controls { position: absolute; bottom: 25px; display: flex; gap: 1rem; z-index: 100; }
+    .btn-nav { background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px 20px; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
+    .btn-nav:hover { background: var(--azul-light); border-color: #7DB2FF; transform: translateY(-2px); }
+    .btn-nav:active { transform: translateY(0); }
+    .slide-indicator { position: absolute; top: 25px; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); background: rgba(30, 41, 59, 0.4); padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border-color); }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <div class="slide-indicator" id="slideIndicator">1 / 5</div>
+
+    <!-- DIAPOSITIVA 1: PORTADA -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-cover">
+        <div class="cover-badge">Fase 4 — Presentación</div>
+        <h1 class="cover-title">Mejoras de Arquitectura &<br>Calidad de Software</h1>
+        <p class="cover-subtitle">Sistema de Gestión de Órdenes de Servicio para Taller Mecánico</p>
+        <div class="cover-meta">
+          <div class="meta-item">Estudiante: <strong>Francisco R. Diaz</strong></div>
+          <div class="meta-item">Matrícula: <strong>2023-3300016</strong></div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Universidad Nacional Evangélica</span>
+        <span>Presiona Flecha Derecha (➔) para avanzar</span>
+      </div>
+    </div>
+
+    <!-- DIAPOSITIVA 2: EL DIAGNÓSTICO -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <h2 class="slide-title">1. El Diagnóstico: <span class="accent">Cómo estaba antes</span></h2>
+        <div class="univeridad-logo">UNEV</div>
+      </div>
+      <div class="slide-body">
+        <div class="flex-col-left">
+          <div class="concept-card">
+            <h3 style="color: #FF5F56;">❌ Lógica de Negocio Acoplada</h3>
+            <p>Los controladores HTTP estaban sobrecargados realizando validaciones estrictas de reglas de negocio en lugar de delegarlo al dominio. (Ej. Verificación exhaustiva de formato de vehículos en las rutas).</p>
+          </div>
+          <div class="concept-card">
+            <h3 style="color: #FF5F56;">❌ Duplicación Visual (Frontend)</h3>
+            <p>Componentes secundarios tenían jerarquías de título (H1) redundantes, y funciones críticas (como el formateo de moneda en RD$) estaban duplicadas a lo largo de los archivos.</p>
+          </div>
+        </div>
+        <div class="flex-col-right">
+          <div class="concept-card">
+            <h3 style="color: #FF5F56;">❌ Bloqueos en UX</h3>
+            <p>Uso de primitivas nativas del navegador (<strong>alert()</strong> y <strong>confirm()</strong>) provocando interrupciones abruptas del hilo de ejecución y una mala experiencia de usuario.</p>
+          </div>
+          <div class="concept-card">
+            <h3 style="color: #FF5F56;">❌ Mezcla de Lógica</h3>
+            <p>Los menús laterales calculaban visualmente las vistas según el rol de manera invasiva directamente en los layouts (Hardcode).</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Análisis Inicial del Sistema</span>
+        <span>Página 2</span>
+      </div>
+    </div>
+
+    <!-- DIAPOSITIVA 3: DECISIONES -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <h2 class="slide-title">2. Decisiones Arquitectónicas <span class="accent">y Razonamiento</span></h2>
+        <div class="univeridad-logo">UNEV</div>
+      </div>
+      <div class="slide-body">
+        <div class="flex-col-left">
+          <div class="concept-card">
+            <h3>Arquitectura Hexagonal (DDD)</h3>
+            <p><strong>Por qué:</strong> Necesitaba separar completamente la lógica pura de "Órdenes de Taller" de la base de datos (PostgreSQL) y el Framework (Express). Esto logra un sistema 100% agnóstico y testeable.</p>
+          </div>
+          <div class="concept-card">
+            <h3>Delegación en Casos de Uso</h3>
+            <p><strong>Por qué:</strong> Centralizar la validación en clases como <code>CrearVehiculoUseCase</code>. Así el Frontend y los controladores se liberan de lógica compleja y solo presentan la información.</p>
+          </div>
+        </div>
+        <div class="flex-col-right">
+          <div class="concept-card">
+            <h3>Patrones Facade, State y Strategy</h3>
+            <p><strong>Por qué:</strong><br>
+            • <strong>Facade:</strong> Simplificar la comunicación de los controladores.<br>
+            • <strong>State:</strong> Manejar el flujo complejo de las Órdenes.<br>
+            • <strong>Strategy:</strong> Aislar cálculos de impuestos (ITBIS).</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Implementación de Patrones</span>
+        <span>Página 3</span>
+      </div>
+    </div>
+
+    <!-- DIAPOSITIVA 4: ANTES Y DESPUES -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <h2 class="slide-title">3. El Antes y el Después <span class="accent">(Frontend y Backend)</span></h2>
+        <div class="univeridad-logo">UNEV</div>
+      </div>
+      <div class="slide-body">
+        <div class="flex-col-left">
+          <div class="concept-card" style="border-color: #FF5F56;">
+            <h3 style="color: #FF5F56;">El Antes</h3>
+            <p><strong>Backend:</strong> Modelos atados fuertemente a Prisma. Sin eventos de dominio. Controladores monolíticos.</p>
+            <p><strong>Frontend:</strong> Componentes como <code>NuevaOrden.jsx</code> con <em>parseInt</em> y validaciones duras. Notificaciones con <code>window.alert()</code>.</p>
+          </div>
+        </div>
+        <div class="flex-col-right">
+          <div class="concept-card" style="border-color: #27C93F;">
+            <h3 style="color: #27C93F;">El Después</h3>
+            <p><strong>Backend:</strong> Entidades ricas y agnósticas en la carpeta <code>/domain</code>. Reglas de negocio protegidas e independientes del framework.</p>
+            <p><strong>Frontend:</strong> Centralizado (<code>formatMoneda</code>), notificaciones asíncronas no invasivas (<code>Toast</code>) y menús dinámicos extraídos al archivo <code>navigationConfig.js</code>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Evolución del Proyecto</span>
+        <span>Página 4</span>
+      </div>
+    </div>
+
+    <!-- DIAPOSITIVA 5: APRENDIZAJES -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <h2 class="slide-title">4. Aprendizajes <span class="accent">de Calidad</span></h2>
+        <div class="univeridad-logo">UNEV</div>
+      </div>
+      <div class="slide-body">
+        <div class="flex-col-left">
+          <div class="concept-card">
+            <h3 style="color: #FFBD2E;">Control de Versiones (Git)</h3>
+            <p>Aprendí el valor de los <strong>commits atómicos</strong>. Implementé mis mejoras en 5 envíos claramente definidos (feat, refactor, fix) que cuentan la historia del cambio de manera ordenada y reversible.</p>
+          </div>
+          <div class="concept-card">
+            <h3 style="color: #FFBD2E;">Protección del Dominio (DDD)</h3>
+            <p>Entendí que el corazón de mi aplicación (la capa de dominio) debe estar protegido contra detalles técnicos (Infraestructura), haciendo que el negocio sobreviva incluso si cambio de React o Postgres a otras herramientas.</p>
+          </div>
+        </div>
+        <div class="flex-col-right">
+          <div class="concept-card">
+            <h3 style="color: #FFBD2E;">Coherencia UI / UX</h3>
+            <p>La calidad del software no solo reside en el Backend. Centralizar el formato de moneda y asegurar que los modales (como Toast y Confirm) sean consistentes en toda la aplicación, eleva sustancialmente la percepción del producto final por el usuario.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Construcción de Software de Calidad</span>
+        <span>Página 5</span>
+      </div>
+    </div>
+
+    <!-- CONTROLES -->
+    <div class="controls">
+      <button class="btn-nav" id="btnPrev">◀ Anterior</button>
+      <button class="btn-nav" id="btnNext" style="background: var(--azul-light);">Siguiente ▶</button>
+    </div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const indicator = document.getElementById('slideIndicator');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    let currentSlide = 0;
+
+    function updateSlides() {
+      slides.forEach((slide, idx) => {
+        if (idx === currentSlide) { slide.classList.add('active'); } 
+        else { slide.classList.remove('active'); }
+      });
+      indicator.textContent = `${currentSlide + 1} / ${slides.length}`;
+      if (currentSlide === slides.length - 1) {
+        btnNext.textContent = "Finalizar ✖";
+        btnNext.style.background = "#FF5F56";
+      } else {
+        btnNext.textContent = "Siguiente ▶";
+        btnNext.style.background = "var(--azul-light)";
+      }
+    }
+
+    function nextSlide() { if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); } }
+    function prevSlide() { if (currentSlide > 0) { currentSlide--; updateSlides(); } }
+
+    btnNext.addEventListener('click', () => {
+      if (currentSlide === slides.length - 1) { currentSlide = 0; updateSlides(); } else { nextSlide(); }
+    });
+    btnPrev.addEventListener('click', prevSlide);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        if (currentSlide === slides.length - 1) { currentSlide = 0; updateSlides(); } else { nextSlide(); }
+      } else if (e.key === 'ArrowLeft') { prevSlide(); }
+    });
+
+    updateSlides();
+  </script>
+</body>
+</html>

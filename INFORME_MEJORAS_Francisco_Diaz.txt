@@ -1,0 +1,96 @@
+INFORME DE MEJORAS IMPLEMENTADASSistema SIGEST — Órdenes de Servicio para Taller Mecánico
+EstudianteFrancisco R. Díaz
+Matrícula2023-3300016
+MateriaIngeniería de Software 2
+UniversidadUNEV
+1. Introducción
+El presente documento describe en detalle todas las mejoras arquitectónicas, de usabilidad y de calidad de código implementadas en el sistema SIGEST durante la Fase 2 del proyecto académico de Ingeniería de Software 2 (UNEV). Las mejoras abarcan tanto el backend (Node.js + Express + Prisma) como el frontend (React + Vite), siguiendo los principios de la Arquitectura Hexagonal, Domain-Driven Design (DDD) y SOLID.
+2. Mejoras en el Backend
+2.1  Nuevo Caso de Uso: CrearVehiculoUseCase
+Antes de la mejora, la ruta HTTP de creación de vehículos contenía directamente validaciones de campos y transformaciones de datos (parseInt). Esto violaba el Principio de Responsabilidad Única (SRP) ya que el controlador no debería conocer las reglas de negocio.
+Problema detectado (ANTES):
+  backend/src/interfaces/http/vehiculo.routes.js (antes)
+// vehiculo.routes.js — Controlador HTTP (MAL: lógica de negocio aquí)router.post('/', async (req, res) => {  const { placa, marca, modelo, anio } = req.body;  if (!placa || !marca || !modelo) {    return res.status(400).json({ error: 'Campos obligatorios faltantes' });  }  const anioInt = parseInt(anio);  // ← transformación de dato en controlador (MAL)  const vehiculo = await prisma.vehiculo.create({    data: { placa, marca, modelo, anio: anioInt }  });  res.json(vehiculo);});
+Solución implementada (DESPUÉS):
+  backend/src/application/casos-de-uso/CrearVehiculoUseCase.js (después)
+// CrearVehiculoUseCase.js — Capa de Aplicación (BIEN: reglas aquí)class CrearVehiculoUseCase {  constructor(vehiculoRepo) {    this.vehiculoRepo = vehiculoRepo;  }  async ejecutar(datos) {    const { placa, marca, modelo, anio } = datos;    if (!placa || !marca || !modelo)      throw new Error('Placa, marca y modelo son obligatorios');    const anioValido = parseInt(anio);   // ← transformación centralizada en el UC    return this.vehiculoRepo.crear({ placa, marca, modelo, anio: anioValido });  }}// vehiculo.routes.js — Controlador (ahora delgado)router.post('/', async (req, res) => {  const veh = await facade.crearVehiculo(req.body);  // ← solo delega  res.json(veh);});
+Resultado: El controlador HTTP queda completamente libre de lógica de negocio. Si las reglas cambian, solo se modifica el Caso de Uso, nunca la ruta.
+2.2  Refactorización de TallerFacade (Inyección de Dependencias)
+Se inyectó CrearVehiculoUseCase como dependencia del TallerFacade, manteniendo la separación de capas y el patrón de Inyección de Dependencias (DIP — SOLID).
+•  TallerFacade recibe el caso de uso en su constructor
+•  El contenedor de dependencias (container.js) instancia y conecta todo
+•  Los controladores solo conocen el facade, jamás los repositorios directamente
+3. Mejoras en el Frontend (React)
+3.1  Reemplazo de Alertas Nativas por Toast y ConfirmModal
+El sistema usaba window.alert() y window.confirm() del navegador para notificar al usuario. Estas funciones bloquean el hilo principal de JavaScript y son visualmente inconsistentes con el diseño del sistema.
+❌ ANTES — Alerta Bloqueante
+✅ DESPUÉS — Toast Asíncrono
+window.alert('Factura generada');
+toast.success('Factura generada ✅');
+window.alert('Error: ' + err.message);
+toast.error(err.message);
+window.confirm('¿Generar factura?');
+setConfirmConfig({ title: '¿Generar factura?', onConfirm: ... });
+Componentes nuevos creados: Toast.jsx (sistema de notificaciones animadas) y ConfirmModal.jsx (modal de confirmación accesible). Ambos se envuelven en el contexto global de App.jsx mediante ToastProvider.
+3.2  Centralización del Formato de Moneda (formatMoneda.js)
+La lógica para formatear montos en pesos dominicanos (RD$) estaba duplicada en múltiples archivos con ligeras diferencias. Se creó una utilidad central:
+  frontend/src/utils/formatMoneda.js
+// frontend/src/utils/formatMoneda.jsexport function formatMoneda(valor) {  return new Intl.NumberFormat('es-DO', {    style: 'currency',    currency: 'DOP',    minimumFractionDigits: 2,  }).format(valor ?? 0);}// Uso en cualquier componente:import { formatMoneda } from '../utils/formatMoneda';formatMoneda(orden.total)  // → RD$ 12,500.00
+Archivos actualizados para usar esta utilidad: Ordenes.jsx, Facturacion.jsx, Dashboard.jsx.
+3.3  Navegación Dinámica por Rol (navigationConfig.js)
+La lógica de qué elementos de menú mostrar según el rol del usuario (ADMIN, RECEPCIONISTA, MECANICO, CAJERO) estaba codificada directamente dentro del componente Layout.jsx. Se extrajo a un archivo de configuración:
+•  navigationConfig.js define qué rutas son visibles para cada rol
+•  Layout.jsx lee esta configuración y renderiza el menú dinámicamente
+•  Añadir un nuevo rol o nueva ruta solo requiere modificar navigationConfig.js
+3.4  Eliminación de Encabezados H1 Duplicados
+Cada vista secundaria (Órdenes, Clientes, Facturación, etc.) tenía un elemento <h1> propio que duplicaba visualmente el título ya mostrado en el header principal del sistema. Se eliminaron estos H1 de las vistas secundarias para mantener una jerarquía visual correcta.
+•  Archivos corregidos: Dashboard.jsx, Ordenes.jsx, Facturacion.jsx, Clientes.jsx, Usuarios.jsx, Mecanicos.jsx
+3.5  Limpieza de Validaciones en Vistas (NuevaOrden y Clientes)
+Componentes como NuevaOrden.jsx y Clientes.jsx contenían parseInt() y validaciones estrictas que pertenecen al backend. Se eliminaron del frontend para que el Backend sea la única fuente de verdad en validaciones de negocio.
+4. Tabla Resumen de Cambios
+Área
+Aspecto
+Antes
+Después
+Backend
+Validación vehículo
+En controlador HTTP
+CrearVehiculoUseCase
+Backend
+Inyección dependencias
+Instanciación directa
+Inyectado en TallerFacade
+Frontend
+Notificaciones
+window.alert() bloqueante
+Toast asíncrono + ConfirmModal
+Frontend
+Formato moneda
+Duplicado en cada vista
+formatMoneda.js centralizado
+Frontend
+Menú por rol
+Hardcoded en Layout.jsx
+navigationConfig.js
+Frontend
+Jerarquía visual
+H1 duplicados en vistas
+Un solo título por contexto
+Frontend
+Validaciones en vista
+parseInt en NuevaOrden.jsx
+Solo en backend (UseCase)
+5. Control de Versiones — Commits Realizados
+Todos los cambios fueron registrados en 5 commits atómicos en la rama master del repositorio https://github.com/francisco-inger/taller-mecanico.git siguiendo la convención semántica (Conventional Commits):
+feat(backend): implement CrearVehiculoUseCase and decouple validation
+refactor(frontend): centralize formatMoneda logic across components
+feat(frontend): add Toast and ConfirmModal, replace native alerts
+refactor(frontend): extract role-based navigation logic to navigationConfig
+fix(frontend): remove duplicate h1 headers and pure business validation from views
+6. Conclusión
+Las mejoras implementadas en esta fase fortalecen significativamente la calidad del sistema SIGEST en tres dimensiones fundamentales:
+•  Arquitectura: El código sigue la Arquitectura Hexagonal con separación estricta entre capas.
+•  Usabilidad: La experiencia del usuario es más fluida, sin interrupciones de diálogos nativos.
+•  Mantenibilidad: La lógica centralizada (moneda, navegación, validaciones) reduce el riesgo de errores futuros.
+El sistema cumple ahora con los principios SOLID, el patrón DDD y las buenas prácticas de Ingeniería de Software exigidas en el proyecto académico de la asignatura INF-259.
+Documento generado el 03 de julio de 2026 — SIGEST v2.0 | Universidad Nacional Evangélica

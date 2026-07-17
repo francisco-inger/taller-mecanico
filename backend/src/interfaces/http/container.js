@@ -11,6 +11,9 @@ const PrismaVehiculoRepository  = require('../../infrastructure/persistence/pris
 const PrismaUsuarioRepository   = require('../../infrastructure/persistence/prisma/PrismaUsuarioRepository');
 const PrismaFacturaRepository   = require('../../infrastructure/persistence/prisma/PrismaFacturaRepository');
 const PrismaMecanicoRepository  = require('../../infrastructure/persistence/prisma/PrismaMecanicoRepository');
+const PrismaConsentimientoRepository = require('../../infrastructure/persistence/prisma/PrismaConsentimientoRepository');
+const PrismaSolicitudArcoRepository = require('../../infrastructure/persistence/prisma/PrismaSolicitudArcoRepository');
+const PrismaFirmaDigitalRepository = require('../../infrastructure/persistence/prisma/PrismaFirmaDigitalRepository');
 const NotificadorEmail          = require('../../infrastructure/notifications/NotificadorEmail');
 const BitacoraAuditoria         = require('../../infrastructure/notifications/BitacoraAuditoria');
 const crearAuthMiddleware        = require('../../infrastructure/auth/authMiddleware');
@@ -32,6 +35,9 @@ const vehiculoRepo = new PrismaVehiculoRepository();
 const usuarioRepo  = new PrismaUsuarioRepository();
 const facturaRepo  = new PrismaFacturaRepository();
 const mecanicoRepo = new PrismaMecanicoRepository();
+const consentimientoRepo = new PrismaConsentimientoRepository();
+const solicitudArcoRepo = new PrismaSolicitudArcoRepository();
+const firmaDigitalRepo = new PrismaFirmaDigitalRepository();
 const configRepo   = require('../../infrastructure/persistence/prisma/PrismaConfiguracionRepository');
 
 // ── 2. Auth ───────────────────────────────────────────────────
@@ -65,4 +71,8 @@ module.exports = {
   tallerFacade,
   authMiddleware,
   jwtAdapter,
+  consentimientoRepo,
+  solicitudArcoRepo,
+  firmaDigitalRepo,
 };
+

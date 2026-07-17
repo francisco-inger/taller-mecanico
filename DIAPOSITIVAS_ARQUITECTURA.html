@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arquitectura y Patrones de Diseño — UNEV</title>
+  
+  <!-- Tipografía premium de Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ────────────────────────────────────────────────
+       Sistema de Diseño & Variables CSS
+       ──────────────────────────────────────────────── */
+    :root {
+      --azul-unev: #00337A;
+      --azul-light: #1A5FB4;
+      --azul-dark: #001F4D;
+      --azul-gradient: linear-gradient(135deg, #001F4D 0%, #00337A 50%, #1A5FB4 100%);
+      --naranja-accent: #FF8C00;
+      --gris-dark: #0F172A;
+      --gris-body: #1E293B;
+      --gris-light: #F8FAFC;
+      --text-main: #FFFFFF;
+      --text-muted: #94A3B8;
+      --bg-slide: #0B132B;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --code-bg: #030712;
+      --border-color: rgba(255, 255, 255, 0.1);
+      
+      --transition-speed: 0.5s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--gris-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ────────────────────────────────────────────────
+       Contenedor de Diapositivas
+       ──────────────────────────────────────────────── */
+    .deck {
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top right, rgba(0, 51, 122, 0.4) 0%, rgba(15, 23, 42, 1) 70%);
+    }
+
+    .slide {
+      position: absolute;
+      width: 90vw;
+      height: 85vh;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 3rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px) scale(0.98);
+      transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    /* ────────────────────────────────────────────────
+       Cabeceras y Pie de Diapositivas
+       ──────────────────────────────────────────────── */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #FFFFFF, var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slide-title span.accent {
+      color: var(--naranja-accent);
+      -webkit-text-fill-color: initial;
+    }
+
+    .univeridad-logo {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--azul-light);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: 1.5px solid var(--azul-light);
+      padding: 4px 12px;
+      border-radius: 8px;
+    }
+
+    .slide-body {
+      flex-grow: 1;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ────────────────────────────────────────────────
+       Estilos de la Diapositiva de Portada
+       ──────────────────────────────────────────────── */
+    .slide-cover {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100%;
+    }
+
+    .cover-badge {
+      background: rgba(0, 51, 122, 0.3);
+      border: 1px solid var(--azul-light);
+      color: #7DB2FF;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cover-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #FFFFFF 30%, #7DB2FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .cover-subtitle {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 3rem;
+      font-size: 1rem;
+      background: rgba(30, 41, 59, 0.4);
+      padding: 1rem 2rem;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+    }
+
+    .meta-item strong {
+      color: var(--naranja-accent);
+    }
+
+    /* ────────────────────────────────────────────────
+       Diagramas y Contenedores Flexibles
+       ──────────────────────────────────────────────── */
+    .flex-col-left {
+      width: 48%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .flex-col-right {
+      width: 48%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .concept-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .concept-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--azul-light);
+    }
+
+    .concept-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #7DB2FF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .concept-card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ────────────────────────────────────────────────
+       Diagrama Hexagonal Interactivo
+       ──────────────────────────────────────────────── */
+    .hex-diagram {
+      position: relative;
+      width: 380px;
+      height: 380px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hex-ring {
+      position: absolute;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.5s ease;
+    }
+
+    .ring-domain {
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle, var(--azul-light) 0%, var(--azul-dark) 100%);
+      border: 3px solid #7DB2FF;
+      box-shadow: 0 0 30px rgba(26, 95, 180, 0.6);
+      z-index: 3;
+    }
+
+    .ring-application {
+      width: 240px;
+      height: 240px;
+      border: 2px dashed rgba(26, 95, 180, 0.8);
+      background: rgba(0, 51, 122, 0.15);
+      z-index: 2;
+    }
+
+    .ring-infrastructure {
+      width: 340px;
+      height: 340px;
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      background: rgba(30, 41, 59, 0.1);
+      z-index: 1;
+    }
+
+    .ring-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      position: absolute;
+    }
+
+    .label-domain {
+      color: #FFFFFF;
+      font-size: 1rem;
+    }
+
+    .label-app {
+      top: 15px;
+      color: #7DB2FF;
+    }
+
+    .label-infra {
+      bottom: 15px;
+      color: var(--naranja-accent);
+    }
+
+    /* ────────────────────────────────────────────────
+       Cajas de Código con Estilo VS Code
+       ──────────────────────────────────────────────── */
+    .code-window {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      height: 360px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .code-header {
+      background: rgba(30, 41, 59, 0.3);
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .code-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #FF5F56; }
+    .dot-yellow { background: #FFBD2E; }
+    .dot-green { background: #27C93F; }
+
+    .code-tab {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .code-body {
+      padding: 1rem;
+      overflow-y: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #E2E8F0;
+      text-align: left;
+      flex-grow: 1;
+    }
+
+    /* Resaltado sintáctico simple */
+    .keyword { color: #F43F5E; font-weight: bold; }
+    .class-name { color: #10B981; }
+    .comment { color: #64748B; font-style: italic; }
+    .string { color: #38BDF8; }
+    .function { color: #F59E0B; }
+
+    /* ────────────────────────────────────────────────
+       Controles de Navegación
+       ──────────────────────────────────────────────── */
+    .controls {
+      position: absolute;
+      bottom: 25px;
+      display: flex;
+      gap: 1rem;
+      z-index: 100;
+    }
+
+    .btn-nav {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-nav:hover {
+      background: var(--azul-light);
+      border-color: #7DB2FF;
+      transform: translateY(-2px);
+    }
+
+    .btn-nav:active {
+      transform: translateY(0);
+    }
+
+    .slide-indicator {
+      position: absolute;
+      top: 25px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(30, 41, 59, 0.4);
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="deck">
+    
+    <!-- Indicador de Slide -->
+    <div class="slide-indicator" id="slideIndicator">1 / 5</div>
+
+    <!-- DIAPOSITIVA 1: PORTADA -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-cover">
+        <div class="cover-badge">Mi Exposicion</div>
+        <h1 class="cover-title">Arquitectura Hexagonal &<br>Patrones de Diseño</h1>
+        <p class="cover-subtitle">Sistema de Gestión de Órdenes de Servicio para Taller Mecánico</p>
+        
+        <div class="cover-meta">
+          <div class="meta-item">Estudiante: <strong>Francisco R. Diaz</strong></div>
+          <div class="meta-item">Matrícula: <strong>[2023-3300016]</strong></div>
+          
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Universidad Nacional Evangélica</span>
+        <span>Presiona Flecha Derecha (➔) para avanzar</span>
+      </div>
+    </div>
+
+    <!-- DIAPOSITIVA 2: ARQUITECTURA HEXAGONAL -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <h2 class="slide-title">Arquitectura Hexagonal <span class="accent">/ DDD Táctico</span></h2>
+        <div class="univeridad-logo">UNEV</div>
+      </div>
+      
+      <div class="slide-body">
+        <div class="flex-col-left">
+          <div class="concept-card">
+            <h3>Dominio (El Corazón)</h3>
+            <p>Contiene la lógica de negocio pura, las entidades (Aggregate Roots) como <strong>OrdenServicio</strong> y los Value Objects (Prioridad, Dinero). Es totalmente independiente de la base de datos y frameworks.</p>
+          </div>
+          <div class="concept-card">
+            <h3>Aplicación (Casos de Uso)</h3>
+            <p>Orquesta el flujo del sistema. Define los servicios de aplicación, coordinando las entidades del dominio a través de un controlador o la fachada <strong>TallerFacade</strong>.</p>
+          </div>
+          <div class="concept-card">
+            <h3>Infraestructura & Interfaces (Adaptadores)</h3>
+            <p>Se encarga de los detalles técnicos: la base de datos (PostgreSQL con Prisma) y los controladores HTTP de Express (interfaces de usuario y API).</p>
+          </div>
+        </div>
+        
+        <div class="flex-col-right">
+          <div class="hex-diagram">
+            <div class="hex-ring ring-infrastructure">
+              <span class="ring-label label-infra">Infraestructura (Postgres/Prisma)</span>
+            </div>
+            <div class="hex-ring ring-application">
+              <span class="ring-label label-app">Aplicación (Casos de Uso)</span>
+            </div>
+            <div class="hex-ring ring-domain">
+              <span class="ring-label label-domain">Dominio</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="slide-footer">
+        <span>Arquitectura y Patrones de Diseño</span>
+        <span>Página 2</span>
+      </div>
+    </div>
+
+    <!-- DIAPOSITIVA 3: PATRÓN STATE -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <h2 class="slide-title">Patrón de Diseño: <span class="accent">State (Comportamiento)</span></h2>
+        <div class="univeridad-logo">UNEV</div>
+      </div>
+      
+      <div class="slide-body">
+        <div class="flex-col-left">
+          <div class="concept-card">
+            <h3>Propósito</h3>
+            <p>Permite a la entidad <strong>OrdenServicio</strong> modificar su comportamiento cuando cambia su estado interno (Recibida ➔ Diagnóstico ➔ Presupuestada, etc.). Evita el uso de condicionales masivos.</p>
+          </div>
+          <div class="concept-card">
+            <h3>Diseño decoupled (OCP & LSP)</h3>
+            <p>Cumple con el <em>Principio Abierto/Cerrado</em>. Para agregar un nuevo estado (ej. "Espera de Repuestos") no modificamos la orden, solo creamos un nuevo archivo de estado concreto que hereda de la clase base abstracta.</p>
+          </div>
+        </div>
+        
+        <div class="flex-col-right">
+          <div class="code-window">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot dot-red"></div>
+                <div class="code-dot dot-yellow"></div>
+                <div class="code-dot dot-green"></div>
+              </div>
+              <div class="code-tab">EstadoRecibida.js</div>
+            </div>
+            <div class="code-body">
+<span class="keyword">const</span> <span class="class-name">EstadoOrden</span> = <span class="function">require</span>(<span class="string">'./EstadoOrden'</span>);
+<span class="keyword">const</span> <span class="class-name">EstadoEnDiagnostico</span> = <span class="function">require</span>(<span class="string">'./EstadoEnDiagnostico'</span>);
+
+<span class="comment">// Estado inicial de la orden</span>
+<span class="keyword">class</span> <span class="class-name">EstadoRecibida</span> <span class="keyword">extends</span> <span class="class-name">EstadoOrden</span> {
+  <span class="function">avanzar</span>(orden) {
+    <span class="comment">// Transición encapsulada</span>
+    orden.<span class="function">_cambiarEstado</span>(<span class="keyword">new</span> <span class="class-name">EstadoEnDiagnostico</span>());
+  }
+
+  <span class="function">nombre</span>() {
+    <span class="keyword">return</span> <span class="string">'RECIBIDA'</span>;
+  }
+}
+
+module.exports = <span class="class-name">EstadoRecibida</span>;</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="slide-footer">
+        <span>Patrón State — Ciclo de Vida de la Orden</span>
+        <span>Página 3</span>
+      </div>
+    </div>
+
+    <!-- DIAPOSITIVA 4: PATRÓN STRATEGY -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <h2 class="slide-title">Patrón de Diseño: <span class="accent">Strategy (Comportamiento)</span></h2>
+        <div class="univeridad-logo">UNEV</div>
+      </div>
+      
+      <div class="slide-body">
+        <div class="flex-col-left">
+          <div class="concept-card">
+            <h3>Propósito</h3>
+            <p>Define una familia de algoritmos, encapsula cada uno de ellos y los hace intercambiables. En nuestro sistema se utiliza en la <strong>CalculadoraOrden</strong> para aplicar diferentes estrategias de impuestos y descuentos dominicanos.</p>
+          </div>
+          <div class="concept-card">
+            <h3>Encapsulamiento del ITBIS 18%</h3>
+            <p>La lógica de recargos, impuestos de ley (ITBIS) y descuentos corporativos se procesa mediante estrategias dinámicas. Esto aísla el cálculo financiero del flujo operativo de la orden.</p>
+          </div>
+        </div>
+        
+        <div class="flex-col-right">
+          <div class="code-window">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot dot-red"></div>
+                <div class="code-dot dot-yellow"></div>
+                <div class="code-dot dot-green"></div>
+              </div>
+              <div class="code-tab">CalculadoraOrden.js</div>
+            </div>
+            <div class="code-body">
+<span class="keyword">class</span> <span class="class-name">CalculadoraOrden</span> {
+  <span class="function">constructor</span>(estrategiaDescuento) {
+    <span class="keyword">this</span>.estrategiaDescuento = estrategiaDescuento;
+    <span class="keyword">this</span>.TASA_ITBIS = <span class="string">0.18</span>; <span class="comment">// 18% República Dominicana</span>
+  }
+
+  <span class="function">calcular</span>(orden) {
+    <span class="keyword">const</span> subtotal = orden.servicios.reduce(...) + orden.repuestos.reduce(...);
+    <span class="keyword">const</span> descuento = <span class="keyword">this</span>.estrategiaDescuento.<span class="function">aplicar</span>(subtotal);
+    <span class="keyword">const</span> itbis = (subtotal - descuento) * <span class="keyword">this</span>.TASA_ITBIS;
+    
+    <span class="keyword">return</span> { subtotal, descuento, itbis, total: subtotal - descuento + itbis };
+  }
+}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="slide-footer">
+        <span>Patrón Strategy — Cálculo de Costos e Impuestos</span>
+        <span>Página 4</span>
+      </div>
+    </div>
+
+    <!-- DIAPOSITIVA 5: CONCLUSIONES -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <h2 class="slide-title">Conclusiones <span class="accent">& Calidad de Software</span></h2>
+        <div class="univeridad-logo">UNEV</div>
+      </div>
+      
+      <div class="slide-body">
+        <div class="flex-col-left">
+          <div class="concept-card">
+            <h3>Validación del Acoplamiento</h3>
+            <p>Se configuró <strong>dependency-cruiser</strong> en el proyecto backend. Si una clase de dominio o aplicación importa algo de infraestructura, los tests automáticos fallan, garantizando la pureza del diseño.</p>
+          </div>
+          <div class="concept-card">
+            <h3>Consistencia por Eventos</h3>
+            <p>El uso de Domain Events (<strong>EstadoCambiadoEvent</strong>) permite un acoplamiento asíncrono para notificaciones y facturación. Se utiliza el patrón <em>pull</em> del agregado para asegurar que solo se disparen tras persistir con éxito en Postgres.</p>
+          </div>
+        </div>
+        
+        <div class="flex-col-right">
+          <div class="concept-card" style="width: 100%; border-color: var(--azul-light); background: rgba(0, 51, 122, 0.1);">
+            <h3 style="color: #7DB2FF;">Lecciones Aprendidas</h3>
+            <ul style="list-style-type: none; display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0.5rem;">
+              <li style="font-size: 0.95rem; color: var(--text-muted);">✔️ <strong>Mantenibilidad:</strong> Añadir nuevos requerimientos sin tocar código existente.</li>
+              <li style="font-size: 0.95rem; color: var(--text-muted);">✔️ <strong>Testabilidad:</strong> Testear el negocio sin necesidad de levantar bases de datos.</li>
+              <li style="font-size: 0.95rem; color: var(--text-muted);">✔️ <strong>Seguridad:</strong> Ciclo de vida blindado frente a transiciones inválidas.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="slide-footer">
+        <span>Cierre de la Exposición</span>
+        <span>Página 5</span>
+      </div>
+    </div>
+
+    <!-- BOTONES DE NAVEGACIÓN -->
+    <div class="controls">
+      <button class="btn-nav" id="btnPrev">◀ Anterior</button>
+      <button class="btn-nav" id="btnNext" style="background: var(--azul-light);">Siguiente ▶</button>
+    </div>
+
+  </div>
+
+  <!-- Lógica JavaScript para la interactividad de las Diapositivas -->
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const indicator = document.getElementById('slideIndicator');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    let currentSlide = 0;
+
+    function updateSlides() {
+      slides.forEach((slide, idx) => {
+        if (idx === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+      indicator.textContent = `${currentSlide + 1} / ${slides.length}`;
+      
+      // Estilizar botón de Siguiente cuando es el final
+      if (currentSlide === slides.length - 1) {
+        btnNext.textContent = "Finalizar ✖";
+        btnNext.style.background = "#FF5F56";
+      } else {
+        btnNext.textContent = "Siguiente ▶";
+        btnNext.style.background = "var(--azul-light)";
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    }
+
+    // Navegación por botones
+    btnNext.addEventListener('click', () => {
+      if (currentSlide === slides.length - 1) {
+        // Al dar clic en finalizar vuelve a la primera
+        currentSlide = 0;
+        updateSlides();
+      } else {
+        nextSlide();
+      }
+    });
+    btnPrev.addEventListener('click', prevSlide);
+
+    // Navegación por teclado
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        if (currentSlide === slides.length - 1) {
+          currentSlide = 0;
+          updateSlides();
+        } else {
+          nextSlide();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    updateSlides();
+  </script>
+</body>
+</html>

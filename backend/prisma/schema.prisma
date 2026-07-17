@@ -22,6 +22,7 @@ model Usuario {
   creadoEn     DateTime @default(now()) @map("creado_en")
 
   logActividad LogActividad[]
+  firmasDigitales FirmaDigital[]
 
   @@map("usuarios")
 }
@@ -46,6 +47,8 @@ model Cliente {
 
   vehiculos   Vehiculo[]
   ordenes     Orden[]
+  consentimientos Consentimiento[]
+  solicitudesArco SolicitudArco[]
 
   @@map("clientes")
 }
@@ -213,4 +216,50 @@ model Configuracion {
   actualizadoEn  DateTime @updatedAt @map("actualizado_en")
 
   @@map("configuracion")
+}
+
+// ── Consentimientos de Privacidad ──────────────────────────────
+model Consentimiento {
+  id            String   @id @default(uuid())
+  clienteId     String   @map("cliente_id")
+  tipo          String   // 'COMPARTIR_TERCEROS' | 'MARKETING' | 'GENERAL'
+  otorgado      Boolean  @default(false)
+  observacion   String?
+  creadoEn      DateTime @default(now()) @map("creado_en")
+  actualizadoEn DateTime @updatedAt @map("actualizado_en")
+
+  cliente       Cliente  @relation(fields: [clienteId], references: [id])
+
+  @@map("consentimientos")
+}
+
+// ── Solicitudes de Titulares ARCO ─────────────────────────────
+model SolicitudArco {
+  id            String   @id @default(uuid())
+  clienteId     String   @map("cliente_id")
+  tipo          String   // 'ACCESO' | 'RECTIFICACION' | 'CANCELACION' | 'OPOSICION'
+  descripcion   String
+  estado        String   @default("PENDIENTE") // 'PENDIENTE' | 'EN_PROCESO' | 'COMPLETADA' | 'RECHAZADA'
+  respuesta     String?
+  creadoEn      DateTime @default(now()) @map("creado_en")
+  actualizadoEn DateTime @updatedAt @map("actualizado_en")
+
+  cliente       Cliente  @relation(fields: [clienteId], references: [id])
+
+  @@map("solicitudes_arco")
+}
+
+// ── Firmas Digitales ──────────────────────────────────────────
+model FirmaDigital {
+  id           String   @id @default(uuid())
+  entidad      String   // 'CONSENTIMIENTO' | 'ORDEN' | 'FACTURA'
+  entidadId    String   @map("entidad_id")
+  firmante     String   // nombre de quien firma
+  imagenBase64 String   @db.Text @map("imagen_base64")
+  usuarioId    String   @map("usuario_id")
+  creadoEn     DateTime @default(now()) @map("creado_en")
+
+  usuario      Usuario  @relation(fields: [usuarioId], references: [id])
+
+  @@map("firmas_digitales")
 }

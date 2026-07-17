@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarea 4 — SOLID y UI/UX | Francisco R. Díaz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --blue-600: #2563EB;
+      --blue-50: #EFF6FF;
+      --emerald-600: #059669;
+      --emerald-50: #ECFDF5;
+      --red-600: #DC2626;
+      --red-50: #FEF2F2;
+      --amber-600: #D97706;
+      --amber-50: #FFFBEB;
+      --purple-600: #7C3AED;
+      --purple-50: #F5F3FF;
+      --slate-900: #0F172A;
+      --slate-700: #334155;
+      --slate-500: #64748B;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --brand-500: #0EA5E9;
+      --brand-600: #0284C7;
+      --brand-700: #0369A1;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--slate-900);
+      background: var(--slate-50);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    /* ── Header ── */
+    .header-block {
+      background: linear-gradient(135deg, var(--blue-600), var(--emerald-600));
+      color: white;
+      border-radius: 20px;
+      padding: 48px 40px;
+      text-align: center;
+      margin-bottom: 32px;
+      box-shadow: 0 20px 60px rgba(37, 99, 235, 0.25);
+    }
+
+    .header-block h1 {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .header-block .subtitle {
+      font-size: 16px;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    .header-block .meta {
+      font-size: 13px;
+      opacity: 0.75;
+      margin-top: 16px;
+      line-height: 1.8;
+    }
+
+    /* ── Secciones ── */
+    h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin: 40px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid var(--blue-600);
+      display: inline-block;
+    }
+
+    h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--slate-700);
+      margin: 24px 0 10px;
+    }
+
+    h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 12px 0 6px;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    p {
+      margin-bottom: 12px;
+      color: var(--slate-700);
+    }
+
+    ul,
+    ol {
+      margin-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    li {
+      margin-bottom: 4px;
+      color: var(--slate-700);
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    .badge-blue {
+      background: var(--blue-50);
+      color: var(--blue-600);
+    }
+
+    .badge-green {
+      background: var(--emerald-50);
+      color: var(--emerald-600);
+    }
+
+    .badge-red {
+      background: var(--red-50);
+      color: var(--red-600);
+    }
+
+    .badge-amber {
+      background: var(--amber-50);
+      color: var(--amber-600);
+    }
+
+    .badge-purple {
+      background: var(--purple-50);
+      color: var(--purple-600);
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: white;
+      border-radius: 14px;
+      border: 1px solid var(--slate-200);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Code blocks ── */
+    .code-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .code-card {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    .code-header {
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .code-header.before {
+      background: #FEF2F2;
+      color: var(--red-600);
+    }
+
+    .code-header.after {
+      background: #ECFDF5;
+      color: var(--emerald-600);
+    }
+
+    pre {
+      background: #1E293B;
+      color: #E2E8F0;
+      padding: 16px;
+      font-size: 12px;
+      line-height: 1.65;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    }
+
+    pre .kw {
+      color: #C084FC;
+    }
+
+    /* keyword */
+    pre .fn {
+      color: #67E8F9;
+    }
+
+    /* function */
+    pre .st {
+      color: #86EFAC;
+    }
+
+    /* string */
+    pre .cm {
+      color: #64748B;
+    }
+
+    /* comment */
+    pre .cl {
+      color: #FCD34D;
+    }
+
+    /* class */
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+
+    th {
+      background: var(--slate-100);
+      font-weight: 700;
+      text-align: left;
+      padding: 10px 14px;
+      color: var(--slate-700);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 10px 14px;
+      border-top: 1px solid var(--slate-200);
+    }
+
+    tr:nth-child(even) td {
+      background: var(--slate-50);
+    }
+
+    /* ── Callout ── */
+    .callout {
+      display: flex;
+      gap: 12px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+
+    .callout-blue {
+      background: var(--blue-50);
+      border-left: 4px solid var(--blue-600);
+    }
+
+    .callout-green {
+      background: var(--emerald-50);
+      border-left: 4px solid var(--emerald-600);
+    }
+
+    .callout-amber {
+      background: var(--amber-50);
+      border-left: 4px solid var(--amber-600);
+    }
+
+    /* ── Color swatch ── */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .color-swatch {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .color-swatch .swatch {
+      height: 50px;
+    }
+
+    .color-swatch .label {
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .color-swatch .hex {
+      font-family: monospace;
+      font-size: 10px;
+      color: var(--slate-500);
+    }
+
+    /* ── Checklist ── */
+    .checklist td:first-child {
+      text-align: center;
+      font-size: 18px;
+    }
+
+    /* Print */
+    @media print {
+      body {
+        font-size: 12px;
+      }
+
+      .header-block {
+        box-shadow: none;
+      }
+
+      .card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      .code-grid {
+        break-inside: avoid;
+      }
+
+      pre {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!--  HEADER                                                              -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <div class="header-block">
+      <h1>Asignación Práctica — SOLID y Mejoras UI/UX</h1>
+      <div class="subtitle">Lógica de Negocio con Principios SOLID y Diseño Frontend Profesional</div>
+      <div class="meta">
+        <strong>Estudiante:</strong> Francisco R. Díaz &nbsp;|&nbsp; <strong>Matrícula:</strong> 2023-3300016<br>
+        <strong>Asignatura:</strong> Ingeniería de Software II (INF-259) &nbsp;|&nbsp; <strong>Universidad:</strong>
+        UNEV<br>
+        <strong>Proyecto:</strong> SIGEST — Sistema de Órdenes de Servicio para Taller Mecánico<br>
+        <strong>Stack:</strong> Node.js · Express · Prisma · PostgreSQL | React · Vite · Tailwind CSS<br>
+        <strong>Docente:</strong> Ing. Carlos Artemio Escalante Lorenzo
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!--  TEMA 1 — SOLID                                                      -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <h2>📐 Tema 1 — Principios SOLID en la Lógica de Negocio</h2>
+
+    <p>El sistema SIGEST implementa una <strong>Arquitectura Hexagonal</strong> con <strong>Domain-Driven Design
+        (DDD)</strong>. A continuación se muestra cómo cada principio SOLID se aplica en código real del proyecto, con
+      evidencia de refactorización <em>antes/después</em>.</p>
+
+    <!-- ── SRP ─────────────────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-blue">SRP</span>
+        Single Responsibility Principle — Responsabilidad Única
+      </div>
+      <p><strong>Regla:</strong> Cada clase debe tener una sola razón para cambiar.</p>
+      <p><strong>Problema detectado:</strong> El controlador HTTP <code>vehiculo.routes.js</code> contenía directamente
+        la validación de campos obligatorios, la transformación de datos (<code>parseInt</code>), y la persistencia.
+        Tres razones para cambiar en una sola función.</p>
+
+      <div class="code-grid">
+        <div class="code-card">
+          <div class="code-header before">❌ ANTES — vehiculo.routes.js</div>
+          <pre><span class="cm">// Controlador HTTP con lógica de negocio mezclada</span>
+router.post('/', <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> { placa, marca, modelo, anio } = req.body;
+
+  <span class="cm">// ❌ Validación de negocio en el controlador</span>
+  <span class="kw">if</span> (!placa || !marca || !modelo) {
+    <span class="kw">return</span> res.status(400)
+      .json({ error: <span class="st">'Campos obligatorios'</span> });
+  }
+
+  <span class="cm">// ❌ Transformación de datos aquí</span>
+  <span class="kw">const</span> anioInt = <span class="fn">parseInt</span>(anio);
+
+  <span class="cm">// ❌ Acceso directo a Prisma</span>
+  <span class="kw">const</span> vehiculo = <span class="kw">await</span> prisma.vehiculo
+    .create({ data: { placa, marca,
+      modelo, anio: anioInt } });
+  res.json(vehiculo);
+});</pre>
+        </div>
+        <div class="code-card">
+          <div class="code-header after">✅ DESPUÉS — CrearVehiculoUseCase.js</div>
+          <pre><span class="cm">// Caso de uso con una sola responsabilidad</span>
+<span class="kw">class</span> <span class="cl">CrearVehiculoUseCase</span> {
+  <span class="fn">constructor</span>(vehiculoRepo) {
+    <span class="kw">this</span>.vehiculoRepo = vehiculoRepo;
+  }
+
+  <span class="kw">async</span> <span class="fn">ejecutar</span>(datos) {
+    <span class="kw">const</span> { placa, marca, modelo, anio } = datos;
+    <span class="kw">if</span> (!placa || !marca || !modelo)
+      <span class="kw">throw new</span> Error(<span class="st">'Obligatorios'</span>);
+
+    <span class="kw">const</span> anioValido = <span class="fn">parseInt</span>(anio);
+    <span class="kw">return this</span>.vehiculoRepo.crear({
+      placa, marca, modelo, anio: anioValido
+    });
+  }
+}
+<span class="cm">// Controlador ahora solo delega:</span>
+router.post('/', <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> v = <span class="kw">await</span> facade.<span class="fn">crearVehiculo</span>(req.body);
+  res.json(v);
+});</pre>
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <strong>✅ Olor eliminado:</strong> <em>God Method</em> — la función del controlador hacía demasiadas cosas.
+        Ahora el controlador tiene una sola responsabilidad (recibir HTTP y delegar), y el Use Case tiene otra (validar
+        y crear).
+      </div>
+    </div>
+
+    <!-- ── OCP ─────────────────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-green">OCP</span>
+        Open/Closed Principle — Abierto/Cerrado
+      </div>
+      <p><strong>Regla:</strong> Abierto a la extensión, cerrado a la modificación.</p>
+      <p><strong>Problema detectado:</strong> Si la lógica de descuento fuera un <code>if/else</code> dentro de la
+        calculadora, cada nuevo tipo de descuento requeriría modificar la clase existente.</p>
+
+      <div class="code-grid">
+        <div class="code-card">
+          <div class="code-header before">❌ ANTES — Lógica con if/else</div>
+          <pre><span class="cm">// Cálculo de descuento con if/else (violación OCP)</span>
+<span class="kw">function</span> <span class="fn">calcularDescuento</span>(subtotal, tipo) {
+  <span class="kw">if</span> (tipo === <span class="st">'frecuente'</span>) {
+    <span class="kw">return</span> subtotal * 0.10;
+  } <span class="kw">else if</span> (tipo === <span class="st">'corporativo'</span>) {
+    <span class="kw">return</span> subtotal * 0.15;
+  } <span class="kw">else if</span> (tipo === <span class="st">'promocion'</span>) {
+    <span class="kw">return</span> subtotal * 0.05;
+  }
+  <span class="cm">// ❌ Para agregar un nuevo descuento hay que</span>
+  <span class="cm">// modificar esta función ya probada</span>
+  <span class="kw">return</span> 0;
+}</pre>
+        </div>
+        <div class="code-card">
+          <div class="code-header after">✅ DESPUÉS — Patrón Strategy</div>
+          <pre><span class="cm">// CalculadoraOrden — Contexto del Strategy</span>
+<span class="kw">class</span> <span class="cl">CalculadoraOrden</span> {
+  <span class="fn">constructor</span>(estrategia = <span class="kw">new</span> SinDescuento()) {
+    <span class="kw">this</span>._estrategia = estrategia;
+  }
+  <span class="fn">calcularTotal</span>(servicios, repuestos) {
+    <span class="kw">const</span> subtotal = ...;
+    <span class="kw">const</span> desc = <span class="kw">this</span>._estrategia.<span class="fn">calcular</span>(subtotal);
+    <span class="kw">return</span> { subtotal, descuento: desc, ... };
+  }
+}
+<span class="cm">// Agregar nuevo descuento = crear clase nueva:</span>
+<span class="kw">class</span> <span class="cl">DescuentoCorporativo</span> {
+  <span class="fn">constructor</span>(porcentaje) { <span class="kw">this</span>.porcentaje = porcentaje; }
+  <span class="fn">calcular</span>(sub) { <span class="kw">return</span> sub * (<span class="kw">this</span>.porcentaje / 100); }
+  <span class="fn">descripcion</span>() { <span class="kw">return</span> <span class="st">`Corporativo (${this.porcentaje}%)`</span>; }
+}
+<span class="cm">// ✅ CalculadoraOrden NO se modifica</span></pre>
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <strong>✅ Olor eliminado:</strong> <em>Cascada if/else</em> — el patrón Strategy permite agregar nuevos
+        descuentos (DescuentoClienteFrecuente, DescuentoCorporativo, DescuentoPromocion, SinDescuento) creando clases
+        nuevas, sin tocar la calculadora ya probada.
+      </div>
+    </div>
+
+    <!-- ── LSP ─────────────────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-purple">LSP</span>
+        Liskov Substitution Principle — Sustitución de Liskov
+      </div>
+      <p><strong>Regla:</strong> Una subclase debe poder reemplazar a su clase base sin alterar el comportamiento
+        esperado.</p>
+      <p><strong>Problema detectado:</strong> Sin el patrón State, la lógica de transiciones de estado estaría dispersa
+        en condicionales que verifican el estado actual antes de cada operación.</p>
+
+      <div class="code-grid">
+        <div class="code-card">
+          <div class="code-header before">❌ ANTES — Condicionales dispersos</div>
+          <pre><span class="cm">// Sin patrón State (violación LSP)</span>
+<span class="kw">function</span> <span class="fn">avanzarEstado</span>(orden) {
+  <span class="kw">if</span> (orden.estado === <span class="st">'RECIBIDA'</span>) {
+    orden.estado = <span class="st">'EN_DIAGNOSTICO'</span>;
+  } <span class="kw">else if</span> (orden.estado === <span class="st">'EN_DIAGNOSTICO'</span>) {
+    orden.estado = <span class="st">'PRESUPUESTADA'</span>;
+  } <span class="kw">else if</span> (orden.estado === <span class="st">'PRESUPUESTADA'</span>) {
+    orden.estado = <span class="st">'APROBADA'</span>;
+  }
+  <span class="cm">// ❌ Cada nuevo estado requiere otro else-if</span>
+  <span class="cm">// ❌ No hay forma de "sustituir" un estado</span>
+  <span class="cm">// por otro sin cambiar esta función</span>
+}</pre>
+        </div>
+        <div class="code-card">
+          <div class="code-header after">✅ DESPUÉS — Patrón State + LSP</div>
+          <pre><span class="cm">// Clase base abstracta</span>
+<span class="kw">class</span> <span class="cl">EstadoOrden</span> {
+  <span class="fn">avanzar</span>(orden) { <span class="kw">throw new</span> Error(<span class="st">'No permitido'</span>); }
+  <span class="fn">rechazar</span>(orden) { <span class="kw">throw new</span> Error(<span class="st">'No permitido'</span>); }
+  <span class="fn">nombre</span>() { <span class="kw">throw new</span> Error(<span class="st">'Implementar'</span>); }
+}
+<span class="cm">// Cada estado concreto es intercambiable (LSP)</span>
+<span class="kw">class</span> <span class="cl">EstadoRecibida</span> <span class="kw">extends</span> <span class="cl">EstadoOrden</span> {
+  <span class="fn">avanzar</span>(orden) {
+    orden._cambiarEstado(<span class="kw">new</span> EstadoEnDiagnostico());
+  }
+  <span class="fn">nombre</span>() { <span class="kw">return</span> <span class="st">'RECIBIDA'</span>; }
+}
+<span class="kw">class</span> <span class="cl">EstadoPresupuestada</span> <span class="kw">extends</span> <span class="cl">EstadoOrden</span> {
+  <span class="fn">avanzar</span>(orden) { orden._cambiarEstado(<span class="kw">new</span> EstadoAprobada()); }
+  <span class="fn">rechazar</span>(orden) { orden._cambiarEstado(<span class="kw">new</span> EstadoRechazada()); }
+  <span class="fn">nombre</span>() { <span class="kw">return</span> <span class="st">'PRESUPUESTADA'</span>; }
+}</pre>
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <strong>✅ Olor eliminado:</strong> <em>Switch/if-else sobre tipo</em> — 10 clases de estado (EstadoRecibida,
+        EstadoEnDiagnostico, EstadoPresupuestada, etc.) implementan la misma interfaz y son perfectamente
+        intercambiables. La OrdenServicio delega <code>avanzar()</code> al estado actual sin necesidad de
+        <code>if</code>.
+      </div>
+    </div>
+
+    <!-- ── ISP ─────────────────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-amber">ISP</span>
+        Interface Segregation Principle — Segregación de Interfaces
+      </div>
+      <p><strong>Regla:</strong> Preferir interfaces pequeñas y específicas; ninguna clase debe implementar métodos que
+        no usa.</p>
+      <p><strong>Problema detectado:</strong> Si todos los Use Cases recibieran el <code>TallerFacade</code> completo
+        (con 20+ métodos), cada caso de uso tendría acceso a funciones que no necesita.</p>
+
+      <div class="code-grid">
+        <div class="code-card">
+          <div class="code-header before">❌ ANTES — Dependencia del Facade completo</div>
+          <pre><span class="cm">// El UseCase recibe TODO el facade (violación ISP)</span>
+<span class="kw">class</span> <span class="cl">CrearOrdenUseCase</span> {
+  <span class="fn">constructor</span>(facade) {
+    <span class="kw">this</span>.facade = facade;
+    <span class="cm">// ❌ Tiene acceso a facade.login()</span>
+    <span class="cm">// ❌ Tiene acceso a facade.generarFactura()</span>
+    <span class="cm">// ❌ Tiene acceso a facade.eliminarOrden()</span>
+    <span class="cm">// Solo necesita ordenRepo, clienteRepo,</span>
+    <span class="cm">// vehiculoRepo y eventBus</span>
+  }
+}</pre>
+        </div>
+        <div class="code-card">
+          <div class="code-header after">✅ DESPUÉS — Solo recibe lo que necesita</div>
+          <pre><span class="cm">// CrearOrdenUseCase.js — Solo dependencias mínimas</span>
+<span class="kw">class</span> <span class="cl">CrearOrdenUseCase</span> {
+  <span class="fn">constructor</span>(ordenRepo, clienteRepo,
+             vehiculoRepo, eventBus) {
+    <span class="kw">this</span>._ordenRepo    = ordenRepo;
+    <span class="kw">this</span>._clienteRepo  = clienteRepo;
+    <span class="kw">this</span>._vehiculoRepo = vehiculoRepo;
+    <span class="kw">this</span>._eventBus     = eventBus;
+    <span class="cm">// ✅ Solo las 4 dependencias necesarias</span>
+    <span class="cm">// ✅ No conoce facturas, usuarios ni login</span>
+  }
+}
+<span class="cm">// GenerarFacturaUseCase — Diferente "interfaz"</span>
+<span class="kw">class</span> <span class="cl">GenerarFacturaUseCase</span> {
+  <span class="fn">constructor</span>(ordenRepo, clienteRepo,
+             facturaRepo, eventBus) { ... }
+}</pre>
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <strong>✅ Olor eliminado:</strong> <em>Fat Interface</em> — cada caso de uso recibe solo los repositorios que
+        utiliza, no el facade entero con 20+ métodos. Esto reduce el acoplamiento y facilita el testing (solo se mockean
+        las dependencias necesarias).
+      </div>
+    </div>
+
+    <!-- ── DIP ─────────────────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-red">DIP</span>
+        Dependency Inversion Principle — Inversión de Dependencias
+      </div>
+      <p><strong>Regla:</strong> Depender de abstracciones, no de implementaciones concretas.</p>
+      <p><strong>Problema detectado:</strong> Si los controladores instanciaran <code>new PrismaClient()</code>
+        directamente, todo el código quedaría acoplado a Prisma (imposible cambiar a otra BD sin reescribir todo).</p>
+
+      <div class="code-grid">
+        <div class="code-card">
+          <div class="code-header before">❌ ANTES — Acoplamiento directo</div>
+          <pre><span class="cm">// Controlador crea sus propias dependencias</span>
+<span class="kw">const</span> { PrismaClient } = require(<span class="st">'@prisma/client'</span>);
+<span class="kw">const</span> prisma = <span class="kw">new</span> <span class="cl">PrismaClient</span>();
+
+router.post('/', <span class="kw">async</span> (req, res) => {
+  <span class="cm">// ❌ Acoplado directamente a Prisma</span>
+  <span class="kw">const</span> orden = <span class="kw">await</span> prisma.orden.create({
+    data: req.body
+  });
+  res.json(orden);
+});
+<span class="cm">// ❌ Cambiar a MongoDB = reescribir TODO</span>
+<span class="cm">// ❌ Imposible hacer tests unitarios</span></pre>
+        </div>
+        <div class="code-card">
+          <div class="code-header after">✅ DESPUÉS — container.js + abstracciones</div>
+          <pre><span class="cm">// container.js — Wiring de dependencias</span>
+<span class="kw">const</span> ordenRepo =
+  <span class="kw">new</span> <span class="cl">PrismaOrdenRepository</span>();
+<span class="kw">const</span> clienteRepo =
+  <span class="kw">new</span> <span class="cl">PrismaClienteRepository</span>();
+<span class="kw">const</span> eventBus = <span class="kw">new</span> <span class="cl">EventBus</span>();
+
+<span class="cm">// El facade recibe abstracciones inyectadas</span>
+<span class="kw">const</span> tallerFacade = <span class="kw">new</span> <span class="cl">TallerFacade</span>({
+  ordenRepo,    <span class="cm">// ← abstracción</span>
+  clienteRepo,  <span class="cm">// ← abstracción</span>
+  vehiculoRepo, <span class="cm">// ← abstracción</span>
+  eventBus,     <span class="cm">// ← abstracción</span>
+});
+<span class="cm">// ✅ Cambiar a MongoDB = solo nuevo repo</span>
+<span class="cm">// ✅ Tests: inyectar repos en memoria</span></pre>
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <strong>✅ Olor eliminado:</strong> <em>Hard-coded dependency</em> — el <code>container.js</code> actúa como
+        contenedor de inyección de dependencias (DI manual). Las capas superiores (UseCase, Facade) reciben
+        abstracciones; <code>PrismaOrdenRepository</code> extiende la clase abstracta <code>OrdenRepository</code>, que
+        es la interfaz que la aplicación conoce.
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!--  TEMA 2 — UI/UX                                                      -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <div class="page-break"></div>
+
+    <h2>🎨 Tema 2 — Mejoras Profesionales de UI/UX</h2>
+
+    <p>Se implementaron <strong>8 técnicas profesionales de interfaz</strong> (mínimo requerido: 6), cada una con
+      justificación técnica.</p>
+
+    <!-- ── Técnica 1: Wizard ───────────────────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-blue">1</span>
+        Asistente / Wizard por Pasos — NuevaOrden.jsx
+      </div>
+      <h4>Problema de usabilidad</h4>
+      <p>El formulario de "Nueva Orden" era una pantalla larga y saturada con todos los campos visibles simultáneamente
+        (cliente, vehículo, prioridad, mecánico, servicios, notas). Esto genera sobrecarga cognitiva y errores de
+        omisión.</p>
+
+      <h4>Solución implementada</h4>
+      <ul>
+        <li><strong>Wizard de 3 pasos:</strong> Paso 1 (Cliente y Vehículo), Paso 2 (Servicios), Paso 3 (Resumen y
+          confirmación).</li>
+        <li><strong>Barra de progreso visual</strong> con indicadores de paso completado ✅, activo 🔵 y pendiente ⚪.
+        </li>
+        <li><strong>Validación por etapa:</strong> no se puede avanzar sin seleccionar cliente y vehículo (Paso 1) o sin
+          agregar al menos un servicio (Paso 2).</li>
+        <li><strong>Resumen visual</strong> con tarjetas resumen antes de confirmar la creación.</li>
+      </ul>
+      <p><strong>Principio de diseño:</strong> <em>Reducción de carga cognitiva</em> (Progressive Disclosure) y
+        <em>prevención de errores</em> (validación por etapa).</p>
+      <p><strong>Archivo:</strong> <code>frontend/src/pages/NuevaOrden.jsx</code></p>
+    </div>
+
+    <!-- ── Técnica 2: Sidebar colapsable ───────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-blue">2</span>
+        Menú Lateral Colapsable — Layout.jsx
+      </div>
+      <h4>Problema de usabilidad</h4>
+      <p>El sidebar de navegación ocupaba ~256px de ancho fijo, reduciendo el espacio disponible para el contenido
+        principal en pantallas medianas.</p>
+
+      <h4>Solución implementada</h4>
+      <ul>
+        <li><strong>Botón toggle</strong> para colapsar/expandir el sidebar en desktop.</li>
+        <li><strong>Modo colapsado:</strong> sidebar de 72px mostrando solo íconos (sin texto).</li>
+        <li><strong>Tooltips</strong> al pasar el mouse sobre cada ítem al estar colapsado (accesibilidad).</li>
+        <li><strong>Persistencia</strong> del estado en <code>localStorage</code> (el sidebar recuerda si estaba
+          colapsado).</li>
+        <li><strong>Transición suave</strong> con <code>transition-all duration-300</code>.</li>
+      </ul>
+      <p><strong>Principio de diseño:</strong> <em>Flexibilidad y eficiencia de uso</em> (Heurística de Nielsen #7).</p>
+      <p><strong>Archivo:</strong> <code>frontend/src/components/Layout.jsx</code></p>
+    </div>
+
+    <!-- ── Técnica 3: Paleta de colores ────────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-blue">3</span>
+        Técnica de Color Profesional — Paleta con Criterio
+      </div>
+      <h4>Problema de usabilidad</h4>
+      <p>Sin una paleta definida, los colores se aplican de forma inconsistente, creando una interfaz visualmente
+        caótica.</p>
+
+      <h4>Paleta implementada</h4>
+      <div class="color-grid">
+        <div class="color-swatch">
+          <div class="swatch" style="background: #0EA5E9;"></div>
+          <div class="label">Primario (Brand)<br><span class="hex">#0EA5E9 — sky-500</span></div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch" style="background: #0284C7;"></div>
+          <div class="label">Primario Oscuro<br><span class="hex">#0284C7 — brand-600</span></div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch" style="background: #059669;"></div>
+          <div class="label">Éxito / Guardar<br><span class="hex">#059669 — emerald-600</span></div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch" style="background: #DC2626;"></div>
+          <div class="label">Error / Eliminar<br><span class="hex">#DC2626 — red-600</span></div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch" style="background: #D97706;"></div>
+          <div class="label">Advertencia<br><span class="hex">#D97706 — amber-600</span></div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch" style="background: #2563EB;"></div>
+          <div class="label">Acción / Avanzar<br><span class="hex">#2563EB — blue-600</span></div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch" style="background: #0F172A;"></div>
+          <div class="label">Sidebar<br><span class="hex">#0F172A — slate-900</span></div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch" style="background: #F8FAFC;"></div>
+          <div class="label">Fondo general<br><span class="hex">#F8FAFC — slate-50</span></div>
+        </div>
+      </div>
+
+      <h4>Justificación</h4>
+      <ul>
+        <li><strong>Rojo (#DC2626)</strong> para acciones destructivas (eliminar) — transmite peligro/urgencia.</li>
+        <li><strong>Esmeralda (#059669)</strong> para éxito y guardado — transmite seguridad/confirmación.</li>
+        <li><strong>Ámbar (#D97706)</strong> para advertencias — transmite precaución sin alarma.</li>
+        <li><strong>Azul (#0EA5E9)</strong> como color primario — transmite profesionalismo y confianza.</li>
+        <li>Contraste WCAG AA verificado en todos los textos sobre fondos claros.</li>
+      </ul>
+      <p><strong>Archivo:</strong> <code>frontend/tailwind.config.js</code> (definición de brand colors)</p>
+    </div>
+
+    <!-- ── Técnica 4: DataGrid profesional ─────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-blue">4</span>
+        DataGrid Profesional — Ordenes.jsx
+      </div>
+      <h4>Problema de usabilidad</h4>
+      <p>La lista de órdenes era un listado simple sin encabezados, sin paginación, y con todas las órdenes visibles en
+        un solo scroll largo.</p>
+
+      <h4>Solución implementada</h4>
+      <ul>
+        <li><strong>Encabezados de columna fijos</strong> (Cliente, Estado, Fecha) con indicadores de ordenamiento.</li>
+        <li><strong>Filas alternadas (zebra striping)</strong> para mejorar la legibilidad horizontal.</li>
+        <li><strong>Ordenamiento por columna</strong> — clic en el encabezado para ordenar ascendente/descendente.</li>
+        <li><strong>Paginación local</strong> — 10 registros por página con navegación numérica.</li>
+        <li><strong>Tooltips con ID</strong> en cada fila al hacer hover.</li>
+        <li><strong>Formato condicional</strong> — badges de estado con colores según el ciclo de vida (recibida=gris,
+          en reparación=azul, facturada=verde, rechazada=rojo).</li>
+      </ul>
+      <p><strong>Principio de diseño:</strong> <em>Consistencia y estándares</em> (Heurística de Nielsen #4) — las
+        tablas profesionales siguen convenciones establecidas.</p>
+      <p><strong>Archivo:</strong> <code>frontend/src/pages/Ordenes.jsx</code></p>
+    </div>
+
+    <!-- ── Técnica 5: Ocultación por rol ───────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-blue">5</span>
+        Ocultación de Opciones por Rol/Permiso — navigationConfig.js
+      </div>
+      <h4>Problema de usabilidad</h4>
+      <p>Mostrar funciones que el usuario no puede usar genera confusión y riesgo de seguridad.</p>
+
+      <h4>Solución implementada</h4>
+      <ul>
+        <li>Cada ítem de navegación tiene un arreglo <code>roles</code> que define quién lo puede ver.</li>
+        <li>La función <code>getNavItemsByRol(rol)</code> filtra los ítems visibles.</li>
+        <li><strong>ADMIN</strong> ve todo (Dashboard, Órdenes, Clientes, Usuarios, Equipo Técnico, Facturación).</li>
+        <li><strong>MECANICO</strong> solo ve Dashboard y Órdenes.</li>
+        <li><strong>CAJERO</strong> ve Dashboard, Órdenes, Clientes y Facturación.</li>
+        <li>El botón "Eliminar Orden" solo aparece si <code>user.rol === 'ADMIN'</code>.</li>
+      </ul>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Módulo</th>
+            <th>ADMIN</th>
+            <th>RECEPCIONISTA</th>
+            <th>MECANICO</th>
+            <th>CAJERO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dashboard</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>Órdenes</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>Clientes</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>Usuarios</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+          </tr>
+          <tr>
+            <td>Equipo Técnico</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+          </tr>
+          <tr>
+            <td>Facturación</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>Eliminar Orden</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Principio de diseño:</strong> <em>Prevención de errores</em> (Nielsen #5) — si no debe usar la función,
+        no la ve.</p>
+      <p><strong>Archivo:</strong> <code>frontend/src/config/navigationConfig.js</code></p>
+    </div>
+
+    <!-- ── Técnica 6: Toast + ConfirmModal ─────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-blue">6</span>
+        Retroalimentación Visual — Toast + ConfirmModal + Spinners
+      </div>
+      <h4>Problema de usabilidad</h4>
+      <p><code>window.alert()</code> y <code>window.confirm()</code> bloquean el hilo principal de JavaScript, tienen un
+        diseño inconsistente entre navegadores, y rompen el flujo del usuario.</p>
+
+      <h4>Solución implementada</h4>
+      <ul>
+        <li><strong>Toast.jsx</strong> — notificaciones flotantes animadas (slide-in) que desaparecen automáticamente.
+          Tres variantes: <code>success</code> (verde), <code>error</code> (rojo), <code>info</code> (azul).</li>
+        <li><strong>ConfirmModal.jsx</strong> — diálogos de confirmación estilizados con opción de peligro (botón rojo)
+          para acciones destructivas.</li>
+        <li><strong>Spinners de carga</strong> — indicadores de loading animados con <code>animate-spin</code> en
+          botones de submit.</li>
+        <li><strong>Badges de estado</strong> — etiquetas de color codificado para cada estado de la orden.</li>
+      </ul>
+      <p><strong>Principio de diseño:</strong> <em>Visibilidad del estado del sistema</em> (Heurística de Nielsen #1).
+      </p>
+      <p><strong>Archivos:</strong> <code>Toast.jsx</code>, <code>ConfirmModal.jsx</code></p>
+    </div>
+
+    <!-- ── Técnica 7: Ventanas modales ─────────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-blue">7</span>
+        Ventanas Modales (Modal / Dialog)
+      </div>
+      <h4>Problema de usabilidad</h4>
+      <p>Las acciones de confirmación (eliminar orden, generar factura) redirigían o abrían diálogos nativos, causando
+        pérdida de contexto.</p>
+
+      <h4>Solución implementada</h4>
+      <ul>
+        <li><strong>ConfirmModal</strong> — se usa para confirmar la generación de factura y la eliminación de órdenes.
+        </li>
+        <li>Overlay oscuro que centra la atención del usuario en la decisión.</li>
+        <li>Botones con semántica de color (rojo para destruir, azul para confirmar).</li>
+        <li>Soporte para modo "peligro" con estilos diferenciados.</li>
+      </ul>
+      <p><strong>Principio de diseño:</strong> <em>Prevención de errores</em> — pedir confirmación explícita antes de
+        acciones irreversibles.</p>
+      <p><strong>Archivos:</strong> <code>ConfirmModal.jsx</code>, <code>Ordenes.jsx</code>,
+        <code>Facturacion.jsx</code></p>
+    </div>
+
+    <!-- ── Técnica 8: Barra menú superior ──────────────────── -->
+    <div class="card">
+      <div class="card-title">
+        <span class="badge badge-blue">8</span>
+        Barra de Menú Superior (Header) con Título Dinámico
+      </div>
+      <h4>Problema de usabilidad</h4>
+      <p>Sin indicación clara de la sección activa, el usuario puede perderse dentro del sistema.</p>
+
+      <h4>Solución implementada</h4>
+      <ul>
+        <li>Header superior fijo con <strong>backdrop-blur</strong> semitransparente que muestra el título dinámico de
+          la página actual.</li>
+        <li>Botón hamburguesa en móvil para abrir el sidebar.</li>
+        <li>Título con gradiente de color que refuerza la identidad de marca.</li>
+      </ul>
+      <p><strong>Principio de diseño:</strong> <em>Reconocimiento antes que recuerdo</em> (Nielsen #6) — el header le
+        dice al usuario dónde está.</p>
+      <p><strong>Archivo:</strong> <code>frontend/src/components/Layout.jsx</code> (líneas 164-177)</p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!--  LISTA DE VERIFICACIÓN                                                -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <div class="page-break"></div>
+
+    <h2>✅ Lista de Verificación de Técnicas Aplicadas</h2>
+
+    <table class="checklist">
+      <thead>
+        <tr>
+          <th style="width:40px;">✓</th>
+          <th>Técnica</th>
+          <th>Evidencia (pantalla / módulo)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>☑️</td>
+          <td>Asistente / Wizard por pasos</td>
+          <td>NuevaOrden.jsx — Wizard de 3 pasos con barra de progreso</td>
+        </tr>
+        <tr>
+          <td>☑️</td>
+          <td>Ventanas modales (Modal / Dialog)</td>
+          <td>ConfirmModal.jsx — Confirmación para eliminar y facturar</td>
+        </tr>
+        <tr>
+          <td>☑️</td>
+          <td>Barra de menú (Header dinámico)</td>
+          <td>Layout.jsx — Header con título dinámico y hamburguesa móvil</td>
+        </tr>
+        <tr>
+          <td>☑️</td>
+          <td>Ocultación de opciones por rol/permiso</td>
+          <td>navigationConfig.js — Filtrado de menú por ADMIN/MECANICO/etc.</td>
+        </tr>
+        <tr>
+          <td>☑️</td>
+          <td>Menú lateral colapsable</td>
+          <td>Layout.jsx — Toggle colapsar/expandir con tooltips y localStorage</td>
+        </tr>
+        <tr>
+          <td>☑️</td>
+          <td>Técnica de color (paleta + HEX)</td>
+          <td>tailwind.config.js — Paleta brand + estados documentada arriba</td>
+        </tr>
+        <tr>
+          <td>☑️</td>
+          <td>DataGrid / DataGridView profesional</td>
+          <td>Ordenes.jsx — Zebra, sort, paginación, formato condicional</td>
+        </tr>
+        <tr>
+          <td>☑️</td>
+          <td>Retroalimentación visual (tooltips, toast)</td>
+          <td>Toast.jsx — Notificaciones animadas + spinners + badges</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-blue" style="background: var(--blue-50); border-left: 4px solid var(--blue-600);">
+      <strong>Total: 8 técnicas implementadas</strong> (mínimo requerido: 6). Cada una con justificación técnica basada
+      en las 10 heurísticas de usabilidad de Jakob Nielsen.
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!--  FUNCIONAMIENTO                                                       -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <h2>⚙️ Funcionamiento del Proyecto</h2>
+
+    <div class="card">
+      <h3>Stack Tecnológico</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Capa</th>
+            <th>Tecnología</th>
+            <th>Propósito</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Backend</td>
+            <td>Node.js + Express</td>
+            <td>API REST</td>
+          </tr>
+          <tr>
+            <td>ORM</td>
+            <td>Prisma</td>
+            <td>Mapeo a PostgreSQL</td>
+          </tr>
+          <tr>
+            <td>Base de datos</td>
+            <td>PostgreSQL 16</td>
+            <td>Persistencia</td>
+          </tr>
+          <tr>
+            <td>Frontend</td>
+            <td>React + Vite</td>
+            <td>Interfaz web SPA</td>
+          </tr>
+          <tr>
+            <td>Estilos</td>
+            <td>Tailwind CSS</td>
+            <td>Utilidades CSS</td>
+          </tr>
+          <tr>
+            <td>Autenticación</td>
+            <td>JWT (jsonwebtoken)</td>
+            <td>Tokens seguros</td>
+          </tr>
+          <tr>
+            <td>Contenedores</td>
+            <td>Docker + docker-compose</td>
+            <td>Despliegue reproducible</td>
+          </tr>
+          <tr>
+            <td>Hosting</td>
+            <td>Render.com</td>
+            <td>Producción</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Patrones de Diseño Implementados</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Patrón</th>
+            <th>Clase</th>
+            <th>Propósito</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>State</td>
+            <td>EstadoOrden (10 estados)</td>
+            <td>Ciclo de vida de la orden</td>
+          </tr>
+          <tr>
+            <td>Strategy</td>
+            <td>CalculadoraOrden + 4 estrategias</td>
+            <td>Descuentos intercambiables</td>
+          </tr>
+          <tr>
+            <td>Builder</td>
+            <td>OrdenServicioBuilder</td>
+            <td>Construcción de órdenes complejas</td>
+          </tr>
+          <tr>
+            <td>Factory Method</td>
+            <td>ServicioFactory</td>
+            <td>Creación de tipos de servicio</td>
+          </tr>
+          <tr>
+            <td>Observer</td>
+            <td>EventBus</td>
+            <td>Notificaciones y auditoría</td>
+          </tr>
+          <tr>
+            <td>Facade</td>
+            <td>TallerFacade</td>
+            <td>API simplificada del módulo</td>
+          </tr>
+          <tr>
+            <td>Repository</td>
+            <td>OrdenRepository (abstracto)</td>
+            <td>Abstracción de persistencia</td>
+          </tr>
+          <tr>
+            <td>Decorator</td>
+            <td>ServicioDecorator</td>
+            <td>Extensión de servicios</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Repositorio y Despliegue</h3>
+      <ul>
+        <li><strong>GitHub:</strong> <a href="https://github.com/francisco-inger/taller-mecanico"
+            target="_blank">https://github.com/francisco-inger/taller-mecanico</a></li>
+        <li><strong>Frontend (producción):</strong> <a href="https://taller-mecanico-frontend-khc6.onrender.com"
+            target="_blank">https://taller-mecanico-frontend-khc6.onrender.com</a></li>
+      </ul>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!--  RÚBRICA                                                              -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <h2>📊 Rúbrica de Autoevaluación</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Criterio</th>
+          <th>Puntos Máximos</th>
+          <th>Evidencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Aplicación de SOLID (backend)</strong></td>
+          <td>3.0</td>
+          <td>5 principios aplicados y justificados con código real</td>
+        </tr>
+        <tr>
+          <td><strong>Refactorización (antes/después)</strong></td>
+          <td>1.5</td>
+          <td>Comparación clara con fragmentos de código antes/después por cada principio</td>
+        </tr>
+        <tr>
+          <td><strong>Técnicas profesionales UI/UX (mín. 6)</strong></td>
+          <td>2.0</td>
+          <td>8 técnicas implementadas con justificación técnica</td>
+        </tr>
+        <tr>
+          <td><strong>Funcionamiento del proyecto</strong></td>
+          <td>1.5</td>
+          <td>Sistema funcional desplegado en Render.com</td>
+        </tr>
+        <tr>
+          <td><strong>Video de demostración</strong></td>
+          <td>1.5</td>
+          <td>(Por grabar por el estudiante)</td>
+        </tr>
+        <tr>
+          <td><strong>Documentación / README</strong></td>
+          <td>0.5</td>
+          <td>Este documento + README.md del repositorio</td>
+        </tr>
+        <tr style="font-weight: bold; background: var(--blue-50);">
+          <td><strong>TOTAL</strong></td>
+          <td><strong>10.0</strong></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!--  FOOTER                                                               -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <div
+      style="text-align: center; margin-top: 60px; padding: 24px; color: var(--slate-500); font-size: 13px; border-top: 1px solid var(--slate-200);">
+      <p>Documento generado para la asignación práctica de Ingeniería de Software II</p>
+      <p><strong>SIGEST v2.0</strong> — Universidad Nacional Evangélica (UNEV)</p>
+      <p>Francisco R. Díaz — Julio 2026</p>
+    </div>
+
+  </div><!-- .container -->
+</body>
+
+</html>
+<div class="card-title">
+  <span class="badge badge-blue">EV-1</span>
+  Pantalla de Inicio de Sesión y Dashboard Principal
+</div>
+<p>El sistema cuenta con una pantalla de login profesional con imagen de fondo del taller mecánico,
+  seguida de un dashboard completo con métricas en tiempo real, actividad reciente y distribución del equipo técnico.
+</p>
+<div class="evidence-grid">
+  <div class="evidence-card">
+    <div class="evidence-label demo">🔐 Login — SIGEST Taller</div>
+    <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-02 233905.png"
+      alt="Pantalla de login del sistema SIGEST con fondo oscuro de taller mecánico">
+    <div class="evidence-caption">Pantalla de inicio de sesión con imagen de fondo temática, formulario glassmorphism y
+      gradiente de marca.</div>
+  </div>
+  <div class="evidence-card">
+    <div class="evidence-label demo">📊 Dashboard — Vista ADMIN</div>
+    <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-02 234204.png"
+      alt="Dashboard principal con métricas de órdenes activas, urgentes y equipo técnico">
+    <div class="evidence-caption">Dashboard con KPIs en tarjetas de color, actividad reciente con tabla de órdenes y
+      panel de carga del equipo técnico.</div>
+  </div>
+</div>
+</div>
+
+<!-- ── EV-2: Wizard antes/después ─────────────────────────────────── -->
+<div class="card evidence-section">
+  <div class="card-title">
+    <span class="badge badge-blue">EV-2</span>
+    Técnica 1 — Asistente / Wizard por Pasos <em>(Antes vs. Después)</em>
+  </div>
+  <p><strong>Problema resuelto:</strong> el formulario original era una pantalla única saturada con todos los campos
+    visibles
+    a la vez (cliente, vehículo, prioridad, mecánico, servicios, notas), generando sobrecarga cognitiva.</p>
+  <div class="evidence-grid">
+    <div class="evidence-card">
+      <div class="evidence-label before">❌ ANTES — Formulario único saturado</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-10 005222.png"
+        alt="Formulario original con todos los campos en una sola pantalla sin progreso">
+      <div class="evidence-caption">Todos los campos (cliente, vehículo, prioridad, servicios, notas) en una sola vista
+        sin guía de pasos ni barra de progreso.</div>
+    </div>
+    <div class="evidence-card">
+      <div class="evidence-label after">✅ DESPUÉS — Wizard Paso 2: Servicios</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-10 010205.png"
+        alt="Wizard de nueva orden paso 2 con barra de progreso y validación por etapa">
+      <div class="evidence-caption">Wizard de 3 pasos con barra de progreso visual, validación por etapa y subtotal en
+        tiempo real (RD$4,000.00).</div>
+    </div>
+  </div>
+  <div class="evidence-grid" style="margin-top: 16px;">
+    <div class="evidence-card">
+      <div class="evidence-label after">✅ DESPUÉS — Wizard Paso 1: Cliente y Vehículo</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-10 003124.png"
+        alt="Wizard paso 1 con cliente y vehículo seleccionados">
+      <div class="evidence-caption">Paso 1 completado con cliente seleccionado (Ana Pérez), vehículo (Honda Civic
+        B789012) y mecánico (Carlos Rodríguez).</div>
+    </div>
+    <div class="evidence-card">
+      <div class="evidence-label after">✅ DESPUÉS — Wizard Paso 3: Resumen y Confirmación</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-10 010253.png"
+        alt="Paso 3 del wizard con resumen de cliente, vehículo, servicios y total antes de confirmar">
+      <div class="evidence-caption">Paso 3: resumen completo con cliente (Ana Pérez), vehículo (Honda Civic), mecánico
+        asignado y total estimado (RD$4,000.00) antes de confirmar la creación.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── EV-3: DataGrid antes/después ───────────────────────────────── -->
+<div class="card evidence-section">
+  <div class="card-title">
+    <span class="badge badge-blue">EV-3</span>
+    Técnica 4 — DataGrid Profesional <em>(Antes vs. Después)</em>
+  </div>
+  <p><strong>Problema resuelto:</strong> la lista de órdenes era un listado simple tipo card sin encabezados de columna,
+    sin paginación visible, sin ordenamiento y con poca información estructurada por fila.</p>
+  <div class="evidence-grid">
+    <div class="evidence-card">
+      <div class="evidence-label before">❌ ANTES — Lista de cards sin estructura</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-02 234255.png"
+        alt="Lista de órdenes simple con cards sin encabezados de columna ni paginación">
+      <div class="evidence-caption">Vista inicial: órdenes como lista de cards con estado (FACTURADA, URGENTE) y fecha,
+        sin columnas ni ordenamiento por campo.</div>
+    </div>
+    <div class="evidence-card">
+      <div class="evidence-label after">✅ DESPUÉS — DataGrid con encabezados y paginación</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-10 003933.png"
+        alt="DataGrid profesional con encabezados Cliente/Vehículo, Estado y Fecha con ordenamiento y paginación">
+      <div class="evidence-caption">DataGrid profesional: encabezados «Cliente/Vehículo», «Estado» y «Fecha» con
+        indicadores de ordenamiento (↑↓), zebra striping, badges de estado y paginación (2 órdenes · pág. 1 de 1).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── EV-4: Ventanas modales + sidebar ───────────────────────────── -->
+<div class="card evidence-section">
+  <div class="card-title">
+    <span class="badge badge-blue">EV-4</span>
+    Técnica 2 — Ventanas Modales | Técnica 3 — Paleta de Colores | Técnica 5 — Menú Lateral
+  </div>
+  <p><strong>Modal de edición:</strong> las acciones de edición ahora se realizan en un diálogo modal estilizado sin
+    perder el contexto de la lista.
+    El modal incluye campos validados y sección colapsable para agregar vehículo.
+    <strong>Paleta y sidebar:</strong> se evidencia la paleta de colores (verde esmeralda para acción principal, azul
+    para marca)
+    y el menú lateral con íconos y texto, ítem activo resaltado.
+  </p>
+  <div class="evidence-grid">
+    <div class="evidence-card">
+      <div class="evidence-label after">✅ Modal — Editar Información de Cliente</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-06-10 121605.png"
+        alt="Modal de edición de cliente con campos nombre, cédula, teléfono, correo y sección agregar vehículo">
+      <div class="evidence-caption">Modal «Editar Información del Cliente» con campos validados, sección colapsable
+        «Agregar Vehículo (Opcional)» y botones Cancelar / Guardar Cliente (verde #059669).</div>
+    </div>
+    <div class="evidence-card">
+      <div class="evidence-label after">✅ Sidebar + Directorio de Clientes (tarjetas)</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-10 004034.png"
+        alt="Sidebar de navegación con módulos y pantalla de clientes con tarjetas y buscador">
+      <div class="evidence-caption">Menú lateral con íconos y texto (Dashboard, Órdenes, Clientes, Usuarios, Equipo
+        Técnico, Facturación), ítem «Clientes» activo. Paleta: sidebar #0F172A, activo verde esmeralda #059669.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── EV-5: Facturación DataGrid + Roles ─────────────────────────── -->
+<div class="card evidence-section">
+  <div class="card-title">
+    <span class="badge badge-blue">EV-5</span>
+    Técnica 7 — Panel de Facturación (DataGrid) + Técnica 5 — Ocultación por Rol
+  </div>
+  <p>El Panel de Facturación presenta un DataGrid profesional con columnas
+    <em>Factura/Orden, Cliente/Vehículo, Fecha, Subtotal, Descuento, ITBIS 18%, Total, Acciones</em>.
+    El usuario <strong>Francisco Díaz (Admin)</strong> ve todos los módulos en el sidebar, incluyendo Usuarios y Equipo
+    Técnico
+    (módulos ocultos para roles MECANICO y CAJERO).
+  </p>
+  <div class="evidence-single">
+    <img class="evidence-img" style="max-height:380px; border-radius:12px; border:1px solid var(--slate-200);"
+      src="captura de pantalla/Captura de pantalla 2026-07-10 004034.png"
+      alt="Panel de facturación con DataGrid, historial de ventas RD$5,900 e ITBIS 18%">
+  </div>
+  <div class="callout callout-green" style="margin-top: 12px;">
+    <strong>✅ ITBIS 18% visible en columna separada:</strong> la factura FAC-2D26929C muestra Subtotal RD$5,000.00 +
+    ITBIS 18% RD$900.00 = Total RD$5,900.00.
+    El sidebar completo (6 módulos) confirma rol ADMIN activo (badge amarillo «ADMIN» + nombre «Francisco Díaz»).
+  </div>
+</div>
+
+<!-- ── EV-6: Retroalimentación visual ─────────────────────────────── -->
+<div class="card evidence-section">
+  <div class="card-title">
+    <span class="badge badge-blue">EV-6</span>
+    Técnica 8 — Retroalimentación Visual (Badges, Toast, Estados)
+  </div>
+  <p>El sistema utiliza <strong>badges de estado</strong> con semántica de color en toda la interfaz:
+    FACTURADA (verde), URGENTE (rojo), NORMAL (gris). Los botones de acción (+ Nueva Orden, + Nuevo Cliente)
+    utilizan el color primario de marca. El estado del sistema se indica con <strong>«Sistema en línea»</strong> (verde)
+    en el dashboard.</p>
+  <div class="evidence-grid">
+    <div class="evidence-card">
+      <div class="evidence-label after">✅ Badges de estado en Órdenes</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-10 003933.png"
+        alt="DataGrid de órdenes con badges FACTURADA verde y URGENTE rojo">
+      <div class="evidence-caption">Badges de estado codificados por color: FACTURADA (#059669 verde), URGENTE (#DC2626
+        rojo) con ícono de alerta, fecha formateada en columna separada.</div>
+    </div>
+    <div class="evidence-card">
+      <div class="evidence-label after">✅ Dashboard — «Sistema en línea» + KPIs con color</div>
+      <img class="evidence-img" src="captura de pantalla/Captura de pantalla 2026-07-02 234204.png"
+        alt="Dashboard con indicador Sistema en línea y tarjetas KPI con colores por estado">
+      <div class="evidence-caption">Indicador «Sistema en línea» (verde), tarjetas KPI con íconos de color diferenciado:
+        azul (órdenes activas), naranja (en espera), rojo (urgentes), verde (total).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── EV-7: Tabla resumen de capturas ────────────────────────────── -->
+<div class="card" style="margin-top: 32px;">
+  <div class="card-title">📋 Índice de Capturas de Pantalla Utilizadas</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Archivo</th>
+        <th>Pantalla</th>
+        <th>Técnica evidenciada</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>2026-07-02 233905</code></td>
+        <td>Login SIGEST</td>
+        <td>EV-1 — Pantalla de inicio profesional</td>
+      </tr>
+      <tr>
+        <td><code>2026-07-02 234204</code></td>
+        <td>Dashboard principal</td>
+        <td>EV-1 — Dashboard + Técnica 8 (badges KPI)</td>
+      </tr>
+      <tr>
+        <td><code>2026-07-02 234255</code></td>
+        <td>Órdenes — ANTES</td>
+        <td>EV-3 — Lista de cards (sin DataGrid)</td>
+      </tr>
+      <tr>
+        <td><code>2026-07-10 003124</code></td>
+        <td>Wizard Paso 1</td>
+        <td>EV-2 — Wizard (cliente y vehículo)</td>
+      </tr>
+      <tr>
+        <td><code>2026-07-10 003933</code></td>
+        <td>Órdenes — DESPUÉS</td>
+        <td>EV-3 — DataGrid + EV-6 (badges estado)</td>
+      </tr>
+      <tr>
+        <td><code>2026-07-10 004034</code></td>
+        <td>Clientes (tarjetas)</td>
+        <td>EV-4 — Sidebar + paleta de colores</td>
+      </tr>
+      <tr>
+        <td><code>2026-07-10 005222</code></td>
+        <td>Crear orden — ANTES</td>
+        <td>EV-2 — Formulario único (antes Wizard)</td>
+      </tr>
+      <tr>
+        <td><code>2026-07-10 010205</code></td>
+        <td>Wizard Paso 2</td>
+        <td>EV-2 — Wizard (servicios + subtotal)</td>
+      </tr>
+      <tr>
+        <td><code>2026-07-10 010253</code></td>
+        <td>Wizard Paso 3</td>
+        <td>EV-2 — Wizard (resumen y confirmación)</td>
+      </tr>
+      <tr>
+        <td><code>2026-07-10 010849</code></td>
+        <td>Facturación DataGrid</td>
+        <td>EV-5 — DataGrid facturación + ITBIS 18%</td>
+      </tr>
+      <tr>
+        <td><code>2026-06-10 121605</code></td>
+        <td>Modal editar cliente</td>
+        <td>EV-4 — Ventana modal (sin perder contexto)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!--  FOOTER                                                               -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div
+  style="text-align: center; margin-top: 60px; padding: 24px; color: var(--slate-500); font-size: 13px; border-top: 1px solid var(--slate-200);">
+  <p>Documento generado para la asignación práctica de Ingeniería de Software II</p>
+  <p><strong>SIGEST v2.0</strong> — Universidad Nacional Evangélica (UNEV)</p>
+  <p>Francisco R. Díaz — Julio 2026</p>
+</div>
+
+</div><!-- .container -->
+</body>
+
+</html>

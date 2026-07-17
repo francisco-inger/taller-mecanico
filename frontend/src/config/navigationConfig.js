@@ -16,6 +16,7 @@ import {
   Wrench as WrenchIcon,
   FileText,
   Settings,
+  ShieldCheck,
 } from 'lucide-react';
 
 /** Todos los ítems de navegación disponibles */
@@ -60,6 +61,12 @@ const ALL_NAV_ITEMS = [
     name: 'Configuración',
     path: '/configuracion',
     icon: Settings,
+    roles: ['ADMIN'],
+  },
+  {
+    name: 'Marco Legal',
+    path: '/marco-legal',
+    icon: ShieldCheck,
     roles: ['ADMIN'],
   },
 ];

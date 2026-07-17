@@ -14,6 +14,9 @@ const usuarioRoutes  = require('./routes/usuarioRoutes');
 const mecanicoRoutes = require('./routes/mecanicoRoutes');
 const logRoutes           = require('./routes/logRoutes');
 const configuracionRoutes = require('./routes/configuracionRoutes');
+const consentimientoRoutes = require('./routes/consentimientoRoutes');
+const solicitudArcoRoutes = require('./routes/solicitudArcoRoutes');
+const firmaRoutes         = require('./routes/firmaRoutes');
 const errorHandler        = require('./middleware/errorHandler');
 
 
@@ -61,6 +64,9 @@ app.use('/api/usuarios',        usuarioRoutes);
 app.use('/api/mecanicos',       mecanicoRoutes);
 app.use('/api/log-actividad',   logRoutes);          // Solo ADMIN — auditoría
 app.use('/api/configuracion',   configuracionRoutes); // GET: todos | PATCH: solo ADMIN
+app.use('/api/consentimientos', consentimientoRoutes);
+app.use('/api/solicitudes-arco', solicitudArcoRoutes);
+app.use('/api/firmas',          firmaRoutes);
 
 
 // ── 404 ───────────────────────────────────────────────────────

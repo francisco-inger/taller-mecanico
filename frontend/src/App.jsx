@@ -12,6 +12,7 @@ import Usuarios from './pages/Usuarios'
 import Mecanicos from './pages/Mecanicos'
 import Facturacion from './pages/Facturacion'
 import Configuracion from './pages/Configuracion'
+import MarcoLegal from './pages/MarcoLegal'
 
 // PrivateRoute sigue existiendo para las rutas que están detrás de autenticación.
 const PrivateRoute = ({ children }) => {
@@ -102,6 +103,14 @@ function App() {
             element={
               <RoleRoute allowedRoles={['ADMIN']}>
                 <Configuracion />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="marco-legal"
+            element={
+              <RoleRoute allowedRoles={['ADMIN']}>
+                <MarcoLegal />
               </RoleRoute>
             }
           />
