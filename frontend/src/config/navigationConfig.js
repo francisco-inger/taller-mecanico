@@ -15,6 +15,7 @@ import {
   Shield,
   Wrench as WrenchIcon,
   FileText,
+  Settings,
 } from 'lucide-react';
 
 /** Todos los ítems de navegación disponibles */
@@ -54,6 +55,12 @@ const ALL_NAV_ITEMS = [
     path: '/facturacion',
     icon: FileText,
     roles: ['ADMIN', 'CAJERO', 'RECEPCIONISTA'],
+  },
+  {
+    name: 'Configuración',
+    path: '/configuracion',
+    icon: Settings,
+    roles: ['ADMIN'],
   },
 ];
 

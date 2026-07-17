@@ -19,11 +19,12 @@ const prisma                    = require('../../infrastructure/persistence/pris
  *  - DIP: depende de abstracciones (repositorios), no de implementaciones concretas
  */
 class GenerarFacturaUseCase {
-  constructor(ordenRepo, clienteRepo, facturaRepo, eventBus) {
+  constructor(ordenRepo, clienteRepo, facturaRepo, eventBus, configRepo) {
     this._ordenRepo   = ordenRepo;
     this._clienteRepo = clienteRepo;
     this._facturaRepo = facturaRepo;
     this._eventBus    = eventBus;
+    this._configRepo  = configRepo;
   }
 
   async ejecutar(ordenId, descuentoManual = null, descripDescuentoManual = null) {
@@ -38,6 +39,10 @@ class GenerarFacturaUseCase {
     const totalRepuestos = orden.repuestos.reduce((acc, r) => acc + (Number(r.precio) * r.cantidad), 0);
     const subtotal       = totalServicios + totalRepuestos;
 
+    const itbisVal = this._configRepo ? await this._configRepo.obtener('itbis_porcentaje') : '18';
+    const itbisPorcentaje = itbisVal ? parseFloat(itbisVal) : 18;
+    const itbisRate = itbisPorcentaje / 100;
+
     let descuento = 0;
     let descuentoDescripcion = '';
 
@@ -50,14 +55,14 @@ class GenerarFacturaUseCase {
         ? new DescuentoClienteFrecuente()
         : new SinDescuento();
 
-      const calculadora = new CalculadoraOrden(estrategia);
+      const calculadora = new CalculadoraOrden(estrategia, itbisPorcentaje);
       const resumen     = calculadora.calcularTotal(orden.servicios, orden.repuestos);
       descuento = resumen.descuento;
       descuentoDescripcion = resumen.descuentoDescripcion;
     }
 
     const baseImponible = subtotal - descuento;
-    const itbis         = parseFloat((baseImponible * 0.18).toFixed(2));
+    const itbis         = parseFloat((baseImponible * itbisRate).toFixed(2));
     const total         = parseFloat((baseImponible + itbis).toFixed(2));
 
     console.log(`[GenerarFactura] Orden=${ordenId} subtotal=${subtotal} descuento=${descuento} itbis=${itbis} total=${total}`);

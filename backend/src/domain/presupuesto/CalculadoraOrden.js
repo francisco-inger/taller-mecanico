@@ -22,9 +22,11 @@ class CalculadoraOrden {
 
   /**
    * @param {object} estrategia - Debe implementar calcular(subtotal) y descripcion()
+   * @param {number} itbisPorcentaje - Porcentaje de ITBIS (por ejemplo, 18)
    */
-  constructor(estrategia = new SinDescuento()) {
+  constructor(estrategia = new SinDescuento(), itbisPorcentaje = 18) {
     this._estrategia = estrategia;
+    this._itbisRate = (parseFloat(itbisPorcentaje) || 18) / 100;
   }
 
   /**
@@ -56,7 +58,7 @@ class CalculadoraOrden {
 
     const descuento      = this._estrategia.calcular(subtotal);
     const baseImponible  = subtotal - descuento;
-    const itbis          = parseFloat((baseImponible * CalculadoraOrden.ITBIS).toFixed(2));
+    const itbis          = parseFloat((baseImponible * this._itbisRate).toFixed(2));
     const total          = parseFloat((baseImponible + itbis).toFixed(2));
 
     return {

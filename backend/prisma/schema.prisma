@@ -201,3 +201,16 @@ enum AccionLog {
   LOGIN
   GENERAR_FACTURA
 }
+
+// ── Configuración del Sistema ──────────────────────────────────
+// Parámetros editables por el ADMIN: ITBIS, datos del negocio, tema, etc.
+// Patrón: clave-valor (key-value store) para máxima flexibilidad.
+model Configuracion {
+  id             String   @id @default(uuid())
+  clave          String   @unique
+  valor          String
+  descripcion    String?
+  actualizadoEn  DateTime @updatedAt @map("actualizado_en")
+
+  @@map("configuracion")
+}

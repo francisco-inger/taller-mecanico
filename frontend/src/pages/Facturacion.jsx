@@ -154,6 +154,12 @@ export default function Facturacion() {
     const repuestos = f.orden?.repuestos || []
     const fecha = new Date(f.fechaEmision).toLocaleString('es-DO')
 
+    const config = useConfigStore.getState().config || {}
+    const nombreTaller = config.nombre_taller || 'SIGEST TALLER'
+    const rnc = config.rnc ? `RNC: ${config.rnc}` : 'RNC: —'
+    const telefono = config.telefono ? `Teléfono: ${config.telefono}` : 'Teléfono: —'
+    const direccion = config.direccion || 'República Dominicana'
+
     const win = window.open('', '_blank', 'width=800,height=900')
     win.document.write(`
       <html>
@@ -259,9 +265,9 @@ export default function Facturacion() {
         </head>
         <body>
           <div class="header">
-            <div class="logo">SIGEST TALLER</div>
-            <p class="subtitle">Servicio de Calidad Automotriz | RNC: 131-22222-2</p>
-            <p class="subtitle">Teléfono: 809-555-1234 | Santo Domingo, Rep. Dominicana</p>
+            <div class="logo">${nombreTaller}</div>
+            <p class="subtitle">Servicio de Calidad Automotriz | ${rnc}</p>
+            <p class="subtitle">${telefono} | ${direccion}</p>
           </div>
 
           <div class="meta-grid">

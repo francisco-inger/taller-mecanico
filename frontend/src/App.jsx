@@ -11,6 +11,7 @@ import Clientes from './pages/Clientes'
 import Usuarios from './pages/Usuarios'
 import Mecanicos from './pages/Mecanicos'
 import Facturacion from './pages/Facturacion'
+import Configuracion from './pages/Configuracion'
 
 // PrivateRoute sigue existiendo para las rutas que están detrás de autenticación.
 const PrivateRoute = ({ children }) => {
@@ -93,6 +94,14 @@ function App() {
             element={
               <RoleRoute allowedRoles={['ADMIN', 'CAJERO', 'RECEPCIONISTA']}>
                 <Facturacion />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="configuracion"
+            element={
+              <RoleRoute allowedRoles={['ADMIN']}>
+                <Configuracion />
               </RoleRoute>
             }
           />

@@ -32,6 +32,7 @@ const vehiculoRepo = new PrismaVehiculoRepository();
 const usuarioRepo  = new PrismaUsuarioRepository();
 const facturaRepo  = new PrismaFacturaRepository();
 const mecanicoRepo = new PrismaMecanicoRepository();
+const configRepo   = require('../../infrastructure/persistence/prisma/PrismaConfiguracionRepository');
 
 // ── 2. Auth ───────────────────────────────────────────────────
 const jwtAdapter = new JwtAdapter(
@@ -55,6 +56,7 @@ const tallerFacade = new TallerFacade({
   facturaRepo,
   usuarioRepo,
   mecanicoRepo,
+  configRepo,
   eventBus,
   jwtAdapter,
 });

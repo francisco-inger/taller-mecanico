@@ -126,11 +126,29 @@ async function main() {
     },
   });
 
-  console.log('✅ Seed completado exitosamente!');
-  console.log('\n👤 Credenciales de acceso:');
-  console.log('   Admin:       cheodiaz631@gmail.com / Cheoymaria2117');
-  console.log('   Admin:       admin@taller.com / Admin123!');
-  console.log('   Recepción:   recepcion@taller.com / Recep123!');
+  // ── Configuración del Sistema ──────────────────────────────────
+  const configDefaults = [
+    { clave: 'nombre_taller',    valor: 'Taller Mecánico SIGEST',   descripcion: 'Nombre del taller que aparece en facturas y encabezados' },
+    { clave: 'rnc',              valor: '',                          descripcion: 'RNC (Registro Nacional del Contribuyente)' },
+    { clave: 'direccion',        valor: '',                          descripcion: 'Dirección física del taller' },
+    { clave: 'telefono',         valor: '',                          descripcion: 'Teléfono de contacto del taller' },
+    { clave: 'correo',           valor: '',                          descripcion: 'Correo electrónico del taller' },
+    { clave: 'itbis_porcentaje', valor: '18',                        descripcion: 'Porcentaje de ITBIS aplicado en facturas (ej: 18)' },
+    { clave: 'moneda',           valor: 'RD$',                       descripcion: 'Símbolo de moneda usado en el sistema' },
+    { clave: 'tema',             valor: 'claro',                     descripcion: 'Tema visual del sistema: claro u oscuro' },
+    { clave: 'color_acento',     valor: 'azul-verde',                descripcion: 'Paleta de colores de la interfaz' },
+  ];
+
+  for (const cfg of configDefaults) {
+    await prisma.configuracion.upsert({
+      where:  { clave: cfg.clave },
+      update: {},             // no sobreescribir si ya existe (preserva cambios del admin)
+      create: cfg,
+    });
+  }
+
+  console.log('✅ Seed completado exitosamente!');\n  console.log('\n👤 Credenciales de acceso:');\n  console.log('   Admin:       cheodiaz631@gmail.com / Cheoymaria2117');\n  console.log('   Admin:       admin@taller.com / Admin123!');\n  console.log('   Recepción:   recepcion@taller.com / Recep123!');
+
 }
 
 main()

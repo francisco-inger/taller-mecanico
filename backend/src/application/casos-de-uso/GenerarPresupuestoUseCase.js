@@ -15,9 +15,10 @@ const DescuentoPromocion        = require('../../domain/presupuesto/estrategias/
  * SOLID: SRP + OCP (nuevas estrategias sin modificar este use case)
  */
 class GenerarPresupuestoUseCase {
-  constructor(ordenRepo, clienteRepo) {
+  constructor(ordenRepo, clienteRepo, configRepo) {
     this._ordenRepo   = ordenRepo;
     this._clienteRepo = clienteRepo;
+    this._configRepo  = configRepo;
   }
 
   /**
@@ -38,7 +39,9 @@ class GenerarPresupuestoUseCase {
       estrategia = new SinDescuento();
     }
 
-    const calculadora = new CalculadoraOrden(estrategia);
+    const itbisVal = this._configRepo ? await this._configRepo.obtener('itbis_porcentaje') : '18';
+    const itbisPorcentaje = itbisVal ? parseFloat(itbisVal) : 18;
+    const calculadora = new CalculadoraOrden(estrategia, itbisPorcentaje);
     const resumen     = calculadora.calcularTotal(orden.servicios, orden.repuestos);
 
     return {

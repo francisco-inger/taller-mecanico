@@ -41,17 +41,18 @@ class TallerFacade {
    * @param {object} deps.facturaRepo
    * @param {object} deps.usuarioRepo
    * @param {object} deps.mecanicoRepo
+   * @param {object} deps.configRepo
    * @param {import('./EventBus')} deps.eventBus
    * @param {object} deps.jwtAdapter
    */
-  constructor({ ordenRepo, clienteRepo, vehiculoRepo, facturaRepo, usuarioRepo, mecanicoRepo, eventBus, jwtAdapter }) {
+  constructor({ ordenRepo, clienteRepo, vehiculoRepo, facturaRepo, usuarioRepo, mecanicoRepo, configRepo, eventBus, jwtAdapter }) {
     this._crearOrden          = new CrearOrdenUseCase(ordenRepo, clienteRepo, vehiculoRepo, eventBus);
     this._avanzarEstado       = new AvanzarEstadoUseCase(ordenRepo, eventBus);
-    this._generarPresupuesto  = new GenerarPresupuestoUseCase(ordenRepo, clienteRepo);
+    this._generarPresupuesto  = new GenerarPresupuestoUseCase(ordenRepo, clienteRepo, configRepo);
     this._aprobarPresupuesto  = new AprobarPresupuestoUseCase(ordenRepo, eventBus);
     this._rechazarPresupuesto = new RechazarPresupuestoUseCase(ordenRepo, eventBus);
-    this._generarFactura      = new GenerarFacturaUseCase(ordenRepo, clienteRepo, facturaRepo, eventBus);
-    this._actualizarFactura   = new ActualizarFacturaUseCase(facturaRepo, ordenRepo);
+    this._generarFactura      = new GenerarFacturaUseCase(ordenRepo, clienteRepo, facturaRepo, eventBus, configRepo);
+    this._actualizarFactura   = new ActualizarFacturaUseCase(facturaRepo, ordenRepo, configRepo);
     this._listarOrdenes       = new ListarOrdenesUseCase(ordenRepo);
     this._crearCliente        = new CrearClienteUseCase(clienteRepo);
     this._actualizarCliente   = new ActualizarClienteUseCase(clienteRepo);
@@ -59,7 +60,7 @@ class TallerFacade {
     this._actualizarUsuario   = new ActualizarUsuarioUseCase(usuarioRepo);
     this._login               = new LoginUseCase(usuarioRepo, jwtAdapter);
     this._crearVehiculo       = new CrearVehiculoUseCase(vehiculoRepo);
-
+ 
     // Guardar repos para operaciones directas
     this._ordenRepo    = ordenRepo;
     this._clienteRepo  = clienteRepo;
@@ -67,6 +68,7 @@ class TallerFacade {
     this._facturaRepo  = facturaRepo;
     this._usuarioRepo  = usuarioRepo;
     this._mecanicoRepo = mecanicoRepo;
+    this._configRepo   = configRepo;
   }
 
   // ─── Órdenes ─────────────────────────────────────────────────────────────

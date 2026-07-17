@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { Wrench, Menu, X, LogOut, ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
+import { useConfigStore } from '../store/configStore'
 import { useState, useEffect } from 'react'
 import { getNavItemsByRol } from '../config/navigationConfig'
 
@@ -17,12 +18,17 @@ export default function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuthStore()
+  const { fetchConfig, config } = useConfigStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)          // mobile
   const [collapsed, setCollapsed] = useState(() => {              // desktop
     try { return localStorage.getItem('sidebar-collapsed') === 'true' } catch { return false }
   })
 
   const navItems = getNavItemsByRol(user?.rol || 'ADMIN')
+
+  useEffect(() => {
+    fetchConfig()
+  }, [])
 
   useEffect(() => {
     try { localStorage.setItem('sidebar-collapsed', collapsed) } catch { /* noop */ }
